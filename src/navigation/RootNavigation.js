@@ -99,8 +99,8 @@ function NavTab() {
       />
 
       <Tab.Screen
-        name="Items Lists"
-        component={ItemListScreen}
+        name="Orders"
+        component={OrderScreen}
         options={{
           title: "Orders",
           tabBarLabel: "",
@@ -134,14 +134,17 @@ function NavTab() {
       />
 
       <Tab.Screen
-        name="Purchases"
-        component={ItemListScreen}
+        name="General Settings"
+        component={SettingGeneralScreen}
         options={{
           title: "Stock Items",
           tabBarLabel: "",
           tabBarActiveTintColor: 'green',
           tabBarIcon: ({ color, size }) => (
-            <Feather name="settings" size={size} color={color} />
+            <Feather name="settings" size={size} color={color}
+              onPress={() => navigation.navigate("General Settings")}
+
+            />
           )
         }}
 
