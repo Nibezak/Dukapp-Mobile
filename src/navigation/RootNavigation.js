@@ -119,6 +119,8 @@ function NavTab() {
 
       />
 
+      {/* <Tab.Screen name="Order Details" component={OrderDetailsSCreen} />  */}
+
       <Tab.Screen
         name="Receipt"
         component={ItemListScreen}
@@ -159,7 +161,7 @@ function NavStack() {
   const navigation = useNavigation();
 
   return (
-    <Stack.Navigator initialRouteName="Welcome">
+    <Stack.Navigator initialRouteName="Items List">
       <Stack.Screen name="Welcome" component={WelcomeScreen} />
       {/** Orders*/}
       <Stack.Screen name="Orders" component={OrderScreen} />

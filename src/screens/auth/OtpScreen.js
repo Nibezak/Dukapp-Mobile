@@ -3,6 +3,7 @@ import {
   SafeAreaView,
   StyleSheet,
   ActivityIndicator,
+  Image,
   Text,
 } from "react-native";
 import { t } from "i18n-js";
@@ -27,7 +28,7 @@ export default function OtpScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.wrapper}>
-      <Text style={styles.appName}>{"Butike"}</Text>
+      <Image source={require('./../../../assets/snack-icon.png')} style={styles.appName} />
       <Text style={styles.prompt}>Enter the code we sent you</Text>
       <Text style={styles.message}>
         {t(
@@ -66,11 +67,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   appName: {
-    color: "#4a5568",
-    fontWeight: "700",
-    fontSize: 24,
+    width: 140,
+    height: 130,
     alignSelf: "center",
-    marginBottom: 30,
+    marginBottom: 10,
   },
   borderStyleBase: {
     width: 30,

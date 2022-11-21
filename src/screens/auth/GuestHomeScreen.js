@@ -22,10 +22,10 @@ export default function GuestHomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.wrapper}>
-      <Text style={styles.appName}>{"Butike"}</Text>
-      <Text style={styles.prompt}>{t("auth.welcome_to_butike_app")}</Text>
+      <Text style={styles.appName}>{"Dukapp"}</Text>
+      <Text style={styles.prompt}>{t("auth.welcome_to_dukapp_app")}</Text>
       <Text style={styles.message}>
-        {t("auth.welcome_to_butike_app_description")}
+        {t("auth.welcome_to_dukapp_app_description")}
       </Text>
 
       <TouchableOpacity

@@ -4,6 +4,7 @@ import {
   StyleSheet,
   View,
   Text,
+  Image,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
@@ -43,8 +44,10 @@ export default function PhoneNumberScreen({ navigation }) {
       <View style={styles.container}>
         <SafeAreaView style={styles.wrapper}>
           <View style={styles.welcome}>
-            <Text style={styles.appName}>{"Butike"}</Text>
-            <Text style={styles.pitch}>{t("auth.welcome_to_butike_app")}</Text>
+            {/* <Text style={styles.appName}>{"Dukapp"}</Text>
+             */}
+            <Image source={require('./../../../assets/snack-icon.png')} style={styles.appName} />
+            <Text style={styles.pitch}>{t("auth.welcome_to_dukapp_app")}</Text>
             <Text style={styles.verifyPhone}>
               {t("auth.verify_your_phone")}
             </Text>
@@ -110,11 +113,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   appName: {
-    color: "#4a5568",
-    fontWeight: "700",
-    fontSize: 24,
+    width: 140,
+    height: 130,
     alignSelf: "center",
-    marginBottom: 30,
+    marginBottom: 10,
   },
   pitch: {
     fontSize: 18,
