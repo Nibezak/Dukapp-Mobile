@@ -51,9 +51,11 @@ import SummaryReportScreen from "../screens/reports/SummaryReportScreen";
 import SettingGeneralScreen from "../screens/settings/SettingGeneralScreen";
 import SettingEditScreen from "../screens/settings/SettingEditScreen";
 import SettingOptionsScreen from "../screens/settings/SettingOptionsScreen";
-
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Feather, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import ButtonFilled from "../components/ButtonFilled";
 const Stack = createStackNavigator();
-
+const Tab = createBottomTabNavigator();
 function AuthStackNavigator() {
   enableScreens();
   return (
@@ -65,6 +67,87 @@ function AuthStackNavigator() {
       <Stack.Screen name="PhoneNumber" component={PhoneNumberScreen} />
       <Stack.Screen name="Otp" component={OtpScreen} />
     </Stack.Navigator>
+  );
+}
+function NavTab() {
+  enableScreens();
+  const navigation = useNavigation();
+
+  return (
+    <Tab.Navigator initialRouteName="Welcome">
+      <Tab.Screen name="Welcome" component={WelcomeScreen} options={{
+        tabBarLabel: "",
+        tabBarActiveTintColor: 'green',
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="md-home" size={size} color={color} />
+        )
+      }} />
+
+
+      <Tab.Screen
+        name="Items List"
+        component={ItemListScreen}
+        options={{
+          title: "Stock Items",
+          tabBarLabel: "",
+          tabBarActiveTintColor: 'green',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="list-alt" size={size} color={color} />
+          )
+        }}
+
+      />
+
+      <Tab.Screen
+        name="Items Lists"
+        component={ItemListScreen}
+        options={{
+          title: "Orders",
+          tabBarLabel: "",
+          tabBarActiveTintColor: 'green',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="md-add-circle" size={36} color={color}
+              onPress={() =>
+                navigation.navigate("Orders", {
+                  order_type: "sale",
+                })
+              }
+            />
+          )
+        }}
+
+
+      />
+
+      <Tab.Screen
+        name="Receipt"
+        component={ItemListScreen}
+        options={{
+          title: "Stock Items",
+          tabBarLabel: "",
+          tabBarActiveTintColor: 'green',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="receipt-outline" size={size} color={color} />
+          )
+        }}
+
+      />
+
+      <Tab.Screen
+        name="Purchases"
+        component={ItemListScreen}
+        options={{
+          title: "Stock Items",
+          tabBarLabel: "",
+          tabBarActiveTintColor: 'green',
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="settings" size={size} color={color} />
+          )
+        }}
+
+      />
+
+    </Tab.Navigator>
   );
 }
 
@@ -186,9 +269,15 @@ export default function RootNavigation() {
   return (
     <>
       {user ? (
-        <NavigationContainer>
-          <NavStack />
-        </NavigationContainer>
+        <>
+          {/* <NavigationContainer>
+            <NavStack />
+          </NavigationContainer> */}
+
+          <NavigationContainer>
+            <NavTab />
+          </NavigationContainer>
+        </>
       ) : (
         <NavigationContainer>
           <AuthStackNavigator />
