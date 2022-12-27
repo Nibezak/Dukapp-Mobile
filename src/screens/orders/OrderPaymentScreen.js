@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Picker, StyleSheet } from "react-native";
 import OrderService from "../../services/OrderService";
 import Button from "../../components/Button";
-import InputText from "../../components/InputText";
+import FieldText from "../../components/FieldText";
 import InputSelect from "../../components/InputSelect";
 import { getSetting } from "../../models/AsyncStorage";
 import { t } from "i18n-js";
@@ -75,7 +75,7 @@ export default function OrderPaymentScreen({ navigation, route }) {
         />
       </View>
       <View style={styles.row}>
-        <InputText
+        <FieldText
           defaultValue={order.total.toString()}
           title={t("order.amount", [{ currency: currency }])}
           onChangeText={setAmount}

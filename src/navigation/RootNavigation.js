@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { View, Button, ActivityIndicator, Text } from "react-native";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
+
 import {
   createStackNavigator,
   TransitionPresets,
@@ -52,10 +53,12 @@ import SettingGeneralScreen from "../screens/settings/SettingGeneralScreen";
 import SettingEditScreen from "../screens/settings/SettingEditScreen";
 import SettingOptionsScreen from "../screens/settings/SettingOptionsScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Feather, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import ButtonFilled from "../components/ButtonFilled";
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const Drawer = createDrawerNavigator();
 function AuthStackNavigator() {
   enableScreens();
   return (
@@ -67,6 +70,32 @@ function AuthStackNavigator() {
       <Stack.Screen name="PhoneNumber" component={PhoneNumberScreen} />
       <Stack.Screen name="Otp" component={OtpScreen} />
     </Stack.Navigator>
+  );
+}
+function NavDrawer() {
+  enableScreens();
+  const navigation = useNavigation();
+
+  return (
+
+    <Drawer.Navigator initialRouteName="Welcome"
+      screenOptions={{ headerShown: false, headerBackTitleVisible: false }}
+    >
+      <Drawer.Screen name="Home" component={NavStack} options={{
+        title: 'Home',
+      }} />
+      <Drawer.Screen name="Customers" component={CustomerListScreen} options={{
+        headerShown: true,
+      }} />
+
+      <Drawer.Screen name="Suppliers" component={SupplierListScreen} options={{
+        headerShown: true,
+      }} />
+      <Drawer.Screen name="Insights" component={SummaryReportScreen} options={{
+        headerShown: true,
+      }} />
+    </Drawer.Navigator>
+
   );
 }
 function NavTab() {
@@ -161,8 +190,8 @@ function NavStack() {
   const navigation = useNavigation();
 
   return (
-    <Stack.Navigator initialRouteName="Items List">
-      <Stack.Screen name="Welcome" component={WelcomeScreen} />
+    <Stack.Navigator initialRouteName="Welcome">
+      <Stack.Screen name="Welcome" component={NavTab} options={{ headerShown: false }} />
       {/** Orders*/}
       <Stack.Screen name="Orders" component={OrderScreen} />
       <Stack.Screen name="Order Details" component={OrderDetailsSCreen} />
@@ -260,7 +289,7 @@ export default function RootNavigation() {
 
     setTimeout(() => {
       setIsLoading(false);
-    }, 2000);
+    }, 1);
   }, [user]);
 
   if (isLoading) {
@@ -275,13 +304,14 @@ export default function RootNavigation() {
     <>
       {user ? (
         <>
-          {/* <NavigationContainer>
-            <NavStack />
-          </NavigationContainer> */}
-
           <NavigationContainer>
-            <NavTab />
+            <NavDrawer />
           </NavigationContainer>
+
+
+          {/* <NavigationContainer>
+            <NavDrawer />
+          </NavigationContainer> */}
         </>
       ) : (
         <NavigationContainer>

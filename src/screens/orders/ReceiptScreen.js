@@ -8,6 +8,7 @@ import { number } from "../../helpers/Numbers";
 import CustomerService from "../../services/CustomerService";
 import { getSetting } from "../../models/AsyncStorage";
 
+
 export default function ReceiptScreen({ navigation, route }) {
   const { user } = useContext(AuthContext);
   const order = route.params.order;
@@ -83,6 +84,7 @@ export default function ReceiptScreen({ navigation, route }) {
           padding: 20,
         }}
       >
+        <Text>Powered by Dukapp <MaterialIcons name="copyright" size={15} color="black" /></Text>
         {/** RECEIPT HEADER */}
         <View style={styles.shopDetailsContainer}>
           <Text style={styles.shopName}>{businessName}</Text>
@@ -95,7 +97,7 @@ export default function ReceiptScreen({ navigation, route }) {
 
         {/** ORDER DETAILS */}
         <View style={styles.orderDetails}>
-          <Text style={styles.receiptNumber}>{order.id}</Text>
+          <Text style={styles.receiptNumber}>#Invoice-number: {order.id}</Text>
         </View>
 
         {/** CUSTOMER DETAILS */}
@@ -155,7 +157,9 @@ export default function ReceiptScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  shopDetailsContainer: {},
+  shopDetailsContainer: {
+    marginTop: 20
+  },
   shopName: {
     textAlign: "center",
     fontWeight: "700",

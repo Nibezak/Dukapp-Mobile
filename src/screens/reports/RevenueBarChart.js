@@ -29,7 +29,7 @@ const graphStyles = {
   padding: 2,
   paddingVertical: 1,
   margin: 8,
-  borderRadius: 10,
+  borderRadius: 16,
 };
 
 export default function RevenueBarChart() {
@@ -68,8 +68,9 @@ export default function RevenueBarChart() {
           style={graphStyles}
           data={barData}
           width={screenWidth}
-          height={215}
+          height={220}
           chartConfig={chartConfig}
+          bezier
         />
       </View>
     </>

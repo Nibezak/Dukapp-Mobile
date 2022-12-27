@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, KeyboardAvoidingView } from "react-native";
-import InputText from "../../components/InputText";
+import FieldText from "../../components/FieldText";
 import Button from "../../components/Button";
 import { t } from "i18n-js";
 import OrderService from "../../services/OrderService";
@@ -46,7 +46,7 @@ export default function CustomerCreateScreen({ navigation, route }) {
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <InputText
+        <FieldText
           value={names}
           autoFocus={true}
           title={t("customer.names")}
@@ -56,7 +56,7 @@ export default function CustomerCreateScreen({ navigation, route }) {
         />
       </View>
       <View style={styles.row}>
-        <InputText
+        <FieldText
           value={phone}
           title={t("customer.phone")}
           onChangeText={setPhone}
@@ -66,7 +66,7 @@ export default function CustomerCreateScreen({ navigation, route }) {
         />
       </View>
       <View style={styles.row}>
-        <InputText
+        <FieldText
           value={email}
           title={t("customer.email")}
           onChangeText={setEmail}
@@ -76,7 +76,7 @@ export default function CustomerCreateScreen({ navigation, route }) {
         />
       </View>
       <View style={styles.row}>
-        <InputText
+        <FieldText
           value={address}
           title={t("customer.address")}
           onChangeText={setAddress}
@@ -85,7 +85,7 @@ export default function CustomerCreateScreen({ navigation, route }) {
         />
       </View>
       <View style={styles.row}>
-        <InputText
+        <FieldText
           value={note}
           title={t("customer.note")}
           numberOfLines={5}

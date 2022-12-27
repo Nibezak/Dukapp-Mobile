@@ -113,7 +113,7 @@ export default function CustomerSearchScreen({ navigation, route }) {
           onPress={() => navigation.goBack()}
           style={{ paddingLeft: 10, marginTop: 10, marginRight: 20 }}
         >
-          <MaterialIcons name="arrow-back" size={24} color="#fff" />
+          <MaterialIcons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
 
         <InputText
@@ -136,6 +136,7 @@ export default function CustomerSearchScreen({ navigation, route }) {
         </TouchableOpacity>
       </Header>
       <FlatList
+        style={{ marginTop: 20 }}
         data={customers}
         renderItem={renderCustomer}
         keyExtractor={keyExtractor}

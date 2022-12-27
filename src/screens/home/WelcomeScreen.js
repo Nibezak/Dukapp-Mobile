@@ -37,11 +37,11 @@ export default function WelcomeScreen({ navigation }) {
     navigation.setOptions({
       headerTitle: () => (<Image source={require('./../../../assets/snack-icon.png')} style={{ width: 120, height: 100 }} />),
       headerTitleAlign: "left",
-      headerRight: () => (
-        <SettingsButton
-          onPress={() => navigation.navigate("General Settings")}
-        />
-      ),
+      // headerRight: () => (
+      //   <SettingsButton
+      //     onPress={() => navigation.navigate("General Settings")}
+      //   />
+      // ),
     });
   }
 

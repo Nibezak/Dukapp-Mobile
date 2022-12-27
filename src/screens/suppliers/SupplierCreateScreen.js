@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, KeyboardAvoidingView } from "react-native";
 import { t } from "i18n-js";
-import InputText from "../../components/InputText";
+import FieldText from "../../components/FieldText";
 import Button from "../../components/Button";
 
 import SupplierService from "../../services/SupplierService";
@@ -39,7 +39,7 @@ export default function SupplierCreateScreen({ navigation }) {
     <View style={styles.container}>
       <KeyboardAvoidingView mode="padding">
         <View style={styles.row}>
-          <InputText
+          <FieldText
             autoFocus={true}
             value={companyName}
             title={t("supplier.company_name")}
@@ -49,7 +49,7 @@ export default function SupplierCreateScreen({ navigation }) {
           />
         </View>
         <View style={styles.row}>
-          <InputText
+          <FieldText
             value={phone}
             title={t("supplier.phone")}
             onChangeText={setPhone}
@@ -59,7 +59,7 @@ export default function SupplierCreateScreen({ navigation }) {
           />
         </View>
         <View style={styles.row}>
-          <InputText
+          <FieldText
             value={email}
             title={t("supplier.email")}
             onChangeText={setEmail}
@@ -69,7 +69,7 @@ export default function SupplierCreateScreen({ navigation }) {
           />
         </View>
         <View style={styles.row}>
-          <InputText
+          <FieldText
             value={tin}
             title={t("supplier.tax_identification_number")}
             onChangeText={setTin}
@@ -78,7 +78,7 @@ export default function SupplierCreateScreen({ navigation }) {
           />
         </View>
         <View style={styles.row}>
-          <InputText
+          <FieldText
             value={address}
             title={t("supplier.address")}
             onChangeText={setAddress}
@@ -88,7 +88,7 @@ export default function SupplierCreateScreen({ navigation }) {
         </View>
 
         <View style={styles.row}>
-          <InputText
+          <FieldText
             value={note}
             title={t("supplier.note")}
             numberOfLines={5}

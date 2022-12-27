@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { t } from "i18n-js";
-import InputText from "../../components/InputText";
+import FieldText from "../../components/FieldText";
 import InputSwitch from "../../components/InputSwitch";
 import Button from "../../components/Button";
 import ItemService from "../../services/ItemService";
@@ -102,7 +102,7 @@ export default function CreateItemScreen({ navigation, route }) {
         />
       </View>
       <View style={styles.row}>
-        <InputText
+        <FieldText
           value={name}
           title={t("item.name")}
           onChangeText={setName}
@@ -111,7 +111,7 @@ export default function CreateItemScreen({ navigation, route }) {
         />
       </View>
       <View style={styles.row}>
-        <InputText
+        <FieldText
           title={t("item.description")}
           onChangeText={setDescription}
           underlineColorAndroid="transparent"
@@ -119,7 +119,7 @@ export default function CreateItemScreen({ navigation, route }) {
         />
       </View>
       <View style={styles.row}>
-        <InputText
+        <FieldText
           title={t("item.category")}
           onChangeText={setCategory}
           underlineColorAndroid="transparent"
@@ -133,7 +133,7 @@ export default function CreateItemScreen({ navigation, route }) {
       ) : (
         <>
           <View style={styles.row}>
-            <InputText
+            <FieldText
               title={t("item.re_order_level")}
               value={reOrderLevel.toString()}
               onChangeText={setReorderLevel}
@@ -144,7 +144,7 @@ export default function CreateItemScreen({ navigation, route }) {
           </View>
 
           <View style={styles.row}>
-            <InputText
+            <FieldText
               title={t("item.quantity")}
               value={quantity.toString()}
               onChangeText={setQuantity}
@@ -155,7 +155,7 @@ export default function CreateItemScreen({ navigation, route }) {
           </View>
 
           <View style={styles.row}>
-            <InputText
+            <FieldText
               title={t("item.unit_cost_price")}
               value={unitPrice.toString()}
               onChangeText={setUnitPrice}
@@ -168,7 +168,7 @@ export default function CreateItemScreen({ navigation, route }) {
       )}
       {/** END OF NON SERVICE PRODUCT */}
       <View style={styles.row}>
-        <InputText
+        <FieldText
           title={t("item.unit_sale_price")}
           onChangeText={setSalePrice}
           underlineColorAndroid="transparent"

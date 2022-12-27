@@ -113,7 +113,7 @@ export default function ItemSearchScreen({ navigation }) {
           onPress={() => navigation.goBack()}
           style={{ paddingLeft: 10, marginTop: 10, marginRight: 20 }}
         >
-          <MaterialIcons name="arrow-back" size={24} color="#fff" />
+          <MaterialIcons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
 
         <InputText
@@ -121,28 +121,28 @@ export default function ItemSearchScreen({ navigation }) {
           autoFocus={true}
           onChangeText={handleSearch}
           placeholder={t("common.search_placeholder")}
-          style={{ borderBottomWidth: 0, color: "#f2f2f2" }}
-          placeholderTextColor={"#f2f2f2"}
         />
 
         <TouchableOpacity
-          style={{ paddingRight: 10, marginTop: 10 }}
+          style={{ paddingRight: 1, marginTop: 10 }}
           onPress={() => {
             setSearchTerm("");
             handleSearch("");
           }}
         >
-          <MaterialIcons name="close" size={24} color="#fff" />
+          <MaterialIcons name="close" size={24} color="black" />
         </TouchableOpacity>
       </Header>
 
       <FlatList
+        style={{ marginTop: 20 }}
         data={items}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         maxToRenderPerBatch={6}
       />
     </View>
+
   );
 }
 

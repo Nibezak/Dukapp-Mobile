@@ -13,6 +13,7 @@ import InputSwitch from "../../components/InputSwitch";
 import Button from "../../components/Button";
 import ItemService from "../../services/ItemService";
 import OrderService from "../../services/OrderService";
+import FieldText from "../../components/FieldText";
 
 export default function EditItemScreen({ navigation, route }) {
   // Define state
@@ -115,7 +116,7 @@ export default function EditItemScreen({ navigation, route }) {
       </View>
 
       <View style={styles.row}>
-        <InputText
+        <FieldText
           title={t("item.name")}
           value={name}
           onChangeText={setName}
@@ -125,7 +126,7 @@ export default function EditItemScreen({ navigation, route }) {
       </View>
 
       <View style={styles.row}>
-        <InputText
+        <FieldText
           title={t("item.description")}
           value={description}
           onChangeText={setDescription}
@@ -135,7 +136,7 @@ export default function EditItemScreen({ navigation, route }) {
       </View>
 
       <View style={styles.row}>
-        <InputText
+        <FieldText
           title={t("item.category")}
           value={category}
           onChangeText={setCategory}
@@ -150,7 +151,7 @@ export default function EditItemScreen({ navigation, route }) {
       ) : (
         <>
           <View style={styles.row}>
-            <InputText
+            <FieldText
               title={t("item.re_order_level")}
               value={reOrderLevel.toString()}
               onChangeText={setReorderLevel}
@@ -174,7 +175,7 @@ export default function EditItemScreen({ navigation, route }) {
           <></>
         ) : (
           <>
-            <InputText
+            <FieldText
               title={t("item.unit_cost_price")}
               value={unitPrice.toString()}
               onChangeText={setUnitPrice}
@@ -186,7 +187,7 @@ export default function EditItemScreen({ navigation, route }) {
         )}
         {/** END OF NON SERVICE PRODUCT */}
 
-        <InputText
+        <FieldText
           title={t("item.unit_sale_price")}
           value={salePrice.toString()}
           onChangeText={setSalePrice}

@@ -4,7 +4,7 @@ import { View, Text, StatusBar } from "react-native";
 export default function Header(props) {
   return (
     <View style={styles.header}>
-      <StatusBar backgroundColor="#4a5568" barStyle="light-content" />
+      <StatusBar barStyle="light-content" />
       <View style={styles.headerChildren}>{props.children}</View>
     </View>
   );
@@ -12,9 +12,10 @@ export default function Header(props) {
 
 const styles = {
   header: {
-    height: 80,
-    backgroundColor: "#4a5568",
+    height: 50,
+    backgroundColor: "#f1f1f1",
     padding: 1,
+    marginBottom: 10
   },
   headerChildren: {
     flex: 1,
