@@ -104,7 +104,7 @@ function NavTab() {
 
   return (
     <Tab.Navigator initialRouteName="Welcome">
-      <Tab.Screen name="Welcome" component={WelcomeScreen} options={{
+      <Tab.Screen name="HomeScreen" component={WelcomeScreen} options={{
         tabBarLabel: "",
         tabBarActiveTintColor: 'green',
         tabBarIcon: ({ color, size }) => (
@@ -151,35 +151,34 @@ function NavTab() {
       {/* <Tab.Screen name="Order Details" component={OrderDetailsSCreen} />  */}
 
       <Tab.Screen
-        name="Receipt"
-        component={ItemListScreen}
+        name="Clients"
+        component={CustomerSearchScreen}
         options={{
-          title: "Stock Items",
+          title: "Customers",
           tabBarLabel: "",
           tabBarActiveTintColor: 'green',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="receipt-outline" size={size} color={color} />
+            <Ionicons name="person" size={24} color={color} />
           )
         }}
 
       />
+
 
       <Tab.Screen
         name="General Settings"
         component={SettingGeneralScreen}
         options={{
-          title: "Stock Items",
+          title: "General Settings",
           tabBarLabel: "",
           tabBarActiveTintColor: 'green',
           tabBarIcon: ({ color, size }) => (
-            <Feather name="settings" size={size} color={color}
-              onPress={() => navigation.navigate("General Settings")}
-
-            />
+            <Feather name="settings" size={size} color={color} />
           )
         }}
 
       />
+
 
     </Tab.Navigator>
   );
@@ -289,7 +288,7 @@ export default function RootNavigation() {
 
     setTimeout(() => {
       setIsLoading(false);
-    }, 1);
+    }, 10);
   }, [user]);
 
   if (isLoading) {
