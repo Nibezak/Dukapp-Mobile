@@ -1,61 +1,65 @@
-import React, { useContext, useState, useEffect } from "react";
-import { View, Button, ActivityIndicator, Text } from "react-native";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import React, { useContext, useState, useEffect } from 'react';
+import { View, Button, ActivityIndicator, Text } from 'react-native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
-import {
-  createStackNavigator,
-  TransitionPresets,
-} from "@react-navigation/stack";
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 // Before rendering any navigation stack
-import { enableScreens } from "react-native-screens";
+import { enableScreens } from 'react-native-screens';
 
 // Providers
-import { AuthContext } from "../context/AuthProvider";
-import SearchButton from "../components/SearchButton";
-import RightNavSearch from "../components/RightNavSearch";
+import { AuthContext } from '../context/AuthProvider';
+import SearchButton from '../components/SearchButton';
+import RightNavSearch from '../components/RightNavSearch';
 
 // Auth
-import GuestHomeScreen from "../screens/auth/GuestHomeScreen";
-import PhoneNumberScreen from "../screens/auth/PhoneNumberScreen";
-import OtpScreen from "../screens/auth/OtpScreen";
+import GuestHomeScreen from '../screens/auth/GuestHomeScreen';
+import PhoneNumberScreen from '../screens/auth/PhoneNumberScreen';
+import OtpScreen from '../screens/auth/OtpScreen';
+import OnboardingScreen from '../screens/auth/OnboardingScreen';
 
 // Home Screens
-import WelcomeScreen from "../screens/home/WelcomeScreen";
+import WelcomeScreen from '../screens/home/WelcomeScreen';
 
 // Order
-import OrderScreen from "../screens/orders/OrderScreen";
-import ReceiptScreen from "../screens/orders/ReceiptScreen";
-import OrderDetailsSCreen from "../screens/orders/OrderDetailsScreen";
-import OrderPaymentScreen from "../screens/orders/OrderPaymentScreen";
+import OrderScreen from '../screens/orders/OrderScreen';
+import ReceiptScreen from '../screens/orders/ReceiptScreen';
+import OrderDetailsSCreen from '../screens/orders/OrderDetailsScreen';
+import OrderPaymentScreen from '../screens/orders/OrderPaymentScreen';
 
 // Inventory
-import ItemCreateScreen from "../screens/items/ItemCreateScreen";
-import ItemEditScreen from "../screens/items/ItemEditScreen";
-import ItemListScreen from "../screens/items/ItemListScreen";
-import ItemSearchScreen from "../screens/items/ItemSearchScreen";
+import ItemCreateScreen from '../screens/items/ItemCreateScreen';
+import ItemEditScreen from '../screens/items/ItemEditScreen';
+import ItemListScreen from '../screens/items/ItemListScreen';
+import ItemSearchScreen from '../screens/items/ItemSearchScreen';
 
 // Customers Screen
-import CustomerCreateScreen from "../screens/customers/CustomerCreateScreen";
-import CustomerEditScreen from "../screens/customers/CustomerEditScreen";
-import CustomerListScreen from "../screens/customers/CustomerListScreen";
-import CustomerSearchScreen from "../screens/customers/CustomerSearchScreen";
+import CustomerCreateScreen from '../screens/customers/CustomerCreateScreen';
+import CustomerEditScreen from '../screens/customers/CustomerEditScreen';
+import CustomerListScreen from '../screens/customers/CustomerListScreen';
+import CustomerSearchScreen from '../screens/customers/CustomerSearchScreen';
 
 // Suppliers Screen
-import SupplierCreateScreen from "../screens/suppliers/SupplierCreateScreen";
-import SupplierEditScreen from "../screens/suppliers/SupplierEditScreen";
-import SupplierListScreen from "../screens/suppliers/SupplierListScreen";
+import SupplierCreateScreen from '../screens/suppliers/SupplierCreateScreen';
+import SupplierEditScreen from '../screens/suppliers/SupplierEditScreen';
+import SupplierListScreen from '../screens/suppliers/SupplierListScreen';
 
 // Report Screen
-import SummaryReportScreen from "../screens/reports/SummaryReportScreen";
+import SummaryReportScreen from '../screens/reports/SummaryReportScreen';
 
 // Setting Screen
-import SettingGeneralScreen from "../screens/settings/SettingGeneralScreen";
-import SettingEditScreen from "../screens/settings/SettingEditScreen";
-import SettingOptionsScreen from "../screens/settings/SettingOptionsScreen";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createDrawerNavigator } from "@react-navigation/drawer";
-import { Feather, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import ButtonFilled from "../components/ButtonFilled";
+import SettingGeneralScreen from '../screens/settings/SettingGeneralScreen';
+import SettingEditScreen from '../screens/settings/SettingEditScreen';
+import SettingOptionsScreen from '../screens/settings/SettingOptionsScreen';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import {
+  Feather,
+  FontAwesome,
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from '@expo/vector-icons';
+import ButtonFilled from '../components/ButtonFilled';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -75,27 +79,109 @@ function AuthStackNavigator() {
 function NavDrawer() {
   enableScreens();
   const navigation = useNavigation();
+  const [settings, setSettings] = useState([]);
+  const [initialScreen, setInitialSceen] = useState('Welcome');
+
+  useEffect(() => {
+    // Fetch settings here
+    getInitialSettings();
+  }, [settings]);
+
+  /**
+   * Fetch settings from the persisted
+   * Database store and update the
+   * state
+   */
+  function getInitialSettings() {
+    const settingFromDB = [
+      {
+        title: 'Business Name',
+        description: 'Configure official company name',
+        key: 'business_name',
+        value: 'Chez John Doe',
+      },
+      {
+        title: 'TIN',
+        description: 'Tax Identification Number',
+        key: 'TIN',
+        value: '10078832',
+      },
+      {
+        title: 'Business Type',
+        description: 'Saloon, Restorant, Butike..',
+        key: 'business_type',
+        value: 'Butike',
+        type: 'select',
+        options: [
+          { key: 'Boutique', title: 'Boutique' },
+          { key: 'Hair Saloon', title: 'Hair Saloon' },
+          { key: 'Restaurant', title: 'Restaurant' },
+          { key: 'Bar', title: 'Bar' },
+          { key: 'Phone Shop', title: 'Phone Shop' },
+          { key: 'Car Wash', title: 'Car Wash' },
+          { key: 'Others', title: 'Others' },
+        ],
+      },
+    ];
+
+    setSettings(settingFromDB);
+  }
+
+  /**
+   * Make welcome screen dynamic based on whether or not initial
+   * settings existing in the database. If settings is empty
+   * (we can check any other setting here), then present
+   * the screen for the user to input required settings
+   * for the application to run smoothly.
+   */
+
+  if (settings == []) {
+    /**
+     * For us to reach here, it means there're no settings stored
+     * in the local database, therefore, give the user option/
+     * screen to input initial database.
+     */
+    setInitialSceen('InitialSettings');
+  }
 
   return (
-
-    <Drawer.Navigator initialRouteName="Welcome"
+    <Drawer.Navigator
+      initialRouteName={initialScreen}
       screenOptions={{ headerShown: false, headerBackTitleVisible: false }}
     >
-      <Drawer.Screen name="Home" component={NavStack} options={{
-        title: 'Home',
-      }} />
-      <Drawer.Screen name="Customers" component={CustomerListScreen} options={{
-        headerShown: true,
-      }} />
+      <Draw.Screen name="InitialSettings" component={OnboardingScreen} />
 
-      <Drawer.Screen name="Suppliers" component={SupplierListScreen} options={{
-        headerShown: true,
-      }} />
-      <Drawer.Screen name="Insights" component={SummaryReportScreen} options={{
-        headerShown: true,
-      }} />
+      <Drawer.Screen
+        name="Home"
+        component={NavStack}
+        options={{
+          title: 'Home',
+        }}
+      />
+
+      <Drawer.Screen
+        name="Customers"
+        component={CustomerListScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
+
+      <Drawer.Screen
+        name="Suppliers"
+        component={SupplierListScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <Drawer.Screen
+        name="Insights"
+        component={SummaryReportScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
     </Drawer.Navigator>
-
   );
 }
 function NavTab() {
@@ -104,48 +190,49 @@ function NavTab() {
 
   return (
     <Tab.Navigator initialRouteName="Welcome">
-      <Tab.Screen name="HomeScreen" component={WelcomeScreen} options={{
-        tabBarLabel: "",
-        tabBarActiveTintColor: 'green',
-        tabBarIcon: ({ color, size }) => (
-          <Ionicons name="md-home" size={size} color={color} />
-        )
-      }} />
-
+      <Tab.Screen
+        name="HomeScreen"
+        component={WelcomeScreen}
+        options={{
+          tabBarLabel: '',
+          tabBarActiveTintColor: 'green',
+          tabBarIcon: ({ color, size }) => <Ionicons name="md-home" size={size} color={color} />,
+        }}
+      />
 
       <Tab.Screen
         name="Items List"
         component={ItemListScreen}
         options={{
-          title: "Stock Items",
-          tabBarLabel: "",
+          title: 'Stock Items',
+          tabBarLabel: '',
           tabBarActiveTintColor: 'green',
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="list-alt" size={size} color={color} />
-          )
+          ),
         }}
-
       />
 
       <Tab.Screen
         name="Orders"
         component={OrderScreen}
         options={{
-          title: "Orders",
-          tabBarLabel: "",
+          title: 'Orders',
+          tabBarLabel: '',
           tabBarActiveTintColor: 'green',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="md-add-circle" size={36} color={color}
+            <Ionicons
+              name="md-add-circle"
+              size={36}
+              color={color}
               onPress={() =>
-                navigation.navigate("Orders", {
-                  order_type: "sale",
+                navigation.navigate('Orders', {
+                  order_type: 'sale',
                 })
               }
             />
-          )
+          ),
         }}
-
-
       />
 
       {/* <Tab.Screen name="Order Details" component={OrderDetailsSCreen} />  */}
@@ -154,32 +241,23 @@ function NavTab() {
         name="Clients"
         component={CustomerSearchScreen}
         options={{
-          title: "Customers",
-          tabBarLabel: "",
+          title: 'Customers',
+          tabBarLabel: '',
           tabBarActiveTintColor: 'green',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person" size={24} color={color} />
-          )
+          tabBarIcon: ({ color, size }) => <Ionicons name="person" size={24} color={color} />,
         }}
-
       />
-
 
       <Tab.Screen
         name="General Settings"
         component={SettingGeneralScreen}
         options={{
-          title: "General Settings",
-          tabBarLabel: "",
+          title: 'General Settings',
+          tabBarLabel: '',
           tabBarActiveTintColor: 'green',
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="settings" size={size} color={color} />
-          )
+          tabBarIcon: ({ color, size }) => <Feather name="settings" size={size} color={color} />,
         }}
-
       />
-
-
     </Tab.Navigator>
   );
 }
@@ -194,10 +272,7 @@ function NavStack() {
       {/** Orders*/}
       <Stack.Screen name="Orders" component={OrderScreen} />
       <Stack.Screen name="Order Details" component={OrderDetailsSCreen} />
-      <Stack.Screen
-        name="Add Payment To Order"
-        component={OrderPaymentScreen}
-      />
+      <Stack.Screen name="Add Payment To Order" component={OrderPaymentScreen} />
       <Stack.Screen name="Order Receipt" component={ReceiptScreen} />
       {/** Items*/}
       <Stack.Screen
@@ -219,7 +294,7 @@ function NavStack() {
         name="Items List"
         component={ItemListScreen}
         options={{
-          title: "Stock Items",
+          title: 'Stock Items',
         }}
       />
       {/** Customer*/}
@@ -240,11 +315,9 @@ function NavStack() {
         name="Customers List"
         component={CustomerListScreen}
         options={{
-          title: "Customers",
+          title: 'Customers',
           headerRight: () => (
-            <SearchButton
-              onPress={() => navigation.navigate("Search Customer")}
-            />
+            <SearchButton onPress={() => navigation.navigate('Search Customer')} />
           ),
         }}
       />
@@ -261,7 +334,7 @@ function NavStack() {
         name="Supplier List"
         component={SupplierListScreen}
         options={{
-          title: "Suppliers",
+          title: 'Suppliers',
           headerRight: () => <RightNavSearch />,
         }}
       />
@@ -285,20 +358,25 @@ export default function RootNavigation() {
   useEffect(() => {
     // Check if the user is logged in or not
     // Check Secure store for the user object/token
-
     setTimeout(() => {
       setIsLoading(false);
     }, 10);
   }, [user]);
 
+  // Show loading indicator as we wait for the secure storage to
+  // be read for use.
   if (isLoading) {
     return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" color="#4a5568" />
       </View>
     );
   }
 
+  // For us to reach here, it means that the secure storage has been successfully
+  // loaded, accessible and can be used. If the user exists, we consider the user
+  // to have logged in, otherwise the user has to be presented the screen for
+  // authentication and be helped to navigate it.
   return (
     <>
       {user ? (
@@ -306,11 +384,6 @@ export default function RootNavigation() {
           <NavigationContainer>
             <NavDrawer />
           </NavigationContainer>
-
-
-          {/* <NavigationContainer>
-            <NavDrawer />
-          </NavigationContainer> */}
         </>
       ) : (
         <NavigationContainer>
