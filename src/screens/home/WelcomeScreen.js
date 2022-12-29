@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { View, FlatList, StyleSheet, Image, InteractionManager, Text } from "react-native";
+import { View, FlatList, StyleSheet, Image, InteractionManager, Text, TouchableWithoutFeedback } from "react-native";
 import HomeSummary from "./HomeSummary";
 import HomeMenus from "./HomeMenus";
 import SettingsButton from "../../components/SettingsButton";
@@ -11,7 +11,14 @@ import ButtonFilled from "../../components/ButtonFilled";
 import { Title, Divider } from "react-native-paper";
 import order from "../../translations/en/order";
 import RevenueBarChart from "../reports/RevenueBarChart";
-
+import { AntDesign } from '@expo/vector-icons';
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItemList,
+  DrawerItem,
+} from '@react-navigation/drawer';
+import { TouchableOpacity } from "react-native-gesture-handler";
 /**
  * Screen component
  */
@@ -36,12 +43,10 @@ export default function WelcomeScreen({ navigation }) {
   function setHeader() {
     navigation.setOptions({
       headerTitle: () => (<Image source={require('./../../../assets/snack-icon.png')} style={{ width: 120, height: 100 }} />),
-      headerTitleAlign: "left",
-      // headerRight: () => (
-      //   <SettingsButton
-      //     onPress={() => navigation.navigate("General Settings")}
-      //   />
-      // ),
+      headerTitleAlign: "center",
+      headerLeft: () => (
+        <AntDesign name="menuunfold" size={24} color="green" onPress={() => navigation.openDrawer()} style={{ paddingLeft: 10 }} />
+      ),
     });
   }
 
@@ -49,6 +54,8 @@ export default function WelcomeScreen({ navigation }) {
   async function refreshOrders() {
     return OrderService.ordersWithItems(setOrders, orderType, null, 8);
   }
+
+
 
   const renderOrder = useCallback((item) => (
     <RenderOrder
@@ -65,6 +72,7 @@ export default function WelcomeScreen({ navigation }) {
 
   const keyExtractor = useCallback((item, index) => index.toString(), []);
 
+
   return (
     <View style={styles.container}>
       {/** Welcome Section of the screen */}
@@ -73,13 +81,7 @@ export default function WelcomeScreen({ navigation }) {
         {t("welcome.today_insights")}
       </Title>
       <HomeSummary />
-      {/* <Divider style={{ padding: 2 }} /> */}
 
-      {/* <Divider /> */}
-      {/** Main menu on welcome screen */}
-      {/* <View style={{ marginVertical: 10 }}>
-        <HomeMenus />
-      </View> */}
       <RevenueBarChart />
       <Title style={styles.title}>
 
@@ -88,7 +90,7 @@ export default function WelcomeScreen({ navigation }) {
       <View>
 
         <FlatList
-          data={orders.slice(0, 4)}
+          data={orders.slice(0, 5)}
           // Data.slice(0,4
           renderItem={renderOrder}
           keyExtractor={keyExtractor}
@@ -107,7 +109,7 @@ export default function WelcomeScreen({ navigation }) {
       >
         {t("welcome.place_an_order")}
       </ButtonFilled>  */}
-      <Text style={{
+      {/* <Text style={{
         justifyContent: "center",
         alignItems: "center",
         alignSelf: "center",
@@ -117,7 +119,7 @@ export default function WelcomeScreen({ navigation }) {
         color: "green"
       }}>
         View More
-      </Text>
+      </Text> */}
     </View>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, Button, ActivityIndicator, Text } from 'react-native';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer, useNavigation, useRoute } from '@react-navigation/native';
 
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 // Before rendering any navigation stack
@@ -239,7 +239,7 @@ function NavTab() {
 
       <Tab.Screen
         name="Clients"
-        component={CustomerSearchScreen}
+        component={CustomerListScreen}
         options={{
           title: 'Customers',
           tabBarLabel: '',
@@ -360,7 +360,7 @@ export default function RootNavigation() {
     // Check Secure store for the user object/token
     setTimeout(() => {
       setIsLoading(false);
-    }, 10);
+    }, 1000);
   }, [user]);
 
   // Show loading indicator as we wait for the secure storage to

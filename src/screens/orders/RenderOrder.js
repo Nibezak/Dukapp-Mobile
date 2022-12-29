@@ -16,8 +16,15 @@ export default function RenderOrder({ item }) {
     getSetting("app_default_currency").then(setCurrency);
   }, []);
 
+  const handlerLongClick = () => {
+    //handler for Long Click
+    alert('Are you sure your want to delete this Item?');
+  };
+
   return (
     <TouchableOpacity
+      onLongPress={handlerLongClick}
+      activeOpacity={0.8}
       onPress={() =>
         navigation.navigate("Order Details", {
           order: order,
@@ -49,6 +56,8 @@ export default function RenderOrder({ item }) {
         </View>
       </View>
     </TouchableOpacity>
+
+
   );
 }
 

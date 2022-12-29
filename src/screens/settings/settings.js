@@ -38,7 +38,7 @@ export const generalSettings = [
         value: "system",
         type: "select",
         options: [
-          { key: "System Defaul", title: "System Defaul" },
+          { key: "System Default", title: "System Default" },
           { key: "Dark Mode", title: "Dark Mode" },
           { key: "Light Mode", title: "Light Mode" },
         ],
@@ -139,7 +139,7 @@ export const generalSettings = [
         title: "Default Payment Method",
         description: "",
         key: "app_default_payment_method",
-        value: "Butike",
+        value: "Dukapp",
         type: "select",
         options: [
           { key: "Cash", title: "Cash" },
