@@ -7,7 +7,7 @@ import {
     FlatList,
     TouchableOpacity,
 } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { t } from "i18n-js";
 import { AuthContext } from "../../context/AuthProvider";
 import Item from "../../models/Item";
@@ -29,6 +29,14 @@ export default function GeneralSettingsScreen() {
     useEffect(() => {
         navigation.setOptions({
             headerTitle: "Settings",
+            headerTitleAlign: "center",
+            headerLeft: () => (
+                <TouchableOpacity
+                    style={{ paddingLeft: 10 }}
+                >
+                    <AntDesign name="menuunfold" size={24} color="green" onPress={() => navigation.openDrawer()} />
+                </TouchableOpacity>
+            ),
         });
     });
 

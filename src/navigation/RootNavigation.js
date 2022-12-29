@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { View, Button, ActivityIndicator, Text } from "react-native";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { NavigationContainer, useNavigation, useRoute } from "@react-navigation/native";
 
 import {
   createStackNavigator,
@@ -141,6 +141,7 @@ function NavTab() {
                   order_type: "sale",
                 })
               }
+
             />
           )
         }}
@@ -148,11 +149,13 @@ function NavTab() {
 
       />
 
+
+
       {/* <Tab.Screen name="Order Details" component={OrderDetailsSCreen} />  */}
 
       <Tab.Screen
         name="Clients"
-        component={CustomerSearchScreen}
+        component={CustomerListScreen}
         options={{
           title: "Customers",
           tabBarLabel: "",
@@ -288,7 +291,7 @@ export default function RootNavigation() {
 
     setTimeout(() => {
       setIsLoading(false);
-    }, 10);
+    }, 1000);
   }, [user]);
 
   if (isLoading) {

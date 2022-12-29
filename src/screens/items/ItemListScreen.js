@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import FloatingButton from "../../components/FloatingButton";
 import ItemService from "../../services/ItemService";
 import SearchButton from "../../components/SearchButton";
@@ -53,14 +53,15 @@ export default function ItemListScreen({ navigation }) {
   function setHeaderRight() {
     navigation.setOptions({
       headerTitle: t("item.items_header"),
+      headerTitleAlign: "center",
       headerLeft: () => (
         <TouchableOpacity
           style={{ paddingLeft: 10 }}
-          onPress={() => navigation.goBack()}
         >
-          <MaterialIcons name="arrow-back" size={24} color="#1f2937" />
+          <AntDesign name="menuunfold" size={24} color="green" onPress={() => navigation.openDrawer()} />
         </TouchableOpacity>
       ),
+
       headerRight: () => (
         <SearchButton onPress={() => navigation.navigate("Item Search")} />
       ),

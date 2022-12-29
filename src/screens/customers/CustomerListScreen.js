@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, InteractionManager, FlatList } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import FloatingButton from "../../components/FloatingButton";
 import CustomerService from "../../services/CustomerService";
 import RenderCustomer from "./RenderCustomer";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import SearchButton from "../../components/SearchButton";
 
 export default function CustomerListScreen({ navigation }) {
   const [customers, setCustomers] = useState([]);
@@ -27,7 +29,27 @@ export default function CustomerListScreen({ navigation }) {
    */
   async function refreshCustomers() {
     CustomerService.getCustomers().then(setCustomers);
+    // set the Header with search
+    setHeaderRight();
   }
+
+  function setHeaderRight() {
+    navigation.setOptions({
+      headerTitle: "Customers",
+      headerTitleAlign: "center",
+      headerLeft: () => (
+        <TouchableOpacity
+          style={{ paddingLeft: 10 }}
+        >
+          <AntDesign name="menuunfold" size={24} color="green" onPress={() => navigation.openDrawer()} />
+        </TouchableOpacity>
+      ),
+      headerRight: () => (
+        <SearchButton onPress={() => navigation.navigate("Search Customer")} />
+      ),
+    });
+  }
+
 
   /**
    * Render Customers in a list
