@@ -15,7 +15,7 @@ import RightNavSearch from '../components/RightNavSearch';
 import GuestHomeScreen from '../screens/auth/GuestHomeScreen';
 import PhoneNumberScreen from '../screens/auth/PhoneNumberScreen';
 import OtpScreen from '../screens/auth/OtpScreen';
-import OnboardingScreen from '../screens/auth/OnboardingScreen';
+import { OnboardingScreen } from '../screens/auth/OnboardingScreen';
 
 // Home Screens
 import WelcomeScreen from '../screens/home/WelcomeScreen';
@@ -60,6 +60,7 @@ import {
   MaterialIcons,
 } from '@expo/vector-icons';
 import ButtonFilled from '../components/ButtonFilled';
+import SideBar from '../components/SideBar';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -79,53 +80,53 @@ function AuthStackNavigator() {
 function NavDrawer() {
   enableScreens();
   const navigation = useNavigation();
-  const [settings, setSettings] = useState([]);
-  const [initialScreen, setInitialSceen] = useState('Welcome');
+  // const [settings, setSettings] = useState([]);
+  // const [initialScreen, setInitialScreen] = useState('Welcome');
 
-  useEffect(() => {
-    // Fetch settings here
-    getInitialSettings();
-  }, [settings]);
+  // useEffect(() => {
+  //   // Fetch settings here
+  //   getInitialSettings();
+  // }, [settings]);
 
   /**
    * Fetch settings from the persisted
    * Database store and update the
    * state
    */
-  function getInitialSettings() {
-    const settingFromDB = [
-      {
-        title: 'Business Name',
-        description: 'Configure official company name',
-        key: 'business_name',
-        value: 'Chez John Doe',
-      },
-      {
-        title: 'TIN',
-        description: 'Tax Identification Number',
-        key: 'TIN',
-        value: '10078832',
-      },
-      {
-        title: 'Business Type',
-        description: 'Saloon, Restorant, Butike..',
-        key: 'business_type',
-        value: 'Butike',
-        type: 'select',
-        options: [
-          { key: 'Boutique', title: 'Boutique' },
-          { key: 'Hair Saloon', title: 'Hair Saloon' },
-          { key: 'Restaurant', title: 'Restaurant' },
-          { key: 'Bar', title: 'Bar' },
-          { key: 'Phone Shop', title: 'Phone Shop' },
-          { key: 'Car Wash', title: 'Car Wash' },
-          { key: 'Others', title: 'Others' },
-        ],
-      },
-    ];
+  // function getInitialSettings() {
+  //   const settingFromDB = [
+  //     {
+  //       title: 'Business Name',
+  //       description: 'Configure official company name',
+  //       key: 'business_name',
+  //       value: 'Chez John Doe',
+  //     },
+  //     {
+  //       title: 'TIN',
+  //       description: 'Tax Identification Number',
+  //       key: 'TIN',
+  //       value: '10078832',
+  //     },
+  //     {
+  //       title: 'Business Type',
+  //       description: 'Saloon, Restorant, Butike..',
+  //       key: 'business_type',
+  //       value: 'Butike',
+  //       type: 'select',
+  //       options: [
+  //         { key: 'Boutique', title: 'Boutique' },
+  //         { key: 'Hair Saloon', title: 'Hair Saloon' },
+  //         { key: 'Restaurant', title: 'Restaurant' },
+  //         { key: 'Bar', title: 'Bar' },
+  //         { key: 'Phone Shop', title: 'Phone Shop' },
+  //         { key: 'Car Wash', title: 'Car Wash' },
+  //         { key: 'Others', title: 'Others' },
+  //       ],
+  //     },
+  //   ];
 
-    setSettings(settingFromDB);
-  }
+  //   setSettings(settingFromDB);
+  // }
 
   /**
    * Make welcome screen dynamic based on whether or not initial
@@ -135,21 +136,21 @@ function NavDrawer() {
    * for the application to run smoothly.
    */
 
-  if (settings == []) {
-    /**
-     * For us to reach here, it means there're no settings stored
-     * in the local database, therefore, give the user option/
-     * screen to input initial database.
-     */
-    setInitialSceen('InitialSettings');
-  }
+  // if (settings != []) {
+  //   /**
+  //    * For us to reach here, it means there're no settings stored
+  //    * in the local database, therefore, give the user option/
+  //    * screen to input to the initial database.
+  //    */
+  //   setInitialScreen('InitialSettings');
+  // }
 
   return (
     <Drawer.Navigator
-      initialRouteName={initialScreen}
+      drawerContent={props => <SideBar {...props} />}
+      initialRouteName="Welcome"
       screenOptions={{ headerShown: false, headerBackTitleVisible: false }}
     >
-      <Draw.Screen name="InitialSettings" component={OnboardingScreen} />
 
       <Drawer.Screen
         name="Home"
@@ -268,6 +269,7 @@ function NavStack() {
 
   return (
     <Stack.Navigator initialRouteName="Welcome">
+      <Stack.Screen name="InitialSettings" component={OnboardingScreen} />
       <Stack.Screen name="Welcome" component={NavTab} options={{ headerShown: false }} />
       {/** Orders*/}
       <Stack.Screen name="Orders" component={OrderScreen} />
