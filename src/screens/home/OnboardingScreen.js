@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { t } from 'i18n-js';
 import { useEffect, useState } from 'react';
-import { SafeAreaView, ToastAndroid, StyleSheet } from 'react-native';
+import { SafeAreaView, ToastAndroid, StyleSheet, ActivityIndicator } from 'react-native';
 import Button from '../../components/Button';
 import FieldText from '../../components/FieldText';
 
@@ -17,6 +17,9 @@ export function OnboardingScreen() {
   const [email, setEmail] = useState(null);
   const [currency, setCurrency] = useState(null);
   const [defaultPaymentMethod, setDefaultPaymentMethod] = useState(null);
+
+  /** This state determines if we need to show the loading screen */
+  const [showLoading, setShowLoading] = useState(true);
 
   useEffect(() => {
     /**
@@ -35,12 +38,19 @@ export function OnboardingScreen() {
    * register new settings
    */
   async function redirectIfSettingsExist() {
-    // 1. Fetch settings from the database
+    /**
+     * Get settings from the local database. If we have a business name
+     * in the database this assumes that the rest of the settings
+     * exist in the database
+     */
     AsyncStorage.getItem('@business_name').then((result) => {
-      console.log(result);
       if (result !== null) {
+        /** Settings exist, redirect to home */
         return navigation.navigate('home');
       }
+
+      /** Hide loading indicator */
+      setShowLoading(false);
     });
   }
 
@@ -61,6 +71,21 @@ export function OnboardingScreen() {
     });
   }
 
+  /**
+   * If the state hasn't finished loading, display activity indicator.
+   */
+  if (showLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+      </View>
+    );
+  }
+
+  /**
+   *  For us to reach here it means that the state has finished loading and we are able to proceed
+   *  by displaying the form for settings
+   */
   return (
     <SafeAreaView style={styles.wrapper}>
       {/* Business Name */}
