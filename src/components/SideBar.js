@@ -1,4 +1,4 @@
-import { AntDesign, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, FontAwesome5, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
@@ -15,9 +15,11 @@ export default function SideBar() {
     const PurchasesIcon = (<AntDesign name="shoppingcart" size={24} color="#10b981" />);
     const ReceiptsIcon = (<FontAwesome5 name="receipt" size={24} color="#10b981" />);
     const ShareIcon = (<AntDesign name="sharealt" size={24} color="#10b981" />);
-    const FeedBackIcon = (<MaterialIcons name="feedback" size={24} color="#10b981" />)
+    const FeedBackIcon = (<MaterialIcons name="feedback" size={24} color="#10b981" />);
+
     const [selectedId, setSelectedId] = useState(null);
     const [businessName, setBusinessName] = useState(null);
+    const [currency, setCurrency] = useState(null);
 
     const listArrayItem = [
         { icon: SupplierIcon, title: 'Suppliers' },
@@ -53,13 +55,16 @@ export default function SideBar() {
 
     function retrieveSetting() {
         getSetting("business_name").then(setBusinessName);
+        getSetting("app_default_currency").then(setCurrency);
     }
     return (
 
         <View style={{ flex: 1 }}>
             <View style={{ justifyContent: "center", flex: 0.3, paddingHorizontal: 20 }}>
-                <Text style={{ fontWeight: "bold", fontSize: 20, marginLeft: 40, paddingBottom: 10 }}>{businessName}</Text>
-                <Text style={{ fontSize: 18, marginTop: 5, color: "green" }}>{`6000 Products`}</Text>
+                <Image source={require('./../../assets/snack-icon.png')} style={{ marginLeft: 50, width: 120, height: 70 }} />
+                <Text style={{ fontWeight: "bold", fontSize: 20, color: "#47a67f" }}>{businessName}</Text>
+                <Text style={{ fontSize: 12, marginTop: 5, color: "green", flexDirection: "row", justifyContent: "space-between" }}><Ionicons name="md-cash-outline" size={24} color="green" /> {currency}</Text>
+                <Text style={{ fontSize: 12, marginTop: 5, color: "green" }}>{`6000 Products`}</Text>
             </View>
             <View style={{ flex: 0.55 }}>
                 <FlatList
