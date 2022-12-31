@@ -1,4 +1,4 @@
-import AxiosConfig from "../helpers/axiosConfig";
+import AxiosConfig from '../helpers/axiosConfig';
 
 /**
  * Upload local store to the server
@@ -8,13 +8,13 @@ import AxiosConfig from "../helpers/axiosConfig";
  * @returns promise
  */
 export async function uploadData(dataType, payload) {
-    return AxiosConfig.post("backup/" + dataType, payload)
-        .then((response) => {
-            return response;
-        })
-        .catch((error) => {
-            console.error(error.message);
-        });
+  return AxiosConfig.post('backup/' + dataType, payload)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.error(error.message);
+    });
 }
 
 /**
@@ -24,15 +24,15 @@ export async function uploadData(dataType, payload) {
  * @returns
  */
 export async function realTimeBackup(queryString, parameters) {
-    return AxiosConfig.post("/backup-realtime", {
-            query: queryString,
-            parameters: parameters,
-        })
-        .then((response) => {
-            console.log(response);
-        })
-        .catch((error) => {
-            console.log(queryString, parameters);
-            console.warn(error.message);
-        });
+  return AxiosConfig.post('/backup-realtime', {
+    query: queryString,
+    parameters: parameters,
+  })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log(queryString, parameters);
+      console.warn(error.message);
+    });
 }

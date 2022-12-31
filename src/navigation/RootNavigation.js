@@ -15,10 +15,10 @@ import RightNavSearch from '../components/RightNavSearch';
 import GuestHomeScreen from '../screens/auth/GuestHomeScreen';
 import PhoneNumberScreen from '../screens/auth/PhoneNumberScreen';
 import OtpScreen from '../screens/auth/OtpScreen';
-import { OnboardingScreen } from '../screens/auth/OnboardingScreen';
 
 // Home Screens
 import WelcomeScreen from '../screens/home/WelcomeScreen';
+import { OnboardingScreen } from '../screens/home/OnboardingScreen';
 
 // Order
 import OrderScreen from '../screens/orders/OrderScreen';
@@ -52,14 +52,8 @@ import SettingEditScreen from '../screens/settings/SettingEditScreen';
 import SettingOptionsScreen from '../screens/settings/SettingOptionsScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import {
-  Feather,
-  FontAwesome,
-  Ionicons,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from '@expo/vector-icons';
-import ButtonFilled from '../components/ButtonFilled';
+import { Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
+
 import SideBar from '../components/SideBar';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -147,16 +141,23 @@ function NavDrawer() {
 
   return (
     <Drawer.Navigator
-      drawerContent={props => <SideBar {...props} />}
-      initialRouteName="Welcome"
+      drawerContent={(props) => <SideBar {...props} />}
+      initialRouteName="InitialSettings"
       screenOptions={{ headerShown: false, headerBackTitleVisible: false }}
     >
+      <Drawer.Screen
+        name="InitialSettings"
+        component={OnboardingScreen}
+        options={{
+          title: 'Initial Setting',
+        }}
+      />
 
       <Drawer.Screen
-        name="Home"
+        name="home"
         component={NavStack}
         options={{
-          title: 'Home',
+          title: 'home',
         }}
       />
 
@@ -190,7 +191,7 @@ function NavTab() {
   const navigation = useNavigation();
 
   return (
-    <Tab.Navigator initialRouteName="Welcome">
+    <Tab.Navigator initialRouteName="HomeScreen">
       <Tab.Screen
         name="HomeScreen"
         component={WelcomeScreen}
@@ -263,7 +264,7 @@ function NavTab() {
   );
 }
 
-function NavStack() {
+export function NavStack() {
   enableScreens();
   const navigation = useNavigation();
 

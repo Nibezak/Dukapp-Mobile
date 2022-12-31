@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -7,15 +7,15 @@ import {
   Text,
   TouchableOpacity,
   ToastAndroid,
-} from "react-native";
-import InputText from "../../components/InputText";
-import Button from "../../components/Button";
-import ItemService from "../../services/ItemService";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { t } from "i18n-js";
-import { MaterialIcons } from "@expo/vector-icons";
-import ButikeButton from "../../components/Button";
-import { setSetting } from "../../models/AsyncStorage";
+} from 'react-native';
+import InputText from '../../components/InputText';
+import Button from '../../components/Button';
+import ItemService from '../../services/ItemService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { t } from 'i18n-js';
+import { MaterialIcons } from '@expo/vector-icons';
+import ButikeButton from '../../components/Button';
+import { setSetting } from '../../models/AsyncStorage';
 
 export default function SettingEditScreen({ navigation, route }) {
   const setting = route.params.setting;
@@ -32,14 +32,14 @@ export default function SettingEditScreen({ navigation, route }) {
   }, [navigation, setting.title]);
 
   /**
-   *
+   * Handle Setting action
    * @param {key for setting} itemKey
    * @param {action to take} itemAction
    * @returns
    */
   async function handleActionSetting(settingKey, itemAction) {
     // Seed database based on selected type of seed
-    if (itemAction.toLowerCase() === "handledatabaseseed") {
+    if (itemAction.toLowerCase() === 'handledatabaseseed') {
       return seedDatabase(settingKey);
     }
   }
@@ -67,12 +67,12 @@ export default function SettingEditScreen({ navigation, route }) {
    */
   async function updateSetting(value) {
     setSetting(setting.key, value).then((resp) => {
-      ToastAndroid.show(t("setting.setting_updated"), ToastAndroid.SHORT);
+      ToastAndroid.show(t('setting.setting_updated'), ToastAndroid.SHORT);
     });
   }
 
   async function retrieveSetting() {
-    AsyncStorage.getItem("@" + setting.key).then(setCurrentSetting);
+    AsyncStorage.getItem('@' + setting.key).then(setCurrentSetting);
   }
 
   /*
@@ -90,12 +90,7 @@ export default function SettingEditScreen({ navigation, route }) {
       >
         <Text>{item.title}</Text>
         {currentSetting === item.key ? (
-          <MaterialIcons
-            name={"check"}
-            size={24}
-            color={"#10b981"}
-            style={styles.avatar}
-          />
+          <MaterialIcons name={'check'} size={24} color={'#10b981'} style={styles.avatar} />
         ) : (
           <></>
         )}
@@ -119,12 +114,12 @@ export default function SettingEditScreen({ navigation, route }) {
     <View style={styles.row}>
       <TextInput
         style={{
-          borderColor: "gray",
-          width: "100%",
+          borderColor: 'gray',
+          width: '100%',
           borderWidth: 1,
           borderRadius: 3,
           padding: 10,
-          backgroundColor: "#fff",
+          backgroundColor: '#fff',
         }}
         autoFocus={true}
         title={setting.title}
@@ -139,18 +134,18 @@ export default function SettingEditScreen({ navigation, route }) {
 /** */
 const styles = StyleSheet.create({
   row: {
-    flexDirection: "row",
+    flexDirection: 'row',
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: "#e2e8f0",
-    justifyContent: "space-between",
+    borderBottomColor: '#e2e8f0',
+    justifyContent: 'space-between',
   },
   rowText: {
     flex: 1,
   },
   label: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     paddingRight: 10,
   },
 });
