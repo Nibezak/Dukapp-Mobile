@@ -1,10 +1,13 @@
+import { AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { t } from 'i18n-js';
 import { useEffect, useState } from 'react';
-import { SafeAreaView, ToastAndroid, StyleSheet, ActivityIndicator } from 'react-native';
+import { SafeAreaView, ToastAndroid, StyleSheet, ActivityIndicator, View, Image } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Picker } from "@react-native-picker/picker";
 import Button from '../../components/Button';
-import FieldText from '../../components/FieldText';
+import InputText from '../../components/InputText';
 
 export function OnboardingScreen() {
   /** Access navigation. It is needed for redirection */
@@ -15,9 +18,9 @@ export function OnboardingScreen() {
   const [address, setAddress] = useState(null);
   const [shopOwnerName, setShopOwnerName] = useState(null);
   const [email, setEmail] = useState(null);
-  const [currency, setCurrency] = useState(null);
-  const [defaultPaymentMethod, setDefaultPaymentMethod] = useState(null);
-
+  const [currency, setCurrency] = useState('');
+  const [defaultPaymentMethod, setDefaultPaymentMethod] = useState('');
+  const [selectedValue, setSelectedValue] = useState('');
   /** This state determines if we need to show the loading screen */
   const [showLoading, setShowLoading] = useState(true);
 
@@ -71,6 +74,8 @@ export function OnboardingScreen() {
     });
   }
 
+
+
   /**
    * If the state hasn't finished loading, display activity indicator.
    */
@@ -82,6 +87,7 @@ export function OnboardingScreen() {
     );
   }
 
+
   /**
    *  For us to reach here it means that the state has finished loading and we are able to proceed
    *  by displaying the form for settings
@@ -89,7 +95,13 @@ export function OnboardingScreen() {
   return (
     <SafeAreaView style={styles.wrapper}>
       {/* Business Name */}
-      <FieldText
+      <View style={{ flexDirection: "row", justifyContent: "space-between", }}>
+        <Image source={require('./../../../assets/snack-icon.png')} style={{ width: 120, height: 100 }} />
+        <TouchableOpacity style={{ marginTop: 40, marginRight: 130 }} onPress={handleSavingSettings}>
+          <AntDesign name="check" size={24} color="#47a67f" />
+        </TouchableOpacity>
+      </View>
+      <InputText
         title={t('setting.shop_name')}
         value={businessName}
         onChangeText={setBusinessName}
@@ -98,7 +110,7 @@ export function OnboardingScreen() {
       />
 
       {/* Business Address */}
-      <FieldText
+      <InputText
         title={t('setting.address')}
         value={address}
         onChangeText={setAddress}
@@ -108,7 +120,7 @@ export function OnboardingScreen() {
 
       {/* Business Owner Name */}
 
-      <FieldText
+      <InputText
         title={t('setting.shop_owner_name')}
         value={shopOwnerName}
         onChangeText={setShopOwnerName}
@@ -118,7 +130,7 @@ export function OnboardingScreen() {
 
       {/* Business Email */}
 
-      <FieldText
+      <InputText
         title={t('setting.email')}
         value={email}
         onChangeText={setEmail}
@@ -128,27 +140,54 @@ export function OnboardingScreen() {
 
       {/* Business Currency */}
 
-      <FieldText
+      {/* <InputText
         title={t('setting.default_currency')}
         value={currency}
         onChangeText={setCurrency}
         underlineColorAndroid="transparent"
         placeholder={t('setting.email_placeholder')}
-      />
+      /> */}
 
       {/* Business Default Payment Method */}
 
-      <FieldText
+      {/* <InputText
+        style={styles.input}
         title={t('setting.default_payment_method')}
         value={defaultPaymentMethod}
         onChangeText={setDefaultPaymentMethod}
         underlineColorAndroid="transparent"
         placeholder={t('setting.default_payment_method_placeholder')}
-      />
+      /> */}
 
-      <Button onPress={handleSavingSettings} color={'#15803d'}>
-        {t('common.save')}
-      </Button>
+      <Picker
+        selectedValue={currency}
+        style={styles.picker}
+        itemStyle={styles.pickerItem}
+        prompt="Select a language"
+        mode="dropdown"
+        dialogueBoxStyle={styles.dialogueBox}
+        onValueChange={(itemValue, itemIndex) => setCurrency(itemValue)}>
+        <Picker.Item label="RWF" value="RWF" style={{ color: "green", fontWeight: "bold" }} />
+        <Picker.Item label="KES" value="KES" style={{ color: "orange", fontWeight: "bold" }} />
+        <Picker.Item label="USD" value="USD" style={{ color: "green", fontWeight: "bold" }} />
+      </Picker>
+
+      <Picker
+        selectedValue={defaultPaymentMethod}
+        style={styles.picker}
+        itemStyle={styles.pickerItem}
+        prompt="Select Default Payment Method"
+        mode="dropdown"
+        dialogueBoxStyle={styles.dialogueBox}
+        onValueChange={(itemValue, itemIndex) => setDefaultPaymentMethod(itemValue)}>
+        <Picker.Item label="CASH" value="CASH" style={{ color: "green", fontWeight: "bold" }} />
+        <Picker.Item label="MOMO" value="MOMO" style={{ color: "orange", fontWeight: "bold" }} />
+        <Picker.Item label="AIRTEL-MONEY" value="AIRTEL-MONEY" style={{ color: "red", fontWeight: "bold" }} />
+        <Picker.Item label="CASH" value="CASH" style={{ color: "green", fontWeight: "bold" }} />
+        <Picker.Item label="M-PESA" value="M-PESA" style={{ color: "green", fontWeight: "bold" }} />
+        <Picker.Item label="CREDIT" value="CREDIT" style={{ color: "green", fontWeight: "bold" }} />
+        <Picker.Item label="OTHERS" value="OTHERS" style={{ color: "green", fontWeight: "bold" }} />
+      </Picker>
     </SafeAreaView>
   );
 }
@@ -157,8 +196,29 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     margin: 10,
-    // justifyContent: 'center',
-    // alignItems: 'center',
+    width: 500,
+  },
+  picker: {
+    backgroundColor: '#e0e0e0',
+    borderRadius: 5,
+    flexDirection: "row",
+    width: "70%",
+    padding: 10,
+    marginVertical: 10,
+    justifyContent: "center"
+  },
+  pickerItem: {
+    color: '#000',
+    fontSize: 18,
+  },
+  dialogueBox: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 1,
   },
   appName: {
     color: '#4a5568',

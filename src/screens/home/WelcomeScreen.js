@@ -19,6 +19,7 @@ import {
   DrawerItem,
 } from '@react-navigation/drawer';
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { WelcomeAnimation } from "../../components/WelcomeAnimation";
 /**
  * Screen component
  */
@@ -76,27 +77,33 @@ export default function WelcomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       {/** Welcome Section of the screen */}
+      {orders.length > 0 ? (
+        <>
+          <Title style={styles.title}>
+            {t("welcome.today_insights")}
+          </Title>
+          <HomeSummary />
 
-      <Title style={styles.title}>
-        {t("welcome.today_insights")}
-      </Title>
-      <HomeSummary />
+          <RevenueBarChart />
+          <Title style={styles.title}>
 
-      <RevenueBarChart />
-      <Title style={styles.title}>
+            {orders.length > 0 ? t("welcome.last_4_orders") : ""}
+          </Title>
+          <View>
 
-        {orders.length > 0 ? t("welcome.last_4_orders") : ""}
-      </Title>
-      <View>
+            <FlatList
+              data={orders.slice(0, 5)}
+              // Data.slice(0,4
+              renderItem={renderOrder}
+              keyExtractor={keyExtractor}
+            />
 
-        <FlatList
-          data={orders.slice(0, 5)}
-          // Data.slice(0,4
-          renderItem={renderOrder}
-          keyExtractor={keyExtractor}
-        />
+          </View>
 
-      </View>
+        </>
+      ) : (
+        <WelcomeAnimation />
+      )}
 
       {/* <ButtonFilled
 

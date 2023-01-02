@@ -27,7 +27,7 @@ const styles = {
     // width: "98%",
     paddingHorizontal: 40,
     borderRadius: 10,
-    marginVertical: 10,
+    marginVertical: 20,
     marginHorizontal: 10,
     height: 50,
     justifyContent: "center",
@@ -43,6 +43,7 @@ const styles = {
     shadowRadius: 6.27,
     elevation: 3,
     flexShrink: 4,
+    marginTop: 40
   },
   buttonText: {
     color: "white",

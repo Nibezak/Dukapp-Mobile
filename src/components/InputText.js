@@ -37,7 +37,7 @@ export default function InputText(props) {
         defaultValue={props.defaultValue}
         underlineColorAndroid={props.underlineColorAndroid}
         keyboardType={props.keyboardType}
-        placeholder="Type something here"
+      // placeholder="Type something here"
       />
     </View>
     // <View style={styles.div}>
