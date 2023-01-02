@@ -77,6 +77,7 @@ export default function WelcomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       {/** Welcome Section of the screen */}
+
       {orders.length > 0 ? (
         <>
           <Title style={styles.title}>
@@ -92,7 +93,7 @@ export default function WelcomeScreen({ navigation }) {
           <View>
 
             <FlatList
-              data={orders.slice(0, 5)}
+              data={orders.slice(0, 4)}
               // Data.slice(0,4
               renderItem={renderOrder}
               keyExtractor={keyExtractor}

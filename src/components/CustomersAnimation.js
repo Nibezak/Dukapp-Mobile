@@ -11,7 +11,7 @@ export function CustomersAnimation() {
             <Image source={require('../../assets/WelcomeAnimation/WelcomeCustomers.png')} style={[styles.image, { width, resizeMode: 'contain' }]} />
             <View style={{ flex: 0.7, backgroundColor: "white" }}>
                 <Text style={styles.title}>
-                    Kepp your Customers
+                    Keep your Customers
                 </Text>
                 <Text style={styles.description}>
                     Stay in Touch with your customers by keeping them in your notebook

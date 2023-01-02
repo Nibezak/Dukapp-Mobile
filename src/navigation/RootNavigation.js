@@ -216,7 +216,12 @@ function NavTab() {
       />
 
       <Tab.Screen
-        name="Orders"
+        onPress={() =>
+          navigation.navigate('Orders', {
+            order_type: 'sale',
+          })
+        }
+        name="Order Sale"
         component={OrderScreen}
         options={{
           title: 'Orders',

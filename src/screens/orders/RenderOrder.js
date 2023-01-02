@@ -5,6 +5,7 @@ import { money } from "../../helpers/Numbers";
 import { useNavigation } from "@react-navigation/native";
 import { getSetting } from "../../models/AsyncStorage";
 
+
 export default function RenderOrder({ item }) {
   const navigation = useNavigation();
   const order = item.item;
@@ -20,7 +21,8 @@ export default function RenderOrder({ item }) {
     //handler for Long Click
     alert('Are you sure your want to delete this Item?');
   };
-
+  const dayjs = require('dayjs');
+  const date = order.created_at;
   return (
     <TouchableOpacity
       onLongPress={handlerLongClick}
@@ -31,16 +33,26 @@ export default function RenderOrder({ item }) {
         })
       }
     >
-      <View style={styles.row}>
+      <View style={{ flexDirection: 'row', justifyContent: "space-between", padding: 2 }}>
+        <Text style={{ paddingHorizontal: 5, paddingVertical: 2, borderRadius: 30, color: '#62656b' }}>
+          {/* {dayjs(order.created_at).format(" d MMM YYYY")} */}
+          {dayjs(date).format('DD MMM YYYY')}
+        </Text>
+        <Text style={{ paddingHorizontal: 5, paddingVertical: 2, borderRadius: 30, color: '#62656b' }}>
+          {dayjs(date).format('H:mm A ')}
+        </Text>
+      </View>
+      <View style={styles.rows}>
         <Text style={styles.orderNumberColumn}>
           {order.order_type.substr(0, 1).toUpperCase()}
           {"#" + order.id}
         </Text>
         <Text style={styles.itemNameColumn} numberOfLines={2}>
           {order.line_items.length === 1
-            ? order.line_items[0].name
+            ? order.line_items[0].name.slice(0, 20)
             : t("order.items", { count: order.line_items.length })}
         </Text>
+
         <View style={styles.itemPriceColumn}>
           <Text style={[styles.amount]}>{money(order.total, currency)}</Text>
           <Text
@@ -51,10 +63,13 @@ export default function RenderOrder({ item }) {
               },
             ]}
           >
-            {payment.title?.toUpperCase()}
+            {payment.title?.slice(0, 6).toUpperCase()}
           </Text>
+
         </View>
+
       </View>
+
     </TouchableOpacity>
 
 
@@ -62,15 +77,16 @@ export default function RenderOrder({ item }) {
 }
 
 const styles = {
-  row: {
+  rows: {
     flexDirection: "row",
     justifyContent: "space-evenly",
-    paddingVertical: 10,
+    marginVertical: 1.8,
     paddingHorizontal: 1,
     marginHorizontal: 7,
     borderBottomWidth: 1,
     borderBottomColor: "#cbd5e0",
   },
+
   amount: {
     fontSize: 14,
   },
@@ -86,7 +102,7 @@ const styles = {
     justifyContent: "center",
   },
   itemNameColumn: {
-    flex: 3,
+    flex: 4,
     marginHorizontal: 5,
   },
   itemPriceColumn: {
