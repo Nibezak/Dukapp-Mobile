@@ -58,10 +58,9 @@ export default function RenderItem({ item, index, onPress }) {
   const isLowStock = item.quantity < item.reorder_level;
 
   return (
+
     <TouchableOpacity onPress={onPress}>
       <View style={styles.row}>
-        {/*<Image style={styles.avatar} source={{ uri: AVATAR }} /> */}
-
         <View style={styles.rowText}>
           <Text style={styles.names}>{item.name}</Text>
           <View>

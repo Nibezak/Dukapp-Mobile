@@ -15,6 +15,7 @@ import SearchButton from "../../components/SearchButton";
 import RenderItem from "./RenderItem";
 import { number } from "../../helpers/Numbers";
 import { t } from "i18n-js";
+import { StockItemAnimation } from "../../components/StockItemAnimation";
 
 //const AVATAR =
 //'https://cdn4.vectorstock.com/i/1000x1000/16/38/add-item-icon-vector-16301638.jpg';
@@ -85,13 +86,21 @@ export default function ItemListScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={items}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        maxToRenderPerBatch={6}
-      />
-      <FloatingButton onPress={() => navigation.navigate("New Item")} />
+      {items.length > 0 ? (
+        <>
+          <FlatList
+            data={items}
+            renderItem={renderItem}
+            keyExtractor={keyExtractor}
+            maxToRenderPerBatch={6}
+          />
+          <FloatingButton onPress={() => navigation.navigate("New Item")} />
+        </>
+      ) : (
+        <StockItemAnimation />
+      )}
+
+
     </View>
   );
 }

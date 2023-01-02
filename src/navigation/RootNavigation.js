@@ -270,7 +270,9 @@ export function NavStack() {
 
   return (
     <Stack.Navigator initialRouteName="Welcome">
-      <Stack.Screen name="InitialSettings" component={OnboardingScreen} />
+      <Stack.Screen name="InitialSettings" component={OnboardingScreen}
+
+      />
       <Stack.Screen name="Welcome" component={NavTab} options={{ headerShown: false }} />
       {/** Orders*/}
       <Stack.Screen name="Orders" component={OrderScreen} />

@@ -2,16 +2,16 @@ import { t } from "i18n-js";
 import { Image, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import ButtonFilled from "./ButtonFilled";
 import { useNavigation } from "@react-navigation/native";
-export function WelcomeAnimation() {
+export function StockItemAnimation() {
     const { width } = useWindowDimensions();
     const navigation = useNavigation();
 
     return (
         <View style={[styles.container, { width }]}>
-            <Image source={require('../../assets/WelcomeAnimation/welcome.png')} style={[styles.image, { width, resizeMode: 'contain' }]} />
-            <View style={{ flex: 0.6, backgroundColor: "white" }}>
+            <Image source={require('../../assets/WelcomeAnimation/welcomeStock.png')} style={[styles.image, { width, resizeMode: 'contain' }]} />
+            <View style={{ flex: 0.7, backgroundColor: "white" }}>
                 <Text style={styles.title}>
-                    Quick and easy Data management
+                    Start by creating a Stock
                 </Text>
                 <Text style={styles.description}>
                     manage products in your stock, calculate income and revenue for you , and create receipts
@@ -19,15 +19,10 @@ export function WelcomeAnimation() {
                 </Text>
                 <View>
                     <ButtonFilled
-
-                        onPress={() =>
-                            navigation.navigate("Orders", {
-                                order_type: "sale",
-                            })
-                        }
+                        onPress={() => navigation.navigate("New Item")}
                         color={"#47a67f"}
                     >
-                        {t("welcome.place_an_order")}
+                        {t("welcome.create_item_in_stock")}
                     </ButtonFilled>
                 </View>
             </View>

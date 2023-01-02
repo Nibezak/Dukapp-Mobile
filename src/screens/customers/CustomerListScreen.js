@@ -7,6 +7,7 @@ import CustomerService from "../../services/CustomerService";
 import RenderCustomer from "./RenderCustomer";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import SearchButton from "../../components/SearchButton";
+import { CustomersAnimation } from "../../components/CustomersAnimation";
 
 export default function CustomerListScreen({ navigation }) {
   const [customers, setCustomers] = useState([]);
@@ -71,15 +72,22 @@ export default function CustomerListScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={customers}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        maxToRenderPerBatch={6}
-      />
-      <FloatingButton onPress={() => navigation.navigate("New Customer")}>
-        <MaterialIcons name="person-add-alt" size={32} />
-      </FloatingButton>
+      {customers.length > 0 ? (
+        <>
+          <FlatList
+            data={customers}
+            renderItem={renderItem}
+            keyExtractor={keyExtractor}
+            maxToRenderPerBatch={6}
+          />
+          <FloatingButton onPress={() => navigation.navigate("New Customer")}>
+            <MaterialIcons name="person-add-alt" size={32} />
+          </FloatingButton>
+        </>
+      ) : (
+        <CustomersAnimation />
+      )}
+
     </View>
   );
 }

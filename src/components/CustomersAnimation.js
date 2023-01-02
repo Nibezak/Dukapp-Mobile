@@ -2,32 +2,26 @@ import { t } from "i18n-js";
 import { Image, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import ButtonFilled from "./ButtonFilled";
 import { useNavigation } from "@react-navigation/native";
-export function WelcomeAnimation() {
+export function CustomersAnimation() {
     const { width } = useWindowDimensions();
     const navigation = useNavigation();
 
     return (
         <View style={[styles.container, { width }]}>
-            <Image source={require('../../assets/WelcomeAnimation/welcome.png')} style={[styles.image, { width, resizeMode: 'contain' }]} />
-            <View style={{ flex: 0.6, backgroundColor: "white" }}>
+            <Image source={require('../../assets/WelcomeAnimation/WelcomeCustomers.png')} style={[styles.image, { width, resizeMode: 'contain' }]} />
+            <View style={{ flex: 0.7, backgroundColor: "white" }}>
                 <Text style={styles.title}>
-                    Quick and easy Data management
+                    Kepp your Customers
                 </Text>
                 <Text style={styles.description}>
-                    manage products in your stock, calculate income and revenue for you , and create receipts
-
+                    Stay in Touch with your customers by keeping them in your notebook
                 </Text>
                 <View>
                     <ButtonFilled
-
-                        onPress={() =>
-                            navigation.navigate("Orders", {
-                                order_type: "sale",
-                            })
-                        }
+                        onPress={() => navigation.navigate("New Customer")}
                         color={"#47a67f"}
                     >
-                        {t("welcome.place_an_order")}
+                        Create a Customer
                     </ButtonFilled>
                 </View>
             </View>
@@ -56,7 +50,7 @@ const styles = StyleSheet.create({
     },
     image: {
         flex: 0.7,
-        justifyContent: "center"
+        justifyContent: "center",
 
     },
     description: {

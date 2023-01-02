@@ -104,29 +104,6 @@ export default function WelcomeScreen({ navigation }) {
       ) : (
         <WelcomeAnimation />
       )}
-
-      {/* <ButtonFilled
-
-        onPress={() =>
-          navigation.navigate("Orders", {
-            order_type: "sale",
-          })
-        }
-        color={"#008000"}
-      >
-        {t("welcome.place_an_order")}
-      </ButtonFilled>  */}
-      {/* <Text style={{
-        justifyContent: "center",
-        alignItems: "center",
-        alignSelf: "center",
-        marginTop: 3,
-        padding: 5,
-        textDecorationLine: 'underline',
-        color: "green"
-      }}>
-        View More
-      </Text> */}
     </View>
   );
 }

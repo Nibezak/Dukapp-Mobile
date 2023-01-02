@@ -9,11 +9,12 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import InputText from "../../components/InputText";
 import FloatingButton from "../../components/FloatingButton";
 import SupplierService from "../../services/SupplierService";
 import RightNavSearch from "../../components/RightNavSearch";
+import { SupplierAnimation } from "../../components/SupplierAnimation";
 
 const AVATAR =
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkz2csrDxNULWyTj-K3rbpC0E8SG2qLZg8gA&usqp=CAU";
@@ -51,18 +52,20 @@ export default function CustomerListScreen({ navigation }) {
    */
   function setHeaderRight() {
     navigation.setOptions({
+      headerTitle: "Suppliers",
+      headerTitleAlign: "center",
       headerLeft: () => (
         <TouchableOpacity
           style={{ paddingLeft: 10 }}
-          onPress={() => navigation.goBack()}
         >
-          <MaterialIcons name="arrow-back" size={24} color="#fff" />
+          <AntDesign name="menuunfold" size={24} color="green" onPress={() => navigation.openDrawer()} />
         </TouchableOpacity>
       ),
-      headerRight: () => <RightNavSearch onPressSearch={activateSearch} />,
+      headerRight: () => (
+        <RightNavSearch onPressSearch={activateSearch} style={{ width: 100 }} />
+      ),
     });
   }
-
   /**
    * Filter Items
    */
@@ -143,14 +146,21 @@ export default function CustomerListScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={suppliers}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-      />
-      <FloatingButton onPress={() => navigation.navigate("New Supplier")}>
-        {"+"}
-      </FloatingButton>
+      {suppliers.length > 0 ? (
+        <>
+          <FlatList
+            data={suppliers}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => index.toString()}
+          />
+          <FloatingButton onPress={() => navigation.navigate("New Supplier")}>
+            {"+"}
+          </FloatingButton>
+        </>
+      ) : (
+        <SupplierAnimation />
+      )}
+
     </View>
   );
 }

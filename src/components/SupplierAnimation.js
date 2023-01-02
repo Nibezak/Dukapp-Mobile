@@ -2,32 +2,26 @@ import { t } from "i18n-js";
 import { Image, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import ButtonFilled from "./ButtonFilled";
 import { useNavigation } from "@react-navigation/native";
-export function WelcomeAnimation() {
+export function SupplierAnimation() {
     const { width } = useWindowDimensions();
     const navigation = useNavigation();
 
     return (
         <View style={[styles.container, { width }]}>
-            <Image source={require('../../assets/WelcomeAnimation/welcome.png')} style={[styles.image, { width, resizeMode: 'contain' }]} />
-            <View style={{ flex: 0.6, backgroundColor: "white" }}>
+            <Image source={require('../../assets/WelcomeAnimation/welcomeSupplier.png')} style={[styles.image, { width, resizeMode: 'contain' }]} />
+            <View style={{ flex: 0.8, backgroundColor: "white" }}>
                 <Text style={styles.title}>
-                    Quick and easy Data management
+                    Create a supplier
                 </Text>
                 <Text style={styles.description}>
-                    manage products in your stock, calculate income and revenue for you , and create receipts
-
+                    In most cases it is important to keep track of the people who supplies your products
                 </Text>
                 <View>
                     <ButtonFilled
-
-                        onPress={() =>
-                            navigation.navigate("Orders", {
-                                order_type: "sale",
-                            })
-                        }
+                        onPress={() => navigation.navigate("New Supplier")}
                         color={"#47a67f"}
                     >
-                        {t("welcome.place_an_order")}
+                        Create a Supplier
                     </ButtonFilled>
                 </View>
             </View>

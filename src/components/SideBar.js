@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { getSetting } from "../models/AsyncStorage";
-
-
+import { useNavigate } from "@reach/router";
+import { useNavigation } from "@react-navigation/native";
 
 export default function SideBar() {
     useEffect(() => {
@@ -22,33 +22,40 @@ export default function SideBar() {
     const [currency, setCurrency] = useState(null);
 
     const listArrayItem = [
-        { icon: SupplierIcon, title: 'Suppliers' },
-        { icon: ReportInsightsIcon, title: 'Report Insights' },
-        { icon: PurchasesIcon, title: 'Purchases' },
-        { icon: ReceiptsIcon, title: 'Receipts' }
+        { icon: SupplierIcon, title: 'Suppliers', route: 'Supplier List' },
+        { icon: ReportInsightsIcon, title: 'Report Insights', route: 'Insights' },
+        { icon: PurchasesIcon, title: 'Purchases', route: '' },
+        { icon: ReceiptsIcon, title: 'Receipts', route: 'Order Receipt' }
     ]
 
     const bottomListItems = [
         { icon: ShareIcon, title: 'Tell a Friend' },
         { icon: FeedBackIcon, title: 'Help and FeedBack' },
     ]
-    const Item = ({ title, icon, handlePress, backgroundColor, color }) => (
-        <TouchableOpacity onPress={handlePress} style={[styles.item, { backgroundColor: backgroundColor }]}>
+
+    const navigation = useNavigation();
+
+    const Item = ({ title, icon, onPress, backgroundColor, color }) => (
+        <TouchableOpacity onPress={onPress} style={[styles.item, { backgroundColor: backgroundColor }]}>
             <View>
-                <Text>{icon}</Text>
+                <Text style={{ color: color }}>{icon}</Text>
             </View>
             <Text style={[styles.title, { color: color }]}>{title}</Text>
         </TouchableOpacity>
     );
+    function navigate(item) {
+        setSelectedId(item.title)
+        navigation.navigate(item.route)
+    }
     const renderItem = ({ item }) => {
-        const backgroundColor = item.title === selectedId ? "#6e3b6e" : "white";
+        const backgroundColor = item.title === selectedId ? "#47a67f" : "white";
         const color = item.title === selectedId ? 'white' : 'black';
         return (
             <Item
-                onPress={() => setSelectedId(item.title)}
+                onPress={() => navigate(item)}
                 title={item.title}
                 backgroundColor={backgroundColor}
-                textColor={color}
+                color={color}
                 icon={item.icon} />
         );
     }
@@ -60,11 +67,17 @@ export default function SideBar() {
     return (
 
         <View style={{ flex: 1 }}>
-            <View style={{ justifyContent: "center", flex: 0.3, paddingHorizontal: 20 }}>
-                <Image source={require('./../../assets/snack-icon.png')} style={{ marginLeft: 50, width: 120, height: 70 }} />
-                <Text style={{ fontWeight: "bold", fontSize: 20, color: "#47a67f" }}>{businessName}</Text>
-                <Text style={{ fontSize: 12, marginTop: 5, color: "green", flexDirection: "row", justifyContent: "space-between" }}><Ionicons name="md-cash-outline" size={24} color="green" /> {currency}</Text>
-                <Text style={{ fontSize: 12, marginTop: 5, color: "green" }}>{`6000 Products`}</Text>
+            <View style={{ justifyContent: "center", flex: 0.25, paddingHorizontal: 20 }}>
+                <View style={{ flexDirection: "row", justifyContent: 'center' }}>
+                    <Image source={require('./../../assets/snack-icon.png')} style={{ width: 120, height: 70 }} />
+                </View>
+                <View style={{ flexDirection: "row", justifyContent: 'center' }}>
+                    <Text style={{ color: "#62656b", fontWeight: "bold", fontSize: 15 }}>Shop name:</Text>
+                </View>
+
+                <View style={{ flexDirection: "row", justifyContent: 'center' }}>
+                    <Text style={{ fontWeight: "bold", fontSize: 20, color: "#47a67f" }}>{businessName}</Text>
+                </View>
             </View>
             <View style={{ flex: 0.55 }}>
                 <FlatList
@@ -85,13 +98,15 @@ export default function SideBar() {
 }
 const styles = StyleSheet.create({
     item: {
-        // padding: 20,
+        padding: 20,
         backgroundColor: "",
         paddingVertical: 10,
         marginVertical: 8,
         marginHorizontal: 16,
         flexDirection: "row",
-        justifyContent: "flex-start"
+        justifyContent: "flex-start",
+        borderRadius: 30
+
     },
     title: {
         fontSize: 18,
