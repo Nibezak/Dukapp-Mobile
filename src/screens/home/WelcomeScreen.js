@@ -8,9 +8,10 @@ import RenderOrder from "../orders/RenderOrder";
 import OrderService from "../../services/OrderService";
 import { useFocusEffect } from "@react-navigation/native";
 import ButtonFilled from "../../components/ButtonFilled";
-import { Title, Divider } from "react-native-paper";
+import { Title, Divider, ActivityIndicator } from "react-native-paper";
 import order from "../../translations/en/order";
 import RevenueBarChart from "../reports/RevenueBarChart";
+import ItemService from "../../services/ItemService";
 import { AntDesign } from '@expo/vector-icons';
 import {
   createDrawerNavigator,
@@ -26,11 +27,13 @@ import { WelcomeAnimation } from "../../components/WelcomeAnimation";
 export default function WelcomeScreen({ navigation }) {
   const [orders, setOrders] = useState([]);
   const [orderType, setOrderType] = useState("sale");
+  const [showLoading, setShowLoading] = useState(true);
 
   useFocusEffect(
     useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
         // Expensive task
+        redirectIfOrderExits();
         refreshOrders();
       });
     }, [])
@@ -38,6 +41,7 @@ export default function WelcomeScreen({ navigation }) {
 
   useEffect(() => {
     setHeader();
+    redirectIfOrderExits();
     refreshOrders();
   }, []);
 
@@ -73,12 +77,34 @@ export default function WelcomeScreen({ navigation }) {
 
   const keyExtractor = useCallback((item, index) => index.toString(), []);
 
+  async function redirectIfOrderExits() {
+
+    if (orders > 0) {
+      /** Go to home page if their is atleast an order in the shop */
+      return navigation.navigate('home');
+    }
+
+    /** Hide loading indicator */
+    setShowLoading(false);
+
+  }
+
+  if (showLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+      </View>
+    );
+  }
+
 
   return (
     <View style={styles.container}>
       {/** Welcome Section of the screen */}
 
-      {orders.length > 0 ? (
+      {orders.length === 0 ? (
+        <WelcomeAnimation />
+      ) : (
         <>
           <Title style={styles.title}>
             {t("welcome.today_insights")}
@@ -102,8 +128,6 @@ export default function WelcomeScreen({ navigation }) {
           </View>
 
         </>
-      ) : (
-        <WelcomeAnimation />
       )}
     </View>
   );

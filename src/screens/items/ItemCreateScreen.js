@@ -184,6 +184,7 @@ export default function CreateItemScreen({ navigation, route }) {
         <Button onPress={addStock} color={"#15803d"}>
           {t("common.save")}
         </Button>
+
       </View>
     </KeyboardAwareScrollView>
   );

@@ -46,8 +46,8 @@ class Order extends Model {
   async createTable() {
     return this.db.statement(
       `CREATE TABLE IF NOT EXISTS ` +
-        this.getTableName() +
-        `(
+      this.getTableName() +
+      `(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               order_type TEXT, 
               order_key TEXT,
@@ -81,8 +81,8 @@ class Order extends Model {
   async createTableOld() {
     return this.db.statement(
       `CREATE TABLE IF NOT EXISTS ` +
-        this.getTableName() +
-        `(
+      this.getTableName() +
+      `(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               order_type TEXT,
               item_id TEXT NULL,

@@ -25,7 +25,7 @@ import OrderScreen from '../screens/orders/OrderScreen';
 import ReceiptScreen from '../screens/orders/ReceiptScreen';
 import OrderDetailsSCreen from '../screens/orders/OrderDetailsScreen';
 import OrderPaymentScreen from '../screens/orders/OrderPaymentScreen';
-
+import SaleReceiptsScreen from '../screens/reports/SaleReceiptsScreen';
 // Inventory
 import ItemCreateScreen from '../screens/items/ItemCreateScreen';
 import ItemEditScreen from '../screens/items/ItemEditScreen';
@@ -183,6 +183,15 @@ function NavDrawer() {
           headerShown: true,
         }}
       />
+      {/* Sale Receipt */}
+      <Drawer.Screen
+        name="Sale Receipt "
+        component={SaleReceiptsScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
+
     </Drawer.Navigator>
   );
 }
@@ -284,6 +293,7 @@ export function NavStack() {
       <Stack.Screen name="Order Details" component={OrderDetailsSCreen} />
       <Stack.Screen name="Add Payment To Order" component={OrderPaymentScreen} />
       <Stack.Screen name="Order Receipt" component={ReceiptScreen} />
+      <Stack.Screen name="Sale Receipt" component={SaleReceiptsScreen} />
       {/** Items*/}
       <Stack.Screen
         name="New Item"

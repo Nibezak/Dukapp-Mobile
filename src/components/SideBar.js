@@ -25,7 +25,7 @@ export default function SideBar() {
         { icon: SupplierIcon, title: 'Suppliers', route: 'Supplier List' },
         { icon: ReportInsightsIcon, title: 'Report Insights', route: 'Insights' },
         { icon: PurchasesIcon, title: 'Purchases', route: '' },
-        { icon: ReceiptsIcon, title: 'Receipts', route: 'Order Receipt' }
+        { icon: ReceiptsIcon, title: 'Receipts', route: 'Sale Receipt' }
     ]
 
     const bottomListItems = [
@@ -45,7 +45,9 @@ export default function SideBar() {
     );
     function navigate(item) {
         setSelectedId(item.title)
-        navigation.navigate(item.route)
+        navigation.navigate(item.route, {
+            order_type: 'sale',
+        })
     }
     const renderItem = ({ item }) => {
         const backgroundColor = item.title === selectedId ? "#47a67f" : "white";
@@ -76,7 +78,7 @@ export default function SideBar() {
                 </View>
 
                 <View style={{ flexDirection: "row", justifyContent: 'center' }}>
-                    <Text style={{ fontWeight: "bold", fontSize: 20, color: "#47a67f" }}>{businessName}</Text>
+                    <Text style={{ fontWeight: "bold", fontSize: 20, color: "#47a67f" }}>{businessName}...</Text>
                 </View>
             </View>
             <View style={{ flex: 0.55 }}>

@@ -66,9 +66,7 @@ export default function SettingEditScreen({ navigation, route }) {
    * @param {string} value
    */
   async function updateSetting(value) {
-    setSetting(setting.key, value).then((resp) => {
-      ToastAndroid.show(t('setting.setting_updated'), ToastAndroid.SHORT);
-    });
+    setSetting(setting.key, value)
   }
 
   async function retrieveSetting() {
@@ -111,23 +109,33 @@ export default function SettingEditScreen({ navigation, route }) {
   }
 
   return (
-    <View style={styles.row}>
-      <TextInput
-        style={{
-          borderColor: 'gray',
-          width: '100%',
-          borderWidth: 1,
-          borderRadius: 3,
-          padding: 10,
-          backgroundColor: '#fff',
-        }}
-        autoFocus={true}
-        title={setting.title}
-        underlineColorAndroid="transparent"
-        value={currentSetting}
-        onChangeText={(text) => updateSetting(text)}
-      />
-    </View>
+    <>
+      <View style={styles.row}>
+        <TextInput
+          style={{
+            borderColor: 'gray',
+            width: '100%',
+            borderWidth: 1,
+            borderRadius: 3,
+            padding: 10,
+            backgroundColor: '#fff',
+          }}
+          autoFocus={true}
+          title={setting.title}
+          underlineColorAndroid="transparent"
+          value={setCurrentSetting}
+          onChangeText={(text) => updateSetting(text)}
+        />
+
+      </View>
+      <View style={{ flexDirection: "row", justifyContent: 'center' }}>
+        <Text style={{ color: "#47a67f", fontWeight: "bold", fontSize: 20 }}>{currentSetting}</Text>
+      </View>
+
+      <View style={{ flexDirection: "row", justifyContent: 'center' }}>
+        <Text style={{ color: "#62656b", fontWeight: "semi-bold", fontSize: 15 }}>Go back to see the changes</Text>
+      </View>
+    </>
   );
 }
 

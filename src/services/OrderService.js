@@ -66,7 +66,7 @@ class OrderService {
     for (var order of orders) {
       // 3. Get Line Items per order
       order.line_items = [];
-      
+
       // Get Items per order
       await OrderItem.refresh()
         .where("order_id", order.id)
@@ -131,6 +131,7 @@ class OrderService {
       };
     });
   }
+
 
   /**
    * Add one item to order

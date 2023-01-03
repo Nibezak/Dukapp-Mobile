@@ -8,13 +8,13 @@ export default class Model {
         this.conditions = 1;
         this.ordering = "ORDER BY id";
         this.orderingMode = "ASC";
-        this.recordsLimit = 1000;
+        this.recordsLimit = 10000;
         this.tableName = this.getTableName();
         this.queryString = "";
         this.columnsToSelect = "*";
         this.queryParameters = [];
         this.createTable();
-        this.resultContainer = (rows) => {};
+        this.resultContainer = (rows) => { };
     }
 
     /**
@@ -58,24 +58,24 @@ export default class Model {
      * @returns
      */
     whereNot(attribute, value) {
-            // Convert value to string that is acceptable by
-            // SQLite if it is not a number
-            value = isNaN(value) ? `'` + value + `'` : value;
+        // Convert value to string that is acceptable by
+        // SQLite if it is not a number
+        value = isNaN(value) ? `'` + value + `'` : value;
 
-            if (this.conditions === null) {
-                this.conditions = attribute + " <> " + value;
-            } else {
-                this.conditions = this.conditions + " AND " + attribute + " <> " + value;
-            }
-
-            return this;
+        if (this.conditions === null) {
+            this.conditions = attribute + " <> " + value;
+        } else {
+            this.conditions = this.conditions + " AND " + attribute + " <> " + value;
         }
-        /**
-         * Build query conditions
-         * @param {string} attribute
-         * @param {string|number} value
-         * @returns
-         */
+
+        return this;
+    }
+    /**
+     * Build query conditions
+     * @param {string} attribute
+     * @param {string|number} value
+     * @returns
+     */
     where(attribute, value) {
         // Convert value to string that is acceptable by
         // SQLite if it is not a number
@@ -94,15 +94,15 @@ export default class Model {
      * Add Raw Condition to the query
      */
     whereRaw(rawCondition) {
-            this.conditions = this.conditions + " AND " + rawCondition;
-            return this;
-        }
-        /**
-         * Search by term
-         *
-         * @param {string} keyword
-         * @returns
-         */
+        this.conditions = this.conditions + " AND " + rawCondition;
+        return this;
+    }
+    /**
+     * Search by term
+     *
+     * @param {string} keyword
+     * @returns
+     */
     async search(keyword) {
         const searchTerms = this.getSearchTerms();
 
@@ -394,8 +394,8 @@ export default class Model {
         const attributes = Object.keys(params).join(", ");
         const placeholders =
             Object.keys(params)
-            .map(() => [])
-            .join("?, ") + `?`;
+                .map(() => [])
+                .join("?, ") + `?`;
 
         // Add conditions if we have conditions
         this.queryString =

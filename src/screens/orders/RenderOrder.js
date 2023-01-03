@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, View, TouchableOpacity, ToastAndroid } from "react-native";
 import { t } from "i18n-js";
 import { money } from "../../helpers/Numbers";
 import { useNavigation } from "@react-navigation/native";
 import { getSetting } from "../../models/AsyncStorage";
+import ItemService from "../../services/ItemService";
 
 
 export default function RenderOrder({ item }) {
   const navigation = useNavigation();
   const order = item.item;
   const payment = order.payments[0];
+  const [error, setError] = useState(null);
 
   const [currency, setCurrency] = useState(null);
 
@@ -17,15 +19,23 @@ export default function RenderOrder({ item }) {
     getSetting("app_default_currency").then(setCurrency);
   }, []);
 
-  const handlerLongClick = () => {
-    //handler for Long Click
-    alert('Are you sure your want to delete this Item?');
-  };
+  const orderDelete = item
+  async function deleteStock() {
+    ItemService.destroy(order).then(() => {
+      ToastAndroid.show(t('welcome.order_deleted'), ToastAndroid.SHORT);
+      return;
+    }).catch(error => {
+      console.log(error.message)
+    });
+
+  }
+
+
   const dayjs = require('dayjs');
   const date = order.created_at;
   return (
     <TouchableOpacity
-      onLongPress={handlerLongClick}
+      onLongPress={deleteStock}
       activeOpacity={0.8}
       onPress={() =>
         navigation.navigate("Order Details", {
@@ -35,11 +45,11 @@ export default function RenderOrder({ item }) {
     >
       <View style={{ flexDirection: 'row', justifyContent: "space-between", padding: 2 }}>
         <Text style={{ paddingHorizontal: 5, paddingVertical: 2, borderRadius: 30, color: '#62656b' }}>
-          {/* {dayjs(order.created_at).format(" d MMM YYYY")} */}
+
           {dayjs(date).format('DD MMM YYYY')}
         </Text>
         <Text style={{ paddingHorizontal: 5, paddingVertical: 2, borderRadius: 30, color: '#62656b' }}>
-          {dayjs(date).format('H:mm A ')}
+          {dayjs(date).format('H:mm A   ZZ')}
         </Text>
       </View>
       <View style={styles.rows}>

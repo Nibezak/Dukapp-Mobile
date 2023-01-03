@@ -1,6 +1,7 @@
+import { useFocusEffect } from "@react-navigation/native";
 import { t } from "i18n-js";
-import React, { useEffect, useState } from "react";
-import { View, Dimensions, Text } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { View, Dimensions, Text, InteractionManager } from "react-native";
 import { BarChart, LineChart } from "react-native-chart-kit";
 import { Title } from "react-native-paper";
 import Metric from "../../components/Metric";
@@ -19,7 +20,7 @@ const chartConfig = {
     borderRadius: 1,
   },
   propsForDots: {
-    r: "2",
+    r: "3",
     stroke: "#10b981",
   },
   useShadowColorFromDataset: true, // optional
@@ -41,11 +42,25 @@ export default function RevenueBarChart() {
     profits: [0, 0, 0, 0, 0, 0, 0],
   });
 
+  useFocusEffect(
+    useCallback(() => {
+      const task = InteractionManager.runAfterInteractions(() => {
+        // Expensive task
+        refreshChart();
+      });
+    }, [])
+  );
+
   useEffect(() => {
+
+    refreshChart();
+  }, []);
+
+  async function refreshChart() {
     ReportService.lastSevenDaysProfit(setDataSets, 7);
     ReportService.inStockItems(setInStock);
     ReportService.lowStockItems(setLowStock);
-  }, []);
+  }
 
   // Chart data
   const barData = {
@@ -58,6 +73,9 @@ export default function RevenueBarChart() {
       },
     ],
   };
+  function formatNumber(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
   return (
     <>
       <View>
@@ -70,6 +88,7 @@ export default function RevenueBarChart() {
           width={screenWidth}
           height={220}
           chartConfig={chartConfig}
+          formatYLabel={(value) => formatNumber(value)}
           bezier
         />
       </View>
