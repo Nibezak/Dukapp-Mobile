@@ -1,10 +1,10 @@
-import * as SQLite from "expo-sqlite";
-import { Platform } from "react-native";
-import * as Sentry from "sentry-expo";
+import * as SQLite from 'expo-sqlite';
+import { Platform } from 'react-native';
+import * as Sentry from 'sentry-expo';
 
 class Database {
   constructor() {
-    this.databaseName = "dukApp001.db";
+    this.databaseName = 'dukApp001.db';
     this.db = this.openDatabase();
   }
   /**
@@ -13,7 +13,7 @@ class Database {
    * @returns
    */
   openDatabase() {
-    if (Platform.OS === "web") {
+    if (Platform.OS === 'web') {
       return {
         transaction: () => {
           return {
@@ -46,8 +46,16 @@ class Database {
   ) {
     return this.statement(queryString, queryParameters).then(({ rows }) => {
       try {
-        resultsContainer(rows._array);
-        return rows._array;
+        let results = [];
+        if (rows == undefined) {
+          resultsContainer(results);
+          return results;
+        }
+
+        results = rows._array;
+
+        resultsContainer(results);
+        return results;
       } catch (error) {
         console.log(queryString);
         console.log(queryParameters);
