@@ -1,22 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity, ToastAndroid } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Text, View, TouchableOpacity, ToastAndroid, InteractionManager } from 'react-native';
 import { t } from 'i18n-js';
 import { money } from '../../helpers/Numbers';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { getSetting } from '../../models/AsyncStorage';
-import ItemService from '../../services/ItemService';
 import Order from '../../models/Order';
+import OrderService from '../../services/OrderService';
 
 export default function RenderOrder({ item }) {
   const navigation = useNavigation();
   const order = item.item;
   const payment = order.payments[0];
-  const [error, setError] = useState(null);
-
   const [currency, setCurrency] = useState(null);
+
+
+
+  useFocusEffect(
+    useCallback(() => {
+      const task = InteractionManager.runAfterInteractions(() => {
+        // Expensive task
+        refreshOrders();
+      });
+    }, [])
+  );
 
   useEffect(() => {
     getSetting('app_default_currency').then(setCurrency);
+    refreshOrders();
   }, []);
 
   /**
@@ -27,12 +37,21 @@ export default function RenderOrder({ item }) {
     /** Pass order to be deleted */
     Order.destroy(order.id)
       .then((result) => {
+        refreshOrders();
+      }).then((result) => {
         ToastAndroid.show(t('welcome.order_deleted'), ToastAndroid.SHORT);
       })
       .catch((error) => {
         console.log(error.message);
       });
   }
+  async function refreshOrders() {
+    return OrderService.ordersWithItems(setOrders, orderType, order.id, 8);
+  }
+
+
+
+
 
   const dayjs = require('dayjs');
   const date = order.created_at;

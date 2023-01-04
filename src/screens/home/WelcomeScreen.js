@@ -1,21 +1,32 @@
-import React, { useEffect, useCallback, useState } from 'react';
-import { View, FlatList, StyleSheet, Image, InteractionManager } from 'react-native';
-import HomeSummary from './HomeSummary';
-import { t } from 'i18n-js';
-import RenderOrder from '../orders/RenderOrder';
-import OrderService from '../../services/OrderService';
-import { useFocusEffect } from '@react-navigation/native';
-import { Title, ActivityIndicator } from 'react-native-paper';
-import RevenueBarChart from '../reports/RevenueBarChart';
+import React, { useEffect, useCallback, useState } from "react";
+import { View, FlatList, StyleSheet, Image, InteractionManager, Text, TouchableWithoutFeedback } from "react-native";
+import HomeSummary from "./HomeSummary";
+import HomeMenus from "./HomeMenus";
+import SettingsButton from "../../components/SettingsButton";
+import { t } from "i18n-js";
+import RenderOrder from "../orders/RenderOrder";
+import OrderService from "../../services/OrderService";
+import { useFocusEffect } from "@react-navigation/native";
+import ButtonFilled from "../../components/ButtonFilled";
+import { Title, Divider, ActivityIndicator } from "react-native-paper";
+import order from "../../translations/en/order";
+import RevenueBarChart from "../reports/RevenueBarChart";
+import ItemService from "../../services/ItemService";
 import { AntDesign } from '@expo/vector-icons';
-
-import { WelcomeAnimation } from '../../components/WelcomeAnimation';
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItemList,
+  DrawerItem,
+} from '@react-navigation/drawer';
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { WelcomeAnimation } from "../../components/WelcomeAnimation";
 /**
  * Screen component
  */
 export default function WelcomeScreen({ navigation }) {
   const [orders, setOrders] = useState([]);
-  const [orderType, setOrderType] = useState('sale');
+  const [orderType, setOrderType] = useState("sale");
   const [showLoading, setShowLoading] = useState(true);
 
   useFocusEffect(
@@ -30,44 +41,26 @@ export default function WelcomeScreen({ navigation }) {
 
   useEffect(() => {
     setHeader();
+    redirectIfOrderExits();
     refreshOrders();
   }, []);
 
   function setHeader() {
     navigation.setOptions({
-      headerTitle: () => (
-        <Image
-          source={require('./../../../assets/snack-icon.png')}
-          style={{ width: 120, height: 100 }}
-        />
-      ),
-      headerTitleAlign: 'center',
+      headerTitle: () => (<Image source={require('./../../../assets/snack-icon.png')} style={{ width: 120, height: 100 }} />),
+      headerTitleAlign: "center",
       headerLeft: () => (
-        <AntDesign
-          name="menuunfold"
-          size={24}
-          color="green"
-          onPress={() => navigation.openDrawer()}
-          style={{ paddingLeft: 10 }}
-        />
+        <AntDesign name="menuunfold" size={24} color="green" onPress={() => navigation.openDrawer()} style={{ paddingLeft: 10 }} />
       ),
     });
   }
 
   // Fetch Orders
   async function refreshOrders() {
-    return OrderService.ordersWithItems(
-      (orders) => {
-        setOrders(orders);
-
-        // We have loaded orders, let's disable activity indicator
-        setShowLoading(false);
-      },
-      orderType,
-      null,
-      8
-    );
+    return OrderService.ordersWithItems(setOrders, orderType, null, 8);
   }
+
+
 
   const renderOrder = useCallback((item) => (
     <RenderOrder
@@ -75,7 +68,7 @@ export default function WelcomeScreen({ navigation }) {
       index={item.id}
       key={item.id}
       onPress={() =>
-        navigation.navigate('Edit Item', {
+        navigation.navigate("Edit Item", {
           item: item,
         })
       }
@@ -83,6 +76,18 @@ export default function WelcomeScreen({ navigation }) {
   ));
 
   const keyExtractor = useCallback((item, index) => index.toString(), []);
+
+  async function redirectIfOrderExits() {
+
+    if (orders > 0) {
+      /** Go to home page if their is atleast an order in the shop */
+      return navigation.navigate('home');
+    }
+
+    /** Hide loading indicator */
+    setShowLoading(false);
+
+  }
 
   if (showLoading) {
     return (
@@ -92,6 +97,7 @@ export default function WelcomeScreen({ navigation }) {
     );
   }
 
+
   return (
     <View style={styles.container}>
       {/** Welcome Section of the screen */}
@@ -100,19 +106,27 @@ export default function WelcomeScreen({ navigation }) {
         <WelcomeAnimation />
       ) : (
         <>
-          <Title style={styles.title}>{t('welcome.today_insights')}</Title>
+          <Title style={styles.title}>
+            {t("welcome.today_insights")}
+          </Title>
           <HomeSummary />
 
           <RevenueBarChart />
-          <Title style={styles.title}>{orders.length > 0 ? t('welcome.last_4_orders') : ''}</Title>
+          <Title style={styles.title}>
+
+            {orders.length > 0 ? t("welcome.last_4_orders") : ""}
+          </Title>
           <View>
+
             <FlatList
               data={orders.slice(0, 4)}
               // Data.slice(0,4
               renderItem={renderOrder}
               keyExtractor={keyExtractor}
             />
+
           </View>
+
         </>
       )}
     </View>
@@ -123,9 +137,10 @@ const styles = StyleSheet.create({
   welcomeSection: {},
   title: {
     fontSize: 16,
-    alignSelf: 'center',
-    color: '#718096',
-    textTransform: 'uppercase',
+    alignSelf: "center",
+    color: "#718096",
+    textTransform: 'uppercase'
+
   },
   container: {
     flex: 1,

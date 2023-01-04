@@ -8,13 +8,11 @@ import {
   TouchableOpacity,
   ToastAndroid,
 } from 'react-native';
-import InputText from '../../components/InputText';
-import Button from '../../components/Button';
 import ItemService from '../../services/ItemService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { t } from 'i18n-js';
 import { MaterialIcons } from '@expo/vector-icons';
-import ButikeButton from '../../components/Button';
+// import ButikeButton from '../../components/Button';
 import { setSetting } from '../../models/AsyncStorage';
 
 export default function SettingEditScreen({ navigation, route }) {
@@ -124,6 +122,7 @@ export default function SettingEditScreen({ navigation, route }) {
           title={setting.title}
           underlineColorAndroid="transparent"
           value={setCurrentSetting}
+          keyboardType={setting.keyboardType}
           onChangeText={(text) => updateSetting(text)}
         />
 

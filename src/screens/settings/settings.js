@@ -106,12 +106,14 @@ export const generalSettings = [
         description: "Contact phone",
         key: "contact_phone",
         value: "250788514836",
+        keyboardType: "numeric"
       },
       {
         title: "Email",
         description: "Contact email",
         key: "contact_email",
         value: "bavenus44@gmail.com",
+        keyboardType: "email-address"
       },
     ],
   },
@@ -153,22 +155,22 @@ export const generalSettings = [
       },
     ],
   },
-  {
-    title: "Tax",
-    description: "Country Revenue",
-    icon: "money",
-    key: "tax",
-    value: "tax",
-    options: [],
-  },
-  {
-    title: "Receipt",
-    description: "Purchase Receipt",
-    icon: "receipt",
-    key: "receipt",
-    value: "receipt",
-    options: [],
-  },
+  // {
+  //   title: "Tax",
+  //   description: "Country Revenue",
+  //   icon: "money",
+  //   key: "tax",
+  //   value: "tax",
+  //   options: [],
+  // },
+  // {
+  //   title: "Receipt",
+  //   description: "Purchase Receipt",
+  //   icon: "receipt",
+  //   key: "receipt",
+  //   value: "receipt",
+  //   options: [],
+  // },
   {
     title: "Backup",
     description: "Take Application Backup",
@@ -225,6 +227,14 @@ export const generalSettings = [
     value: "reset-db",
     action: "handleDatabaseReset",
     color: "#dc2626",
+    options: [],
+  },
+  {
+    title: "Support us",
+    description: "Support Grow Dukapp",
+    icon: "people",
+    key: "receipt",
+    value: "receipt",
     options: [],
   },
   {

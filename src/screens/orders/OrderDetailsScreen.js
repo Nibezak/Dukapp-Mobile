@@ -39,6 +39,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
       const task = InteractionManager.runAfterInteractions(() => {
         // Expensive task
         refreshOrder();
+        getOrderCustomer();
       });
     }, [])
   );
@@ -60,6 +61,14 @@ export default function OrderDetailsScreen({ navigation, route }) {
 
     //  Remove payment option if customer paid
     resetToDefaultSuggestion();
+
+    // Fetch order from the database 
+
+    refreshOrder();
+
+    // Get order's customer if there is one 
+
+    getOrderCustomer();
   }, []);
 
   function updateNavRight() {

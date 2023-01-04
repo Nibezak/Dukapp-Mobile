@@ -10,6 +10,7 @@ export default function SideBar() {
     useEffect(() => {
         retrieveSetting();
     })
+    const HomeIcon = (<AntDesign name="home" size={24} color="#10b981" />);
     const SupplierIcon = (<MaterialCommunityIcons name="truck-delivery-outline" size={24} color="#10b981" />)
     const ReportInsightsIcon = (<MaterialIcons name="insights" size={24} color="#10b981" />);
     const PurchasesIcon = (<AntDesign name="shoppingcart" size={24} color="#10b981" />);
@@ -22,10 +23,11 @@ export default function SideBar() {
     const [currency, setCurrency] = useState(null);
 
     const listArrayItem = [
+        { icon: HomeIcon, title: 'Home', route: 'HomeScreen' },
         { icon: SupplierIcon, title: 'Suppliers', route: 'Supplier List' },
+        { icon: ReceiptsIcon, title: 'Receipts', route: 'Sale Receipt' },
         { icon: ReportInsightsIcon, title: 'Report Insights', route: 'Insights' },
-        { icon: PurchasesIcon, title: 'Purchases', route: '' },
-        { icon: ReceiptsIcon, title: 'Receipts', route: 'Sale Receipt' }
+        // { icon: PurchasesIcon, title: 'Your Purchases', route: '' },
     ]
 
     const bottomListItems = [
@@ -50,8 +52,8 @@ export default function SideBar() {
         })
     }
     const renderItem = ({ item }) => {
-        const backgroundColor = item.title === selectedId ? "#47a67f" : "white";
-        const color = item.title === selectedId ? 'white' : 'black';
+        const backgroundColor = item.title === selectedId ? "white" : "white";
+        const color = item.title === selectedId ? 'black' : 'black';
         return (
             <Item
                 onPress={() => navigate(item)}
@@ -69,16 +71,21 @@ export default function SideBar() {
     return (
 
         <View style={{ flex: 1 }}>
-            <View style={{ justifyContent: "center", flex: 0.25, paddingHorizontal: 20 }}>
+            <View style={{ justifyContent: "center", flex: 0.35, paddingHorizontal: 20 }}>
                 <View style={{ flexDirection: "row", justifyContent: 'center' }}>
                     <Image source={require('./../../assets/snack-icon.png')} style={{ width: 120, height: 70 }} />
                 </View>
                 <View style={{ flexDirection: "row", justifyContent: 'center' }}>
-                    <Text style={{ color: "#62656b", fontWeight: "bold", fontSize: 15 }}>Shop name:</Text>
+                    {/* <Text style={{ color: "#62656b", fontWeight: "bold", fontSize: 15, paddingVertical: 10 }}>Shop name:</Text> */}
                 </View>
 
                 <View style={{ flexDirection: "row", justifyContent: 'center' }}>
                     <Text style={{ fontWeight: "bold", fontSize: 20, color: "#47a67f" }}>{businessName}...</Text>
+                </View>
+
+                <View style={{ flexDirection: "row", justifyContent: 'space-between', marginTop: 30, backgroundColor: "rgba(16, 185, 120, 0.8)", paddingHorizontal: 5, paddingVertical: 6, borderRadius: 10 }}>
+                    <FontAwesome5 name="money-check-alt" size={24} color="#f1f1f1" />
+                    <Text style={{ fontWeight: "bold", fontSize: 18, color: "#f1f1f1", paddingHorizontal: 5, fontFamily: "sans-serif" }}>{currency}</Text>
                 </View>
             </View>
             <View style={{ flex: 0.55 }}>
@@ -87,7 +94,7 @@ export default function SideBar() {
                     renderItem={renderItem}
                 />
             </View>
-            <View style={{ flex: 0.35 }}>
+            <View style={{ flex: 0.25 }}>
                 <FlatList
                     data={bottomListItems}
                     renderItem={renderItem}
