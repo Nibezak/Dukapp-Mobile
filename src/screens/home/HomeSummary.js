@@ -26,12 +26,14 @@ export default function HomeSummary() {
       const task = InteractionManager.runAfterInteractions(() => {
         // Expensive task
         refreshMetrics();
+        retrieveSetting();
       });
     }, [])
   );
 
   useEffect(() => {
     refreshMetrics();
+    retrieveSetting();
     getSetting("app_default_currency").then(setCurrency);
   }, []);
 
@@ -44,7 +46,10 @@ export default function HomeSummary() {
     HomeMetricService.inStockItems(setInStockItems);
     HomeMetricService.lowStockItems(setLowStockItems);
   }
-
+  // retrieve the currency that was set by the user 
+  function retrieveSetting() {
+    getSetting("app_default_currency").then(setCurrency);
+  }
   return (
     <>
       <View style={{ flexDirection: "row" }}>

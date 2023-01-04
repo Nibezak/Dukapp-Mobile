@@ -5,8 +5,6 @@ import {
   StyleSheet,
   Image,
   InteractionManager,
-  Text,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import HomeSummary from './HomeSummary';
 import { t } from 'i18n-js';
@@ -59,6 +57,7 @@ export default function WelcomeScreen({ navigation }) {
       ),
     });
   }
+
 
   // Fetch Orders
   async function refreshOrders() {
