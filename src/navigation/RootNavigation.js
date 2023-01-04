@@ -55,6 +55,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
 
 import SideBar from '../components/SideBar';
+import LowStockScreen from '../screens/items/LowStockScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -225,13 +226,13 @@ function NavTab() {
       />
 
       <Tab.Screen
+        component={OrderScreen}
         onPress={() =>
           navigation.navigate('Orders', {
             order_type: 'sale',
           })
         }
         name="Order Sale"
-        component={OrderScreen}
         options={{
           title: 'Orders',
           tabBarLabel: '',
@@ -240,6 +241,7 @@ function NavTab() {
             <Ionicons
               name="md-add-circle"
               size={36}
+              component={OrderScreen}
               color={color}
               onPress={() =>
                 navigation.navigate('Orders', {
@@ -289,7 +291,13 @@ export function NavStack() {
       />
       <Stack.Screen name="Welcome" component={NavTab} options={{ headerShown: false }} />
       {/** Orders*/}
-      <Stack.Screen name="Orders" component={OrderScreen} />
+      <Stack.Screen name="Orders" component={OrderScreen}
+        onPress={() =>
+          navigation.navigate('Orders', {
+            order_type: 'sale',
+          })
+        }
+      />
       <Stack.Screen name="Order Details" component={OrderDetailsSCreen} />
       <Stack.Screen name="Add Payment To Order" component={OrderPaymentScreen} />
       <Stack.Screen name="Order Receipt" component={ReceiptScreen} />
@@ -315,6 +323,13 @@ export function NavStack() {
         component={ItemListScreen}
         options={{
           title: 'Stock Items',
+        }}
+      />
+      <Stack.Screen
+        name="Low Stock"
+        component={LowStockScreen}
+        options={{
+          title: 'Low Stock',
         }}
       />
       {/** Customer*/}

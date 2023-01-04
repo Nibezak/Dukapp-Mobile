@@ -6,11 +6,13 @@ import { money, number } from '../../helpers/Numbers';
 import { getSetting } from '../../models/AsyncStorage';
 import RevenueBarChart from './RevenueBarChart';
 import ReportService from './../../services/ReportService';
+import { useNavigation } from '@react-navigation/native';
 
-function RenderReportItem({ value, title, titleColor }) {
+function RenderReportItem({ value, title, titleColor, route }) {
+  const navigation = useNavigation();
   return (
     <View style={styles.card}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate(route)}>
         <View style={styles.rowText}>
           <Text style={styles.value}>{value}</Text>
         </View>
@@ -26,7 +28,7 @@ export default function SummaryReportScreen() {
   const [currency, setCurrency] = useState(null);
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
-
+  const navigation = useNavigation();
   // Revenue summaries
   const [sales, setSales] = useState(0);
   const [profit, setProfit] = useState(0);
@@ -53,8 +55,8 @@ export default function SummaryReportScreen() {
   const [fastMoving, setFastMoving] = useState(0);
   const [slowMoving, setSlowMoving] = useState(0);
   const [stockSummaries, setStockSummaries] = useState([
-    { color: '#4ade80', title: 'In Stock ', value: inStock },
-    { color: '#facc15', title: 'Low Stock', value: lowStock },
+    { color: '#4ade80', title: 'In Stock ', value: inStock, route: 'In Stock' },
+    { color: '#facc15', title: 'Low Stock', value: lowStock, route: 'Low Stock' },
     { color: '#84cc16', title: 'Fast Moving', value: fastMoving },
     { color: '#fb923c', title: 'Slow Moving', value: slowMoving },
   ]);
@@ -122,11 +124,12 @@ export default function SummaryReportScreen() {
     <View>
       <RevenueBarChart />
 
-      <View style={{ marginTop: 14 }}>
-        <Title style={{ paddingHorizontal: 7, color: '#718096', fontSize: 16 }}>
-          {t('report.revenue_summary')}
-        </Title>
-
+      <View style={{ backgroundColor: "white", paddingHorizontal: 10, marginHorizontal: 10, borderRadius: 10 }}>
+        <View style={{ paddingVertical: 2, paddingHorizontal: 2, flexDirection: "row", justifyContent: 'center' }}>
+          <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>
+            {t('report.revenue_summary')}
+          </Title>
+        </View>
         <View style={styles.row}>
           {revenueSummaries.map((item) => (
             <RenderReportItem
@@ -136,8 +139,9 @@ export default function SummaryReportScreen() {
             />
           ))}
         </View>
-
-        <Title style={styles.subHeader}>{t('report.payment_summary')}</Title>
+        <View style={{ paddingVertical: 2, paddingHorizontal: 2, flexDirection: "row", justifyContent: 'center' }}>
+          <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>{t('report.payment_summary')}</Title>
+        </View>
         <View style={styles.row}>
           {paymentMethod.map((item) => (
             <RenderReportItem
@@ -147,14 +151,16 @@ export default function SummaryReportScreen() {
             />
           ))}
         </View>
-
-        <Title style={styles.subHeader}>{t('report.items_summary')}</Title>
+        <View style={{ paddingVertical: 2, paddingHorizontal: 2, flexDirection: "row", justifyContent: 'center' }}>
+          <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>{t('report.items_summary')}</Title>
+        </View>
         <View style={styles.row}>
           {stockSummaries.map((item) => (
             <RenderReportItem
               title={item.title}
               value={number(item.value)}
               titleColor={item.color}
+              route={item.route}
             />
           ))}
         </View>
@@ -172,6 +178,7 @@ const styles = {
     marginHorizontal: 7,
     borderBottomWidth: 1,
     borderBottomColor: '#cbd5e0',
+    borderRadius: 100
   },
   subHeader: {
     paddingHorizontal: 7,
@@ -188,7 +195,7 @@ const styles = {
   card: {
     flex: 1,
     padding: 10,
-    backgroundColor: '#f7fafc',
+    // backgroundColor: '#f7fafc',
   },
   title: {
     marginTop: 5,
@@ -201,8 +208,8 @@ const styles = {
   },
   value: {
     textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 18,
+    fontWeight: 'semi-bold',
+    fontSize: 16,
     alignSelf: 'center',
     color: '#4a5568',
   },
