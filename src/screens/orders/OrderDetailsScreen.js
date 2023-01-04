@@ -181,11 +181,12 @@ export default function OrderDetailsScreen({ navigation, route }) {
    * Get orders
    */
   async function refreshOrder() {
-    await OrderService.ordersWithItems(setOrder, orderType, order.id);
-    // 1. Update the customer
-    getOrderCustomer();
-    // 2. Update the menu to the receipt
-    updateNavRight();
+    OrderService.ordersWithItems(setOrder, orderType, order.id).then((result) => {
+      // 1. Update the customer
+      getOrderCustomer();
+      // 2. Update the menu to the receipt
+      updateNavRight();
+    });
   }
 
   /**
@@ -290,8 +291,6 @@ export default function OrderDetailsScreen({ navigation, route }) {
       total: 1 * item.sale_price,
     };
 
-    console.log(item);
-
     OrderService.addItemToOrder(itemAttributes, orderType).then((result) => {
       refreshOrder();
     });
@@ -377,8 +376,6 @@ export default function OrderDetailsScreen({ navigation, route }) {
         renderItem={renderOrderLineItem}
         keyExtractor={keyExtractor}
       />
-
-      {/**Suggestion to simplify order entry */}
 
       {/**Suggestion to simplify order entry */}
       {/* Only show suggestion when user has entered something to search */}
