@@ -1,16 +1,17 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { View, StyleSheet, InteractionManager, FlatList } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
-import FloatingButton from "../../components/FloatingButton";
-import CustomerService from "../../services/CustomerService";
-import RenderCustomer from "./RenderCustomer";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import SearchButton from "../../components/SearchButton";
-import { CustomersAnimation } from "../../components/CustomersAnimation";
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, StyleSheet, InteractionManager, FlatList, ActivityIndicator } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { AntDesign, MaterialIcons } from '@expo/vector-icons';
+import FloatingButton from '../../components/FloatingButton';
+import CustomerService from '../../services/CustomerService';
+import RenderCustomer from './RenderCustomer';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import SearchButton from '../../components/SearchButton';
+import { CustomersAnimation } from '../../components/CustomersAnimation';
 
 export default function CustomerListScreen({ navigation }) {
   const [customers, setCustomers] = useState([]);
+  const [showLoading, setShowLoading] = useState(true);
 
   useFocusEffect(
     useCallback(() => {
@@ -22,35 +23,37 @@ export default function CustomerListScreen({ navigation }) {
   );
 
   useEffect(() => {
-    refreshCustomers;
+    refreshCustomers();
   }, []);
 
   /**
    * Get DB customers
    */
   async function refreshCustomers() {
-    CustomerService.getCustomers().then(setCustomers);
+    CustomerService.getCustomers()
+      .then(setCustomers)
+      .then((result) => setShowLoading(false));
     // set the Header with search
     setHeaderRight();
   }
 
   function setHeaderRight() {
     navigation.setOptions({
-      headerTitle: "Customers",
-      headerTitleAlign: "center",
+      headerTitle: 'Customers',
+      headerTitleAlign: 'center',
       headerLeft: () => (
-        <TouchableOpacity
-          style={{ paddingLeft: 10 }}
-        >
-          <AntDesign name="menuunfold" size={24} color="green" onPress={() => navigation.openDrawer()} />
+        <TouchableOpacity style={{ paddingLeft: 10 }}>
+          <AntDesign
+            name="menuunfold"
+            size={24}
+            color="green"
+            onPress={() => navigation.openDrawer()}
+          />
         </TouchableOpacity>
       ),
-      headerRight: () => (
-        <SearchButton onPress={() => navigation.navigate("Search Customer")} />
-      ),
+      headerRight: () => <SearchButton onPress={() => navigation.navigate('Search Customer')} />,
     });
   }
-
 
   /**
    * Render Customers in a list
@@ -61,7 +64,7 @@ export default function CustomerListScreen({ navigation }) {
       index={item.id}
       key={item.id}
       onPress={() =>
-        navigation.navigate("Edit Customer", {
+        navigation.navigate('Edit Customer', {
           customer: item,
         })
       }
@@ -70,6 +73,19 @@ export default function CustomerListScreen({ navigation }) {
 
   const keyExtractor = useCallback((item) => item.id.toString(), []);
 
+  /**
+   * Show the activity indicator as long as the items are being fetched.
+   * This improves user experience by showing a loader.
+   */
+  if (showLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+      </View>
+    );
+  }
+
+  // If we reach here it means that the list of customers has finished loading
   return (
     <View style={styles.container}>
       {customers.length > 0 ? (
@@ -80,14 +96,13 @@ export default function CustomerListScreen({ navigation }) {
             keyExtractor={keyExtractor}
             maxToRenderPerBatch={6}
           />
-          <FloatingButton onPress={() => navigation.navigate("New Customer")}>
+          <FloatingButton onPress={() => navigation.navigate('New Customer')}>
             <MaterialIcons name="person-add-alt" size={32} />
           </FloatingButton>
         </>
       ) : (
         <CustomersAnimation />
       )}
-
     </View>
   );
 }

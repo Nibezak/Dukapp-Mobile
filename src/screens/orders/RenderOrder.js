@@ -4,60 +4,23 @@ import { t } from 'i18n-js';
 import { money } from '../../helpers/Numbers';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { getSetting } from '../../models/AsyncStorage';
-import Order from '../../models/Order';
 import OrderService from '../../services/OrderService';
 
-export default function RenderOrder({ item }) {
+export default function RenderOrder({ item, parentRefresher }) {
   const navigation = useNavigation();
   const order = item.item;
   const payment = order.payments[0];
   const [currency, setCurrency] = useState(null);
 
-
-
-  useFocusEffect(
-    useCallback(() => {
-      const task = InteractionManager.runAfterInteractions(() => {
-        // Expensive task
-        refreshOrders();
-      });
-    }, [])
-  );
-
   useEffect(() => {
     getSetting('app_default_currency').then(setCurrency);
-    refreshOrders();
   }, []);
-
-  /**
-   * Function to destroy an existing
-   * Order
-   */
-  async function handleDeleteOrder() {
-    /** Pass order to be deleted */
-    Order.destroy(order.id)
-      .then((result) => {
-        refreshOrders();
-      }).then((result) => {
-        ToastAndroid.show(t('welcome.order_deleted'), ToastAndroid.SHORT);
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
-  }
-  async function refreshOrders() {
-    return OrderService.ordersWithItems(setOrders, orderType, order.id, 8);
-  }
-
-
-
-
 
   const dayjs = require('dayjs');
   const date = order.created_at;
+
   return (
     <TouchableOpacity
-      onLongPress={handleDeleteOrder}
       key={order.id}
       activeOpacity={0.8}
       onPress={() =>

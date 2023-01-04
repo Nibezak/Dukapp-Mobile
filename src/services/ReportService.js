@@ -48,6 +48,9 @@ class ReportService {
    * @param {payment method} method
    */
   salesByPayment(setSales, startDate, endDate, method = 'credit') {
+    /** If others is passed as method e */
+    method = method == 'All' ? '' : method;
+
     Database.execute(
       `SELECT
           SUM(order_items.total) sales
@@ -106,21 +109,15 @@ class ReportService {
   fastMovingStock(setStock, startDate, endDate) {
     Database.execute(
       `SELECT
-          count(distinct items.id) fast_moving_items
-        FROM items LEFT JOIN order_items 
-            ON items.id = order_items.item_id 
-        WHERE 
-          GROUP BY items.id
-          HAVING SUM(order_items.quantity) >= 1
-        `,
+        name,
+        sum(quantity) slow_moving_items   
+      FROM order_items
+      WHERE (substr(order_items.created_at, 0, 11) BETWEEN ? AND ?)
+      GROUP BY name
+      HAVING SUM(quantity) > 1;
+      `,
       [startDate, endDate],
       (result) => {
-        console.log(result);
-        if (result.length === 0) {
-          // No result available set this to 0
-          return setStock(0);
-        }
-
         setStock(result[0].fast_moving_items);
       }
     );
@@ -135,19 +132,16 @@ class ReportService {
   slowMovingStock(setStock, startDate, endDate) {
     Database.execute(
       `SELECT
-            count(distinct items.id) slow_moving_items
-      FROM items LEFT JOIN order_items 
-            ON items.id = order_items.item_id 
-      WHERE 
-        (substr(created_at, 0, 11) BETWEEN ? AND ?)
-        GROUP BY items.id
-        HAVING SUM(order_items.quantity) <= 1
+          name,
+          sum(quantity) slow_moving_items   
+        FROM order_items
+        WHERE (substr(order_items.created_at, 0, 11) BETWEEN ? AND ?)
+        GROUP BY name
+        HAVING SUM(quantity) <= 1;
       `,
       [startDate, endDate],
       (result) => {
-        console.log(result);
-
-        // setStock(result[0].slow_moving_items)
+        setStock(result.length);
       }
     );
   }

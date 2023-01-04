@@ -74,71 +74,6 @@ function AuthStackNavigator() {
 }
 function NavDrawer() {
   enableScreens();
-  const navigation = useNavigation();
-  // const [settings, setSettings] = useState([]);
-  // const [initialScreen, setInitialScreen] = useState('Welcome');
-
-  // useEffect(() => {
-  //   // Fetch settings here
-  //   getInitialSettings();
-  // }, [settings]);
-
-  /**
-   * Fetch settings from the persisted
-   * Database store and update the
-   * state
-   */
-  // function getInitialSettings() {
-  //   const settingFromDB = [
-  //     {
-  //       title: 'Business Name',
-  //       description: 'Configure official company name',
-  //       key: 'business_name',
-  //       value: 'Chez John Doe',
-  //     },
-  //     {
-  //       title: 'TIN',
-  //       description: 'Tax Identification Number',
-  //       key: 'TIN',
-  //       value: '10078832',
-  //     },
-  //     {
-  //       title: 'Business Type',
-  //       description: 'Saloon, Restorant, Butike..',
-  //       key: 'business_type',
-  //       value: 'Butike',
-  //       type: 'select',
-  //       options: [
-  //         { key: 'Boutique', title: 'Boutique' },
-  //         { key: 'Hair Saloon', title: 'Hair Saloon' },
-  //         { key: 'Restaurant', title: 'Restaurant' },
-  //         { key: 'Bar', title: 'Bar' },
-  //         { key: 'Phone Shop', title: 'Phone Shop' },
-  //         { key: 'Car Wash', title: 'Car Wash' },
-  //         { key: 'Others', title: 'Others' },
-  //       ],
-  //     },
-  //   ];
-
-  //   setSettings(settingFromDB);
-  // }
-
-  /**
-   * Make welcome screen dynamic based on whether or not initial
-   * settings existing in the database. If settings is empty
-   * (we can check any other setting here), then present
-   * the screen for the user to input required settings
-   * for the application to run smoothly.
-   */
-
-  // if (settings != []) {
-  //   /**
-  //    * For us to reach here, it means there're no settings stored
-  //    * in the local database, therefore, give the user option/
-  //    * screen to input to the initial database.
-  //    */
-  //   setInitialScreen('InitialSettings');
-  // }
 
   return (
     <Drawer.Navigator
@@ -192,7 +127,6 @@ function NavDrawer() {
           headerShown: true,
         }}
       />
-
     </Drawer.Navigator>
   );
 }
@@ -286,12 +220,12 @@ export function NavStack() {
 
   return (
     <Stack.Navigator initialRouteName="Welcome">
-      <Stack.Screen name="InitialSettings" component={OnboardingScreen}
-
-      />
+      <Stack.Screen name="InitialSettings" component={OnboardingScreen} />
       <Stack.Screen name="Welcome" component={NavTab} options={{ headerShown: false }} />
       {/** Orders*/}
-      <Stack.Screen name="Orders" component={OrderScreen}
+      <Stack.Screen
+        name="Orders"
+        component={OrderScreen}
         onPress={() =>
           navigation.navigate('Orders', {
             order_type: 'sale',

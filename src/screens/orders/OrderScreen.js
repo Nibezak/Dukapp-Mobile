@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,25 +7,28 @@ import {
   FlatList,
   Keyboard,
   Dimensions,
-} from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
-import { t } from "i18n-js";
-import InputSend from "../../components/InputSend";
-import SuggestionButton from "../../components/SuggestionButton";
-import ItemService from "../../services/ItemService";
-import OrderService from "./../../services/OrderService";
-import RenderOrder from "./RenderOrder";
+} from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { t } from 'i18n-js';
+import InputSend from '../../components/InputSend';
+import SuggestionButton from '../../components/SuggestionButton';
+import ItemService from '../../services/ItemService';
+import OrderService from './../../services/OrderService';
+import RenderOrder from './RenderOrder';
 
 const windowHeight = Dimensions.get('window').height;
 
 // Constants
 export default function OrderScreen({ navigation, route }) {
-  const [typing, setTyping] = useState("");
+  const [typing, setTyping] = useState('');
   const [orders, setOrders] = useState([]);
-  const [orderType, setOrderType] = useState(route.params.order_type);
   const [lastOrder, setLastOrder] = useState({});
   const [suggestions, setSuggestions] = useState([]);
   const [items, setItems] = useState([]);
+
+  /** Fix the undefined order_type error */
+  const routeParams = route.params;
+  const orderType = routeParams.order_type == undefined ? 'sale' : routeParams.order_type;
 
   useFocusEffect(
     useCallback(() => {
@@ -64,15 +67,15 @@ export default function OrderScreen({ navigation, route }) {
    */
   async function sellNewItem() {
     // 1. Redirect to add new item Screen
-    navigation.navigate("New Item", {
+    navigation.navigate('New Item', {
       item_name: typing,
-      action_type: "add_product_and_sale",
+      action_type: 'add_product_and_sale',
       order_type: orderType,
     });
     // 2. Store Item and redirect back to Sale after
 
     // Clear the input text
-    setTyping("");
+    setTyping('');
   }
 
   /**
@@ -89,7 +92,7 @@ export default function OrderScreen({ navigation, route }) {
         Keyboard.dismiss();
 
         // 4. Clear the input text
-        setTyping("");
+        setTyping('');
 
         // 5. Reset suggestions
         resetToDefaultSuggestion();
@@ -128,7 +131,7 @@ export default function OrderScreen({ navigation, route }) {
     newSuggestions = newSuggestions.map((item) => {
       return {
         ...item,
-        suggestionType: "product",
+        suggestionType: 'product',
       };
     });
 
@@ -140,21 +143,16 @@ export default function OrderScreen({ navigation, route }) {
    * Make sales from suggestions
    */
   async function saleSuggestion(suggestion) {
-    const suggestionTypes = [
-      "add_customer",
-      "add_payment",
-      "change_order_type",
-      "product",
-    ];
+    const suggestionTypes = ['add_customer', 'add_payment', 'change_order_type', 'product'];
 
     const type = suggestion.suggestionType;
     // Ensure we can process known types
     if (!suggestionTypes.includes(type)) {
-      throw "Suggestion Type unknown:" + type;
+      throw 'Suggestion Type unknown:' + type;
     }
 
     // 1. Make a quick new sale
-    if (type === "product") {
+    if (type === 'product') {
       await saleFromSuggestion(suggestion);
       return;
     }
@@ -168,7 +166,7 @@ export default function OrderScreen({ navigation, route }) {
     /////////////////////////////////////////////////
 
     if (orders.length < 1) {
-      throw "Please sale before add proceeding";
+      throw 'Please sale before add proceeding';
     }
 
     // 0. Get latest order ID to assign the payment
@@ -181,15 +179,15 @@ export default function OrderScreen({ navigation, route }) {
      * Button the user pressed on the screen
      */
     // 1. Add a Customer
-    if (type === "add_customer") {
-      navigation.navigate("New Customer", {
+    if (type === 'add_customer') {
+      navigation.navigate('New Customer', {
         order: lastOrder,
       });
     }
 
     // 2. Add a payment
-    if (type === "add_payment") {
-      navigation.navigate("Add Payment To Order", {
+    if (type === 'add_payment') {
+      navigation.navigate('Add Payment To Order', {
         order: lastOrder,
       });
     }
@@ -201,7 +199,7 @@ export default function OrderScreen({ navigation, route }) {
       index={item.id}
       key={item.id}
       onPress={() =>
-        navigation.navigate("Edit Item", {
+        navigation.navigate('Edit Item', {
           item: item,
         })
       }
@@ -209,12 +207,7 @@ export default function OrderScreen({ navigation, route }) {
   ));
 
   const renderSuggestion = useCallback(({ item }) => {
-    return (
-      <SuggestionButton
-        title={item.name}
-        onPress={() => saleSuggestion(item)}
-      />
-    );
+    return <SuggestionButton title={item.name} onPress={() => saleSuggestion(item)} />;
   }, []);
 
   const keyExtractor = useCallback((item, index) => index.toString(), []);
@@ -223,8 +216,7 @@ export default function OrderScreen({ navigation, route }) {
    * Render to the screen
    */
   return (
-    <View style={[styles.container]} >
-
+    <View style={[styles.container]}>
       {/* Display order summary */}
       <FlatList
         inverted
@@ -243,17 +235,19 @@ export default function OrderScreen({ navigation, route }) {
           renderItem={renderSuggestion}
           pagingEnabled={true}
           keyExtractor={keyExtractor}
-        />) : (<></>)}
+        />
+      ) : (
+        <></>
+      )}
 
-      <KeyboardAvoidingView keyboardDismissMode="on-drag"
-        enabled={false} >
+      <KeyboardAvoidingView keyboardDismissMode="on-drag" enabled={false}>
         {/** Type to sell */}
         <InputSend
-          style={{ bottom: 140, position: "absolute" }}
+          style={{ bottom: 140, position: 'absolute' }}
           onChangeText={handleTypingSuggestions}
           onPress={sellNewItem}
           value={typing}
-          placeholder={t("order.type_to_sell")}
+          placeholder={t('order.type_to_sell')}
         />
       </KeyboardAvoidingView>
     </View>
@@ -268,36 +262,36 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   suggestions: {
-    width: "95%",
+    width: '95%',
     borderRadius: 3,
-    alignSelf: "center",
+    alignSelf: 'center',
     height: windowHeight / 2.5,
     position: 'absolute',
     bottom: 60,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   row: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#f7fafc",
+    borderBottomColor: '#f7fafc',
   },
   amount: {
     fontSize: 40,
-    fontWeight: "800",
+    fontWeight: '800',
     paddingRight: 5,
   },
   itemName: {
     paddingRight: 5,
     flexGrow: 1,
     width: 30,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   itemDescription: {
     paddingRight: 10,
   },
   bottom: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
 });

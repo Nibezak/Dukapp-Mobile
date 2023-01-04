@@ -1,31 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { InteractionManager, ActivityIndicator, View } from 'react-native';
 import { t } from 'i18n-js';
 import { Text, Title } from 'react-native-paper';
 import { money, number } from '../../helpers/Numbers';
 import { getSetting } from '../../models/AsyncStorage';
 import RevenueBarChart from './RevenueBarChart';
 import ReportService from './../../services/ReportService';
-import { useNavigation } from '@react-navigation/native';
-
-function RenderReportItem({ value, title, titleColor, route }) {
-  const navigation = useNavigation();
-  return (
-    <View style={styles.card}>
-      <TouchableOpacity onPress={() => navigation.navigate(route)}>
-        <View style={styles.rowText}>
-          <Text style={styles.value}>{value}</Text>
-        </View>
-        <View style={styles.rowText}>
-          <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
-        </View>
-      </TouchableOpacity>
-    </View>
-  );
-}
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { RenderReportItem } from './SummaryReportItem';
 
 export default function SummaryReportScreen() {
   const [currency, setCurrency] = useState(null);
+  const [showLoading, setshowLoading] = useState(true);
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
   const navigation = useNavigation();
@@ -46,7 +32,7 @@ export default function SummaryReportScreen() {
   const [paymentMethod, setPaymentMethod] = useState([
     { color: '#718096', title: 'By Cash', value: byCash },
     { color: '#718096', title: 'By Mobile', value: byMobile },
-    { color: '#718096', title: 'Others', value: byCredit },
+    { color: '#718096', title: 'All', value: byCredit },
   ]);
 
   // Stock Summaries
@@ -61,13 +47,28 @@ export default function SummaryReportScreen() {
     { color: '#fb923c', title: 'Slow Moving', value: slowMoving },
   ]);
 
+  useFocusEffect(
+    useCallback(() => {
+      const task = InteractionManager.runAfterInteractions(() => {
+        // Expensive task
+        refreshReportByDate(startDate, endDate);
+      });
+    }, [])
+  );
+
   useEffect(() => {
     getSetting('app_default_currency').then(setCurrency);
 
     // Load data for the report
     refreshReportByDate(startDate, endDate);
-  }, []);
+  }, [stockSummaries, paymentMethod, revenueSummaries]);
 
+  const keyExtractor = useCallback((index) => index.toString(), []);
+  /**
+   * Fetch report from database based on the date
+   * @param {string} startDate
+   * @param {string} endDate
+   */
   function refreshReportByDate(startDate, endDate) {
     // 1. Refresh revenue reports
     ReportService.sales(
@@ -102,7 +103,7 @@ export default function SummaryReportScreen() {
       (otherSales) => (paymentMethod[2].value = otherSales),
       startDate,
       endDate,
-      'other'
+      'All'
     );
 
     // 3. Refresh items/ inventory reports
@@ -113,19 +114,50 @@ export default function SummaryReportScreen() {
       '2000-01-01',
       endDate
     );
+
     ReportService.slowMovingStock(
-      (slowMoving) => (stockSummaries[3].value = slowMoving),
+      (slowMoving) => {
+        stockSummaries[3].value = slowMoving;
+
+        // We have loaded all values. Let's hide the loading screen
+        setshowLoading(false);
+      },
       startDate,
       endDate
+    );
+  }
+
+  /**
+   * Show the activity indicator as long as the items are being fetched.
+   * This improves user experience by showing a loader.
+   */
+  if (showLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+      </View>
     );
   }
 
   return (
     <View>
       <RevenueBarChart />
-
-      <View style={{ backgroundColor: "white", paddingHorizontal: 10, marginHorizontal: 10, borderRadius: 10 }}>
-        <View style={{ paddingVertical: 2, paddingHorizontal: 2, flexDirection: "row", justifyContent: 'center' }}>
+      <View
+        style={{
+          backgroundColor: 'white',
+          paddingHorizontal: 10,
+          marginHorizontal: 10,
+          borderRadius: 10,
+        }}
+      >
+        <View
+          style={{
+            paddingVertical: 2,
+            paddingHorizontal: 2,
+            flexDirection: 'row',
+            justifyContent: 'center',
+          }}
+        >
           <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>
             {t('report.revenue_summary')}
           </Title>
@@ -139,28 +171,48 @@ export default function SummaryReportScreen() {
             />
           ))}
         </View>
-        <View style={{ paddingVertical: 2, paddingHorizontal: 2, flexDirection: "row", justifyContent: 'center' }}>
-          <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>{t('report.payment_summary')}</Title>
+        <View
+          style={{
+            paddingVertical: 2,
+            paddingHorizontal: 2,
+            flexDirection: 'row',
+            justifyContent: 'center',
+          }}
+        >
+          <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>
+            {t('report.payment_summary')}
+          </Title>
         </View>
         <View style={styles.row}>
-          {paymentMethod.map((item) => (
+          {paymentMethod.map((item, index) => (
             <RenderReportItem
               title={item.title}
               value={money(item.value)}
               titleColor={item.color}
+              key={keyExtractor(index)}
             />
           ))}
         </View>
-        <View style={{ paddingVertical: 2, paddingHorizontal: 2, flexDirection: "row", justifyContent: 'center' }}>
-          <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>{t('report.items_summary')}</Title>
+        <View
+          style={{
+            paddingVertical: 2,
+            paddingHorizontal: 2,
+            flexDirection: 'row',
+            justifyContent: 'center',
+          }}
+        >
+          <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>
+            {t('report.items_summary')}
+          </Title>
         </View>
         <View style={styles.row}>
-          {stockSummaries.map((item) => (
+          {stockSummaries.map((item, index) => (
             <RenderReportItem
               title={item.title}
               value={number(item.value)}
               titleColor={item.color}
               route={item.route}
+              key={keyExtractor(index)}
             />
           ))}
         </View>
@@ -178,7 +230,7 @@ const styles = {
     marginHorizontal: 7,
     borderBottomWidth: 1,
     borderBottomColor: '#cbd5e0',
-    borderRadius: 100
+    borderRadius: 100,
   },
   subHeader: {
     paddingHorizontal: 7,

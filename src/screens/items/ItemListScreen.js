@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -6,16 +6,16 @@ import {
   InteractionManager,
   FlatList,
   TouchableOpacity,
-} from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
-import FloatingButton from "../../components/FloatingButton";
-import ItemService from "../../services/ItemService";
-import SearchButton from "../../components/SearchButton";
-import RenderItem from "./RenderItem";
-import { number } from "../../helpers/Numbers";
-import { t } from "i18n-js";
-import { StockItemAnimation } from "../../components/StockItemAnimation";
+  ActivityIndicator,
+} from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { AntDesign } from '@expo/vector-icons';
+import FloatingButton from '../../components/FloatingButton';
+import ItemService from '../../services/ItemService';
+import SearchButton from '../../components/SearchButton';
+import RenderItem from './RenderItem';
+import { t } from 'i18n-js';
+import { StockItemAnimation } from '../../components/StockItemAnimation';
 
 //const AVATAR =
 //'https://cdn4.vectorstock.com/i/1000x1000/16/38/add-item-icon-vector-16301638.jpg';
@@ -23,7 +23,7 @@ import { StockItemAnimation } from "../../components/StockItemAnimation";
 export default function ItemListScreen({ navigation }) {
   // Set the state
   const [items, setItems] = useState([]);
-  const [searchTerm, setSearchTerm] = useState();
+  const [showLoading, setShowLoading] = useState(true);
 
   useFocusEffect(
     useCallback(() => {
@@ -43,7 +43,9 @@ export default function ItemListScreen({ navigation }) {
    */
   async function refreshItems() {
     //
-    ItemService.getItems().then(setItems);
+    ItemService.getItems()
+      .then(setItems)
+      .then((result) => setShowLoading(false));
     // Set the header with search and settings
     setHeaderRight();
   }
@@ -53,19 +55,20 @@ export default function ItemListScreen({ navigation }) {
    */
   function setHeaderRight() {
     navigation.setOptions({
-      headerTitle: t("item.items_header"),
-      headerTitleAlign: "center",
+      headerTitle: t('item.items_header'),
+      headerTitleAlign: 'center',
       headerLeft: () => (
-        <TouchableOpacity
-          style={{ paddingLeft: 10 }}
-        >
-          <AntDesign name="menuunfold" size={24} color="green" onPress={() => navigation.openDrawer()} />
+        <TouchableOpacity style={{ paddingLeft: 10 }}>
+          <AntDesign
+            name="menuunfold"
+            size={24}
+            color="green"
+            onPress={() => navigation.openDrawer()}
+          />
         </TouchableOpacity>
       ),
 
-      headerRight: () => (
-        <SearchButton onPress={() => navigation.navigate("Item Search")} />
-      ),
+      headerRight: () => <SearchButton onPress={() => navigation.navigate('Item Search')} />,
     });
   }
 
@@ -75,7 +78,7 @@ export default function ItemListScreen({ navigation }) {
       index={item.id}
       key={item.id}
       onPress={() =>
-        navigation.navigate("Edit Item", {
+        navigation.navigate('Edit Item', {
           item: item,
         })
       }
@@ -83,6 +86,18 @@ export default function ItemListScreen({ navigation }) {
   ));
 
   const keyExtractor = useCallback((item) => item.id.toString(), []);
+
+  /**
+   * Show the activity indicator as long as the items are being fetched.
+   * This improves user experience by showing a loader.
+   */
+  if (showLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -94,13 +109,11 @@ export default function ItemListScreen({ navigation }) {
             keyExtractor={keyExtractor}
             maxToRenderPerBatch={6}
           />
-          <FloatingButton onPress={() => navigation.navigate("New Item")} />
+          <FloatingButton onPress={() => navigation.navigate('New Item')} />
         </>
       ) : (
         <StockItemAnimation />
       )}
-
-
     </View>
   );
 }
@@ -110,10 +123,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   row: {
-    flexDirection: "row",
+    flexDirection: 'row',
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#e2e8f0",
+    borderBottomColor: '#e2e8f0',
   },
   avatar: {
     borderRadius: 20,
@@ -125,11 +138,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   details: {
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
     fontSize: 14,
   },
   names: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     paddingRight: 10,
   },
 });

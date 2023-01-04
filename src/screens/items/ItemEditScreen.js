@@ -1,19 +1,12 @@
-import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  ToastAndroid,
-  TouchableOpacity,
-} from "react-native";
-import { t } from "i18n-js";
-import InputText from "../../components/InputText";
-import InputTextDisabled from "../../components/InputTextDisabled";
-import InputSwitch from "../../components/InputSwitch";
-import Button from "../../components/Button";
-import ItemService from "../../services/ItemService";
-import OrderService from "../../services/OrderService";
-import FieldText from "../../components/FieldText";
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, ToastAndroid, TouchableOpacity } from 'react-native';
+import { t } from 'i18n-js';
+import InputTextDisabled from '../../components/InputTextDisabled';
+import InputSwitch from '../../components/InputSwitch';
+import Button from '../../components/Button';
+import ItemService from '../../services/ItemService';
+import OrderService from '../../services/OrderService';
+import FieldText from '../../components/FieldText';
 
 export default function EditItemScreen({ navigation, route }) {
   // Define state
@@ -42,9 +35,7 @@ export default function EditItemScreen({ navigation, route }) {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={handleSaleItem} style={{ paddingRight: 20 }}>
-          <Text style={{ color: "#10b981", fontWeight: "bold" }}>
-            {t("item.sale")}
-          </Text>
+          <Text style={{ color: '#10b981', fontWeight: 'bold' }}>{t('item.sale')}</Text>
         </TouchableOpacity>
       ),
     });
@@ -54,11 +45,8 @@ export default function EditItemScreen({ navigation, route }) {
    *
    */
   async function handleSaleItem() {
-    OrderService.quickSale(item, "sale").then((result) => {
-      ToastAndroid.show(
-        t("item.item_is_sold", { item_name: item.name }),
-        ToastAndroid.SHORT
-      );
+    OrderService.quickSale(item, 'sale').then((result) => {
+      ToastAndroid.show(t('item.item_is_sold', { item_name: item.name }), ToastAndroid.SHORT);
     });
   }
 
@@ -100,48 +88,48 @@ export default function EditItemScreen({ navigation, route }) {
     <View style={styles.container}>
       <View
         style={{
-          flexDirection: "row",
+          flexDirection: 'row',
           paddingLeft: 10,
           paddingRight: 10,
           borderBottomWidth: 1,
-          borderBottomColor: "#cbd5e0",
-          color: "#cbd5e0",
+          borderBottomColor: '#cbd5e0',
+          color: '#cbd5e0',
         }}
       >
         <InputSwitch
           onValueChange={toggleSwitch}
           value={isService}
-          title={t("item.is_item_service")}
+          title={t('item.is_item_service')}
         />
       </View>
 
       <View style={styles.row}>
         <FieldText
-          title={t("item.name")}
+          title={t('item.name')}
           value={name}
           onChangeText={setName}
           underlineColorAndroid="transparent"
-          placeholder={t("item.name_placeholder")}
+          placeholder={t('item.name_placeholder')}
         />
       </View>
 
       <View style={styles.row}>
         <FieldText
-          title={t("item.description")}
+          title={t('item.description')}
           value={description}
           onChangeText={setDescription}
           underlineColorAndroid="transparent"
-          placeholder={t("item.description")}
+          placeholder={t('item.description')}
         />
       </View>
 
       <View style={styles.row}>
         <FieldText
-          title={t("item.category")}
+          title={t('item.category')}
           value={category}
           onChangeText={setCategory}
           underlineColorAndroid="transparent"
-          placeholder={t("item.category_placeholder")}
+          placeholder={t('item.category_placeholder')}
         />
       </View>
 
@@ -152,19 +140,19 @@ export default function EditItemScreen({ navigation, route }) {
         <>
           <View style={styles.row}>
             <FieldText
-              title={t("item.re_order_level")}
+              title={t('item.re_order_level')}
               value={reOrderLevel.toString()}
               onChangeText={setReorderLevel}
               underlineColorAndroid="transparent"
-              placeholder={t("item.re_order_level_placeholder")}
+              placeholder={t('item.re_order_level_placeholder')}
               keyboardType="numeric"
             />
             <InputTextDisabled
-              title={t("item.quantity")}
+              title={t('item.quantity')}
               value={quantity.toString()}
               onChangeText={setQuantity}
               underlineColorAndroid="transparent"
-              placeholder={t("item.quantity_placeholder")}
+              placeholder={t('item.quantity_placeholder')}
               keyboardType="numeric"
             />
           </View>
@@ -176,11 +164,11 @@ export default function EditItemScreen({ navigation, route }) {
         ) : (
           <>
             <FieldText
-              title={t("item.unit_cost_price")}
+              title={t('item.unit_cost_price')}
               value={unitPrice.toString()}
               onChangeText={setUnitPrice}
               underlineColorAndroid="transparent"
-              placeholder={t("item.unit_cost_price_placeholder")}
+              placeholder={t('item.unit_cost_price_placeholder')}
               keyboardType="numeric"
             />
           </>
@@ -188,21 +176,21 @@ export default function EditItemScreen({ navigation, route }) {
         {/** END OF NON SERVICE PRODUCT */}
 
         <FieldText
-          title={t("item.unit_sale_price")}
+          title={t('item.unit_sale_price')}
           value={salePrice.toString()}
           onChangeText={setSalePrice}
           underlineColorAndroid="transparent"
-          placeholder={t("item.unit_sale_price_placeholder")}
+          placeholder={t('item.unit_sale_price_placeholder')}
           keyboardType="numeric"
         />
       </View>
 
       <View style={[styles.row, { borderBottomWidth: 0 }]}>
-        <Button onPress={handleDeleteItem} color={"#dc2626"}>
-          {t("common.delete")}
+        <Button onPress={handleDeleteItem} color={'#dc2626'}>
+          {t('common.delete')}
         </Button>
-        <Button onPress={handleSaveItem} color={"#15803d"}>
-          {t("common.save")}
+        <Button onPress={handleSaveItem} color={'#15803d'}>
+          {t('common.save')}
         </Button>
       </View>
     </View>
@@ -217,7 +205,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   row: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginVertical: 5,
     marginHorizontal: 20,
   },

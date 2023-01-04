@@ -37,7 +37,6 @@ export function OnboardingScreen() {
      * No need to show the form if settings
      * exist in the local database
      */
-
     redirectIfSettingsExist();
   }, []);
 
