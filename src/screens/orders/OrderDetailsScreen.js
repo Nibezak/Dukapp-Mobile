@@ -40,7 +40,6 @@ export default function OrderDetailsScreen({ navigation, route }) {
       const task = InteractionManager.runAfterInteractions(() => {
         // Expensive task
         refreshOrder();
-        getOrderCustomer();
       });
     }, [])
   );
@@ -64,10 +63,6 @@ export default function OrderDetailsScreen({ navigation, route }) {
     // Fetch order from the database
 
     refreshOrder();
-
-    // Get order's customer if there is one
-
-    getOrderCustomer();
   }, []);
 
   /**
@@ -184,8 +179,6 @@ export default function OrderDetailsScreen({ navigation, route }) {
     OrderService.ordersWithItems(setOrder, orderType, order.id).then((result) => {
       // 1. Update the customer
       getOrderCustomer();
-      // 2. Update the menu to the receipt
-      updateNavRight();
     });
   }
 
@@ -364,9 +357,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
   return (
     <View style={styles.container}>
       {/** Order Payment*/}
-      {order.payments.map((payment, index) => (
-        <RenderPayment key={index} payment={payment} customer={customer} order={order} />
-      ))}
+      <RenderPayment customer={customer} order={order} />
 
       {/** Order customer */}
 
