@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { getSetting } from "../models/AsyncStorage";
-import { useNavigate } from "@reach/router";
 import { useNavigation } from "@react-navigation/native";
 
 export default function SideBar() {
@@ -76,14 +75,10 @@ export default function SideBar() {
                     <Image source={require('./../../assets/snack-icon.png')} style={{ width: 120, height: 70 }} />
                 </View>
                 <View style={{ flexDirection: "row", justifyContent: 'center' }}>
-                    {/* <Text style={{ color: "#62656b", fontWeight: "bold", fontSize: 15, paddingVertical: 10 }}>Shop name:</Text> */}
-                </View>
-
-                <View style={{ flexDirection: "row", justifyContent: 'center' }}>
                     <Text style={{ fontWeight: "bold", fontSize: 20, color: "#47a67f" }}>{businessName}...</Text>
                 </View>
 
-                <View style={{ flexDirection: "row", justifyContent: 'space-between', marginTop: 30, backgroundColor: "rgba(16, 185, 120, 0.8)", paddingHorizontal: 5, paddingVertical: 6, borderRadius: 10 }}>
+                <View style={{ flexDirection: "row", justifyContent: 'space-between', marginTop: 30, backgroundColor: "rgba(16, 185, 120, 0.7)", paddingHorizontal: 5, paddingVertical: 6, borderRadius: 10 }}>
                     <FontAwesome5 name="money-check-alt" size={24} color="#f1f1f1" />
                     <Text style={{ fontWeight: "bold", fontSize: 18, color: "#f1f1f1", paddingHorizontal: 5, fontFamily: "sans-serif" }}>{currency}</Text>
                 </View>

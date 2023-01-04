@@ -15,7 +15,7 @@ export default function InputText(props) {
       onChangeText={props.onChangeText}
       style={{
         flex: 1,
-        maxHeight: 48,
+        maxHeight: "100%",
         borderRadius: 3,
         alignSelf: 'stretch',
         marginHorizontal: 5,
@@ -23,7 +23,7 @@ export default function InputText(props) {
         paddingVertical: 1,
         backgroundColor: colors.textInput,
       }}
-      mode="outlined"
+
       onEndEditing={props.onEndEditing}
       ref={props.ref}
       autoFocus={props.autoFocus}

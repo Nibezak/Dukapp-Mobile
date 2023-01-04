@@ -5,6 +5,7 @@ import Button from "../../components/Button";
 import { t } from "i18n-js";
 import OrderService from "../../services/OrderService";
 import CustomerService from "../../services/CustomerService";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function CustomerCreateScreen({ navigation, route }) {
   const [names, setNames] = useState("");
@@ -44,7 +45,7 @@ export default function CustomerCreateScreen({ navigation, route }) {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.row}>
         <FieldText
           value={names}
@@ -101,14 +102,14 @@ export default function CustomerCreateScreen({ navigation, route }) {
         />
       </View>
       <View style={[styles.row, { borderBottomWidth: 0 }]}>
-        <Button onPress={() => navigation.goBack()} color={"#f59e0b"}>
+        <Button onPress={() => navigation.goBack()} color={"#f1f1f1"} backgroundColor={"#f59e0b"}>
           {t("common.cancel")}
         </Button>
-        <Button onPress={handleSaveCustomer} color={"#15803d"}>
+        <Button onPress={handleSaveCustomer} color={"#f1f1f1"} backgroundColor={"#47a67f"}>
           {t("common.save")}
         </Button>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

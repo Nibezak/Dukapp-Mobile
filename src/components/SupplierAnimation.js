@@ -8,8 +8,8 @@ export function SupplierAnimation() {
 
     return (
         <View style={[styles.container, { width }]}>
-            <Image source={require('../../assets/WelcomeAnimation/welcomeSupplier.png')} style={[styles.image, { width, resizeMode: 'contain' }]} />
-            <View style={{ flex: 0.8, backgroundColor: "white" }}>
+            <View style={{ flex: 1, backgroundColor: "white" }}>
+                <Image source={require('../../assets/WelcomeAnimation/welcomeSupplier.png')} style={[styles.image, { width, resizeMode: 'contain' }]} />
                 <Text style={styles.title}>
                     Create a supplier
                 </Text>

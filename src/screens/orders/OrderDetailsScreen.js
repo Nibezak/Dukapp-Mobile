@@ -8,6 +8,7 @@ import {
   FlatList,
   Dimensions,
   Alert,
+  ToastAndroid,
 } from 'react-native';
 import { t } from 'i18n-js';
 import SuggestionButton from '../../components/SuggestionButton';
@@ -120,6 +121,9 @@ export default function OrderDetailsScreen({ navigation, route }) {
     Order.destroy(order.id)
       .then((result) => {
         return navigation.goBack();
+      })
+      .then(() => {
+        ToastAndroid.show(t('welcome.order_deleted'), ToastAndroid.SHORT);
       })
       .catch((error) => {
         console.log(error.message);

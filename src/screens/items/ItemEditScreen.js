@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, ToastAndroid, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, ToastAndroid, TouchableOpacity, Alert } from 'react-native';
 import { t } from 'i18n-js';
 import InputTextDisabled from '../../components/InputTextDisabled';
 import InputSwitch from '../../components/InputSwitch';
@@ -7,7 +7,9 @@ import Button from '../../components/Button';
 import ItemService from '../../services/ItemService';
 import OrderService from '../../services/OrderService';
 import FieldText from '../../components/FieldText';
-
+import Item from '../../models/Item';
+import { MaterialIcons } from '@expo/vector-icons';
+import { ScrollView } from 'react-native-gesture-handler';
 export default function EditItemScreen({ navigation, route }) {
   // Define state
   const [item, setItem] = useState(route.params.item);
@@ -31,12 +33,20 @@ export default function EditItemScreen({ navigation, route }) {
     updateNavRight();
   }, []);
 
+
   function updateNavRight() {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity onPress={handleSaleItem} style={{ paddingRight: 20 }}>
-          <Text style={{ color: '#10b981', fontWeight: 'bold' }}>{t('item.sale')}</Text>
-        </TouchableOpacity>
+        <>
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity onPress={handleSaleItem} style={{ paddingRight: 20, marginHorizontal: 20, marginVertical: 3 }}>
+              <Text style={{ color: '#10b981', fontWeight: 'bold' }}>{t('item.sale')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleDeleteButton} style={{ paddingRight: 20 }}>
+              <MaterialIcons name="delete" size={24} color="#ef4444" />
+            </TouchableOpacity>
+          </View>
+        </>
       ),
     });
   }
@@ -48,6 +58,34 @@ export default function EditItemScreen({ navigation, route }) {
     OrderService.quickSale(item, 'sale').then((result) => {
       ToastAndroid.show(t('item.item_is_sold', { item_name: item.name }), ToastAndroid.SHORT);
     });
+  }
+  function handleDeleteButton() {
+    Alert.alert(
+      'Deleting Order #' + item.id,
+      'Are you sure you want to Delete Item # ' + item.name + '?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'CANCEL',
+        },
+        { text: 'DELETE', onPress: () => deleteThisOrder() },
+      ]
+    );
+  }
+
+  function deleteThisOrder() {
+    /** Pass order to be deleted */
+    Item.destroy(item.id)
+      .then((result) => {
+        return navigation.goBack();
+      })
+      .then(() => {
+        ToastAndroid.show('Item has been Delete', ToastAndroid.SHORT);
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
   }
 
   /**
@@ -102,97 +140,100 @@ export default function EditItemScreen({ navigation, route }) {
           title={t('item.is_item_service')}
         />
       </View>
+      <ScrollView>
+        <View style={styles.row}>
+          <FieldText
+            title={t('item.name')}
+            value={name}
+            onChangeText={setName}
+            underlineColorAndroid="transparent"
+            placeholder={t('item.name_placeholder')}
+          />
+        </View>
 
-      <View style={styles.row}>
-        <FieldText
-          title={t('item.name')}
-          value={name}
-          onChangeText={setName}
-          underlineColorAndroid="transparent"
-          placeholder={t('item.name_placeholder')}
-        />
-      </View>
+        <View style={styles.row}>
+          <FieldText
+            title={t('item.description')}
+            value={description}
+            onChangeText={setDescription}
+            underlineColorAndroid="transparent"
+            placeholder={t('item.description')}
+          />
+        </View>
 
-      <View style={styles.row}>
-        <FieldText
-          title={t('item.description')}
-          value={description}
-          onChangeText={setDescription}
-          underlineColorAndroid="transparent"
-          placeholder={t('item.description')}
-        />
-      </View>
+        <View style={styles.row}>
+          <FieldText
+            title={t('item.category')}
+            value={category}
+            onChangeText={setCategory}
+            underlineColorAndroid="transparent"
+            placeholder={t('item.category_placeholder')}
+          />
+        </View>
 
-      <View style={styles.row}>
-        <FieldText
-          title={t('item.category')}
-          value={category}
-          onChangeText={setCategory}
-          underlineColorAndroid="transparent"
-          placeholder={t('item.category_placeholder')}
-        />
-      </View>
-
-      {/** Only display this section if this is not a service */}
-      {isService ? (
-        <></>
-      ) : (
-        <>
-          <View style={styles.row}>
-            <FieldText
-              title={t('item.re_order_level')}
-              value={reOrderLevel.toString()}
-              onChangeText={setReorderLevel}
-              underlineColorAndroid="transparent"
-              placeholder={t('item.re_order_level_placeholder')}
-              keyboardType="numeric"
-            />
-            <InputTextDisabled
-              title={t('item.quantity')}
-              value={quantity.toString()}
-              onChangeText={setQuantity}
-              underlineColorAndroid="transparent"
-              placeholder={t('item.quantity_placeholder')}
-              keyboardType="numeric"
-            />
-          </View>
-        </>
-      )}
-      <View style={styles.row}>
+        {/** Only display this section if this is not a service */}
         {isService ? (
           <></>
         ) : (
           <>
-            <FieldText
-              title={t('item.unit_cost_price')}
-              value={unitPrice.toString()}
-              onChangeText={setUnitPrice}
-              underlineColorAndroid="transparent"
-              placeholder={t('item.unit_cost_price_placeholder')}
-              keyboardType="numeric"
-            />
+            <View style={styles.row}>
+              <FieldText
+                title={t('item.re_order_level')}
+                value={reOrderLevel.toString()}
+                onChangeText={setReorderLevel}
+                underlineColorAndroid="transparent"
+                placeholder={t('item.re_order_level_placeholder')}
+                keyboardType="numeric"
+              />
+              <InputTextDisabled
+                title={t('item.quantity')}
+                value={quantity.toString()}
+                onChangeText={setQuantity}
+                underlineColorAndroid="transparent"
+                placeholder={t('item.quantity_placeholder')}
+                keyboardType="numeric"
+              />
+            </View>
           </>
         )}
-        {/** END OF NON SERVICE PRODUCT */}
+        <View style={styles.row}>
+          {isService ? (
+            <></>
+          ) : (
+            <>
+              <FieldText
+                title={t('item.unit_cost_price')}
+                value={unitPrice.toString()}
+                onChangeText={setUnitPrice}
+                underlineColorAndroid="transparent"
+                placeholder={t('item.unit_cost_price_placeholder')}
+                keyboardType="numeric"
+              />
+            </>
+          )}
+          {/** END OF NON SERVICE PRODUCT */}
 
-        <FieldText
-          title={t('item.unit_sale_price')}
-          value={salePrice.toString()}
-          onChangeText={setSalePrice}
-          underlineColorAndroid="transparent"
-          placeholder={t('item.unit_sale_price_placeholder')}
-          keyboardType="numeric"
-        />
-      </View>
+          <FieldText
+            title={t('item.unit_sale_price')}
+            value={salePrice.toString()}
+            onChangeText={setSalePrice}
+            underlineColorAndroid="transparent"
+            placeholder={t('item.unit_sale_price_placeholder')}
+            keyboardType="numeric"
+          />
+        </View>
 
-      <View style={[styles.row, { borderBottomWidth: 0 }]}>
-        <Button onPress={handleDeleteItem} color={'#dc2626'}>
-          {t('common.delete')}
-        </Button>
-        <Button onPress={handleSaveItem} color={'#15803d'}>
-          {t('common.save')}
-        </Button>
-      </View>
+        <View style={[styles.row, { borderBottomWidth: 0 }]}>
+          {/* <Button onPress={handleDeleteItem} color={'#f1f1f1'} backgroundColor='#ef4444'>
+            {t('common.delete')}
+          </Button> */}
+          <View style={{ width: "50%" }}>
+            <Button onPress={handleSaveItem} color={'#f1f1f1'} backgroundColor='#47a67f'>
+              {t('common.save')}
+            </Button>
+          </View>
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -206,6 +247,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
+    justifyContent: "center",
     marginVertical: 5,
     marginHorizontal: 20,
   },

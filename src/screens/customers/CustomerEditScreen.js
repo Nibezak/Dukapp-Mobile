@@ -5,6 +5,7 @@ import FieldText from "../../components/FieldText";
 import Button from "../../components/Button";
 
 import CustomerService from "../../services/CustomerService";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function CustomerEditScreen({ navigation, route }) {
   // Retrieve Customer
@@ -44,7 +45,7 @@ export default function CustomerEditScreen({ navigation, route }) {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.row}>
         <FieldText
           autoFocus={true}
@@ -101,14 +102,14 @@ export default function CustomerEditScreen({ navigation, route }) {
         />
       </View>
       <View style={[styles.row, { borderBottomWidth: 0 }]}>
-        <Button onPress={handDeleteCustomer} color={"#dc2626"}>
+        <Button onPress={handDeleteCustomer} color={"#f1f1f1"} backgroundColor={"#ef4444"}>
           {t("common.delete")}
         </Button>
-        <Button onPress={handleSaveCustomer} color={"#15803d"}>
+        <Button onPress={handleSaveCustomer} color={"#f1f1f1"} backgroundColor={'#47a67f'}>
           {t("common.save")}
         </Button>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

@@ -15,13 +15,14 @@ import FloatingButton from "../../components/FloatingButton";
 import SupplierService from "../../services/SupplierService";
 import RightNavSearch from "../../components/RightNavSearch";
 import { SupplierAnimation } from "../../components/SupplierAnimation";
+import { ActivityIndicator } from "react-native-paper";
 
 const AVATAR =
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkz2csrDxNULWyTj-K3rbpC0E8SG2qLZg8gA&usqp=CAU";
 
 export default function CustomerListScreen({ navigation }) {
   const [suppliers, setSuppliers] = useState([]);
-
+  const [showLoading, setShowLoading] = useState(true);
   useFocusEffect(
     useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
@@ -42,7 +43,7 @@ export default function CustomerListScreen({ navigation }) {
     SupplierService.getSuppliers().then((suppliers) => {
       setSuppliers(suppliers);
       console.log(suppliers);
-    });
+    }).then(setShowLoading(false));
 
     setHeaderRight();
   }
@@ -114,7 +115,17 @@ export default function CustomerListScreen({ navigation }) {
       ),
     });
   }
-
+  /**
+   * Show the activity indicator as long as the items are being fetched.
+   * This improves user experience by showing a loader.
+   */
+  if (showLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+      </View>
+    );
+  }
   /**
    * Render Customers in a list
    */

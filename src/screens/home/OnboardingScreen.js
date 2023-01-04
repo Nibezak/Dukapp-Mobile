@@ -10,11 +10,13 @@ import {
   ActivityIndicator,
   View,
   Image,
+  Text,
 } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Picker } from '@react-native-picker/picker';
 import Button from '../../components/Button';
-import InputText from '../../components/InputText';
+import FieldText from '../../components/FieldText';
+import InputSelect from '../../components/InputSelect';
 
 export function OnboardingScreen() {
   /** Access navigation. It is needed for redirection */
@@ -78,6 +80,31 @@ export function OnboardingScreen() {
     });
   }
 
+  var paymentOptions = [
+    { value: "cash", label: "Cash" },
+    { value: "mobile_mtn_momo", label: "MTN MoMo" },
+    { value: "mobile_airtel_money", label: "Airtel Money" },
+    { value: "mobile_mpesa", label: "M-Pesa" },
+    { value: "credit", label: "Credit" },
+    { value: "others", label: "Others" },
+  ];
+
+  var currencyOptions = [
+    { value: "RWF", label: "RWF" },
+    { value: "KES", label: "KES" },
+    { value: "USD", label: "USD" },
+    { value: "UGX", label: "UGX" },
+  ];
+
+  function handleSetPayment(value, index) {
+    const paymentOption = paymentOptions[index];
+    setDefaultPaymentMethod(paymentOption.value);
+  }
+  function handleSetCurrency(value, index) {
+    const currencyOption = currencyOptions[index];
+    setCurrency(currencyOptions.value);
+  }
+
   /**
    * If the state hasn't finished loading, display activity indicator.
    */
@@ -95,112 +122,93 @@ export function OnboardingScreen() {
    */
   return (
     <SafeAreaView style={styles.wrapper}>
-      {/* Business Name */}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Image
-          source={require('./../../../assets/snack-icon.png')}
-          style={{ width: 120, height: 100 }}
+      <ScrollView>
+        {/* Business Name */}
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Image
+            source={require('./../../../assets/snack-icon.png')}
+            style={{ width: 120, height: 100 }}
+          />
+        </View>
+        <FieldText
+          title={t('setting.shop_name')}
+          value={businessName}
+          onChangeText={setBusinessName}
+          underlineColorAndroid="transparent"
+          placeholder={t('setting.shop_name_placeholder')}
         />
-        <TouchableOpacity
-          style={{ marginTop: 40, marginRight: 130 }}
-          onPress={handleSavingSettings}
-        >
-          <AntDesign name="check" size={24} color="#47a67f" />
-        </TouchableOpacity>
-      </View>
-      <InputText
-        title={t('setting.shop_name')}
-        value={businessName}
-        onChangeText={setBusinessName}
-        underlineColorAndroid="transparent"
-        placeholder={t('setting.shop_name_placeholder')}
-      />
 
-      {/* Business Address */}
-      <InputText
-        title={t('setting.address')}
-        value={address}
-        onChangeText={setAddress}
-        underlineColorAndroid="transparent"
-        placeholder={t('setting.address_placeholder')}
-      />
-
-      {/* Business Owner Name */}
-
-      <InputText
-        title={t('setting.shop_owner_name')}
-        value={shopOwnerName}
-        onChangeText={setShopOwnerName}
-        underlineColorAndroid="transparent"
-        placeholder={t('setting.shop_owner_name_placeholder')}
-      />
-
-      {/* Business Email */}
-
-      <InputText
-        title={t('setting.email')}
-        value={email}
-        onChangeText={setEmail}
-        underlineColorAndroid="transparent"
-        placeholder={t('setting.email_placeholder')}
-      />
-
-      {/* Business Currency */}
-
-      {/* <InputText
-        title={t('setting.default_currency')}
-        value={currency}
-        onChangeText={setCurrency}
-        underlineColorAndroid="transparent"
-        placeholder={t('setting.email_placeholder')}
-      /> */}
-
-      {/* Business Default Payment Method */}
-
-      {/* <InputText
-        style={styles.input}
-        title={t('setting.default_payment_method')}
-        value={defaultPaymentMethod}
-        onChangeText={setDefaultPaymentMethod}
-        underlineColorAndroid="transparent"
-        placeholder={t('setting.default_payment_method_placeholder')}
-      /> */}
-
-      <Picker
-        selectedValue={currency}
-        style={styles.picker}
-        itemStyle={styles.pickerItem}
-        prompt="Select a language"
-        mode="dropdown"
-        dialogueBoxStyle={styles.dialogueBox}
-        onValueChange={(itemValue, itemIndex) => setCurrency(itemValue)}
-      >
-        <Picker.Item label="RWF" value="RWF" style={{ color: 'green', fontWeight: 'bold' }} />
-        <Picker.Item label="KES" value="KES" style={{ color: 'orange', fontWeight: 'bold' }} />
-        <Picker.Item label="USD" value="USD" style={{ color: 'green', fontWeight: 'bold' }} />
-      </Picker>
-
-      <Picker
-        selectedValue={defaultPaymentMethod}
-        style={styles.picker}
-        itemStyle={styles.pickerItem}
-        prompt="Select Default Payment Method"
-        mode="dropdown"
-        dialogueBoxStyle={styles.dialogueBox}
-        onValueChange={(itemValue, itemIndex) => setDefaultPaymentMethod(itemValue)}
-      >
-        <Picker.Item label="CASH" value="CASH" style={{ color: 'green', fontWeight: 'bold' }} />
-        <Picker.Item label="MOMO" value="MOMO" style={{ color: 'orange', fontWeight: 'bold' }} />
-        <Picker.Item
-          label="AIRTEL-MONEY"
-          value="AIRTEL-MONEY"
-          style={{ color: 'red', fontWeight: 'bold' }}
+        {/* Business Address */}
+        <FieldText
+          title={t('setting.address')}
+          value={address}
+          onChangeText={setAddress}
+          underlineColorAndroid="transparent"
+          placeholder={t('setting.address_placeholder')}
         />
-        <Picker.Item label="CASH" value="CASH" style={{ color: 'green', fontWeight: 'bold' }} />
-        <Picker.Item label="M-PESA" value="M-PESA" style={{ color: 'green', fontWeight: 'bold' }} />
-        <Picker.Item label="CREDIT" value="CREDIT" style={{ color: 'green', fontWeight: 'bold' }} />
-        <Picker.Item label="OTHERS" value="OTHERS" style={{ color: 'green', fontWeight: 'bold' }} />
-      </Picker>
+
+        {/* Business Owner Name */}
+
+        <FieldText
+          title={t('setting.shop_owner_name')}
+          value={shopOwnerName}
+          onChangeText={setShopOwnerName}
+          underlineColorAndroid="transparent"
+          placeholder={t('setting.shop_owner_name_placeholder')}
+        />
+
+        {/* Business Email */}
+
+        <FieldText
+          title={t('setting.email')}
+          value={email}
+          onChangeText={setEmail}
+          underlineColorAndroid="transparent"
+          keyboardType="email-address"
+          placeholder={t('setting.email_placeholder')}
+        />
+
+        <View style={{ width: "50%" }}>
+          <View style={{ flexDirection: "row", justifyContent: "flex-start", paddingVertical: 10, marginHorizontal: 10 }}>
+            <Text style={{ fontWeight: "semibold", fontSize: 15, color: "#62656b" }}>
+              Default Currency
+            </Text>
+          </View>
+          <InputSelect
+            mode={"dropdown"}
+            selectedValue={currency}
+            style={{ height: 50, width: 150 }}
+            onValueChange={(itemValue, itemIndex) =>
+              setCurrency(itemValue)
+            }
+            options={currencyOptions}
+          />
+        </View>
+
+        <View style={{ width: "70%" }}>
+          <View style={{ flexDirection: "row", justifyContent: "flex-start", paddingVertical: 10, marginHorizontal: 10 }}>
+            <Text style={{ fontWeight: "semibold", fontSize: 15, color: "#62656b" }}>
+              Default Payment Method
+            </Text>
+          </View>
+          <InputSelect
+            mode={"dropdown"}
+            selectedValue={defaultPaymentMethod}
+            style={{ height: 50, width: 150 }}
+            onValueChange={(itemValue, itemIndex) =>
+              setDefaultPaymentMethod(itemValue, itemIndex)
+            }
+            options={paymentOptions}
+          />
+        </View>
+        <View style={{ width: "70%", paddingVertical: 10, marginVertical: 10, flexDirection: "row", justifyContent: "center" }}>
+          <View style={{ width: "50%" }}>
+            <Button onPress={handleSavingSettings} color={"#f1f1f1"} backgroundColor={"#47a67f"}>
+              {t("common.save")}
+            </Button>
+          </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

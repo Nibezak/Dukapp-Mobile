@@ -8,8 +8,8 @@ export function CustomersAnimation() {
 
     return (
         <View style={[styles.container, { width }]}>
-            <Image source={require('../../assets/WelcomeAnimation/WelcomeCustomers.png')} style={[styles.image, { width, resizeMode: 'contain' }]} />
-            <View style={{ flex: 0.7, backgroundColor: "white" }}>
+            <View style={{ flex: 1, backgroundColor: "white" }}>
+                <Image source={require('../../assets/WelcomeAnimation/WelcomeCustomers.png')} style={[styles.image, { width, resizeMode: 'contain' }]} />
                 <Text style={styles.title}>
                     Keep your Customers
                 </Text>

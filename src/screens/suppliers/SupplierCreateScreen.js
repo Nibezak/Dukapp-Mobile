@@ -5,6 +5,7 @@ import FieldText from "../../components/FieldText";
 import Button from "../../components/Button";
 
 import SupplierService from "../../services/SupplierService";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function SupplierCreateScreen({ navigation }) {
   const [companyName, setCompanyName] = useState("");
@@ -36,7 +37,7 @@ export default function SupplierCreateScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <KeyboardAvoidingView mode="padding">
         <View style={styles.row}>
           <FieldText
@@ -105,14 +106,14 @@ export default function SupplierCreateScreen({ navigation }) {
         </View>
       </KeyboardAvoidingView>
       <View style={[styles.row, { marginVertical: 10 }]}>
-        <Button onPress={() => navigation.goBack()} color={"#f59e0b"}>
+        <Button onPress={() => navigation.goBack()} color={"#f1f1f1"} backgroundColor={'#f59e0b'}>
           {t("common.cancel")}
         </Button>
-        <Button onPress={handleSaveSupplier} color={"#15803d"}>
+        <Button onPress={handleSaveSupplier} color={"#f1f1f1"} backgroundColor={'#47a67f'}>
           {t("common.save")}
         </Button>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

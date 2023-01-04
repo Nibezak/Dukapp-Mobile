@@ -7,6 +7,7 @@ import {
     FlatList,
     Keyboard,
     Dimensions,
+    ActivityIndicator,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { t } from "i18n-js";
@@ -29,7 +30,7 @@ export default function SaleReceiptsScreen({ navigation, route }) {
     const [customer, setCustomer] = useState({ names: "Guest " });
     const [lastOrder, setLastOrder] = useState({});
     const [items, setItems] = useState([]);
-
+    const [showLoading, setShowLoading] = useState(true);
     useFocusEffect(
         useCallback(() => {
             const task = InteractionManager.runAfterInteractions(() => {
@@ -58,7 +59,7 @@ export default function SaleReceiptsScreen({ navigation, route }) {
      * Get Orders from DB
      */
     async function getItems() {
-        ItemService.getItems().then(setItems);
+        ItemService.getItems().then(setItems).then(() => setShowLoading(false));
     }
 
 
@@ -73,6 +74,13 @@ export default function SaleReceiptsScreen({ navigation, route }) {
 
     const keyExtractor = useCallback((item, index) => index.toString(), []);
 
+    if (showLoading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+            </View>
+        );
+    }
     /**
      * Render to the screen
      */

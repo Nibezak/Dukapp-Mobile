@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, KeyboardAvoidingView } from "react-native";
+import React, { useState } from "react";
+import { View, StyleSheet } from "react-native";
 import { t } from "i18n-js";
-import InputText from "../../components/InputText";
+import FieldText from "../../components/FieldText";
 import Button from "../../components/Button";
 import SupplierService from "../../services/SupplierService";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function SupplierEditScreen({ navigation, route }) {
   // Retrieve Customer
@@ -44,9 +45,9 @@ export default function SupplierEditScreen({ navigation, route }) {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.row}>
-        <InputText
+        <FieldText
           autoFocus={true}
           value={companyName}
           title={t("supplier.comany_name")}
@@ -56,7 +57,7 @@ export default function SupplierEditScreen({ navigation, route }) {
         />
       </View>
       <View style={styles.row}>
-        <InputText
+        <FieldText
           value={phone}
           title={t("supplier.phone")}
           onChangeText={setPhone}
@@ -66,7 +67,7 @@ export default function SupplierEditScreen({ navigation, route }) {
         />
       </View>
       <View style={styles.row}>
-        <InputText
+        <FieldText
           value={email}
           title={t("supplier.email")}
           onChangeText={setEmail}
@@ -76,7 +77,7 @@ export default function SupplierEditScreen({ navigation, route }) {
         />
       </View>
       <View style={styles.row}>
-        <InputText
+        <FieldText
           value={tin}
           title={t("supplier.tin")}
           onChangeText={setTin}
@@ -85,7 +86,7 @@ export default function SupplierEditScreen({ navigation, route }) {
         />
       </View>
       <View style={styles.row}>
-        <InputText
+        <FieldText
           value={address}
           title={t("supplier.address")}
           onChangeText={setAddress}
@@ -94,7 +95,7 @@ export default function SupplierEditScreen({ navigation, route }) {
         />
       </View>
       <View style={styles.row}>
-        <InputText
+        <FieldText
           value={note}
           title={t("supplier.note")}
           numberOfLines={5}
@@ -110,14 +111,14 @@ export default function SupplierEditScreen({ navigation, route }) {
         />
       </View>
       <View style={[styles.row, { borderBottomWidth: 0 }]}>
-        <Button onPress={handDeleteSupplier} color={"#dc2626"}>
+        <Button onPress={handDeleteSupplier} color={"#f1f1f1"} backgroundColor={'#ef4444'}>
           {t("common.delete")}
         </Button>
-        <Button onPress={handleSaveSupplier} color={"#15803d"}>
+        <Button onPress={handleSaveSupplier} color={"#f1f1f1"} backgroundColor={'#47a67f'}>
           {t("common.save")}
         </Button>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

@@ -8,8 +8,8 @@ export function WelcomeAnimation() {
 
     return (
         <View style={[styles.container, { width }]}>
-            <Image source={require('../../assets/WelcomeAnimation/welcome.png')} style={[styles.image, { width, resizeMode: 'contain' }]} />
-            <View style={{ flex: 0.5, backgroundColor: "white", paddingHorizontal: 3 }}>
+            <View style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 3 }}>
+                <Image source={require('../../assets/WelcomeAnimation/welcome.png')} style={[styles.image, { width, resizeMode: 'contain' }]} />
                 <Text style={styles.title}>
                     Quick and easy Data management
                 </Text>

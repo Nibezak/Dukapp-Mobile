@@ -77,17 +77,17 @@ export default function OrderPaymentScreen({ navigation, route }) {
       <View style={styles.row}>
         <FieldText
           defaultValue={order.total.toString()}
-          title={t("order.amount", [{ currency: currency }])}
+          title={"amount in " + currency}
           onChangeText={setAmount}
           underlineColorAndroid="transparent"
           keyboardType="numeric"
         />
       </View>
       <View style={[styles.row, { borderBottomWidth: 0 }]}>
-        <Button onPress={() => navigation.goBack()} color={"#f59e0b"}>
+        <Button onPress={() => navigation.goBack()} color={"#f1f1f1"} backgroundColor={'#f59e0b'}>
           {"Cancel"}
         </Button>
-        <Button onPress={handleAddPayment} color={"#15803d"}>
+        <Button onPress={handleAddPayment} color={"#f1f1f1"} backgroundColor={'#47a67f'}>
           {"Save"}
         </Button>
       </View>

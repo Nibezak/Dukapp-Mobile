@@ -135,6 +135,8 @@ export const generalSettings = [
           { key: "USD", title: "USD" },
           { key: "RWF", title: "RWF" },
           { key: "KES", title: "KES" },
+          { key: "UGX", title: "UGX" },
+
         ],
       },
       {
@@ -230,8 +232,8 @@ export const generalSettings = [
     options: [],
   },
   {
-    title: "Support us",
-    description: "Support Grow Dukapp",
+    title: "Support us dukapp",
+    description: "support the dukapp community and invest",
     icon: "people",
     key: "receipt",
     value: "receipt",

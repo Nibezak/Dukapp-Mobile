@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { InteractionManager, ActivityIndicator, View } from 'react-native';
 import { t } from 'i18n-js';
-import { Text, Title } from 'react-native-paper';
+import { Title } from 'react-native-paper';
 import { money, number } from '../../helpers/Numbers';
 import { getSetting } from '../../models/AsyncStorage';
 import RevenueBarChart from './RevenueBarChart';
@@ -36,6 +36,7 @@ export default function SummaryReportScreen() {
   ]);
 
   // Stock Summaries
+
   const [inStock, setInStock] = useState(0);
   const [lowStock, setLowStock] = useState(0);
   const [fastMoving, setFastMoving] = useState(0);
@@ -43,8 +44,8 @@ export default function SummaryReportScreen() {
   const [stockSummaries, setStockSummaries] = useState([
     { color: '#4ade80', title: 'In Stock ', value: inStock, route: 'In Stock' },
     { color: '#facc15', title: 'Low Stock', value: lowStock, route: 'Low Stock' },
-    { color: '#84cc16', title: 'Fast Moving', value: fastMoving },
-    { color: '#fb923c', title: 'Slow Moving', value: slowMoving },
+    { color: '#84cc16', title: 'Fast Moving', value: fastMoving, },
+    { color: '#fb923c', title: 'Slow Moving', value: slowMoving, },
   ]);
 
   useFocusEffect(
@@ -52,6 +53,7 @@ export default function SummaryReportScreen() {
       const task = InteractionManager.runAfterInteractions(() => {
         // Expensive task
         refreshReportByDate(startDate, endDate);
+
       });
     }, [])
   );
