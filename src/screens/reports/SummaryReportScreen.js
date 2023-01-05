@@ -30,8 +30,8 @@ export default function SummaryReportScreen() {
   const [byMobile, setByMobile] = useState(0);
   const [byCredit, setByCredit] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState([
-    { color: '#718096', title: 'By Cash', value: byCash, },
-    { color: '#718096', title: 'By Mobile', value: byMobile },
+    { color: '#718096', title: 'By Cash', value: byCash, route: 'By Cash' },
+    { color: '#718096', title: 'By Mobile', value: byMobile, route: 'By Mobile' },
     { color: '#718096', title: 'All', value: byCredit, route: 'Sale Receipt' },
   ]);
 
@@ -44,8 +44,8 @@ export default function SummaryReportScreen() {
   const [stockSummaries, setStockSummaries] = useState([
     { color: '#4ade80', title: 'In Stock ', value: inStock, route: 'In Stock' },
     { color: '#facc15', title: 'Low Stock', value: lowStock, route: 'Low Stock' },
-    { color: '#84cc16', title: 'Fast going', value: fastMoving, route: 'Insights' },
-    { color: '#fb923c', title: 'Slow going', value: slowMoving, route: 'Insights' },
+    { color: '#84cc16', title: 'Fast going', value: fastMoving, route: 'Fast Going' },
+    { color: '#fb923c', title: 'Slow going', value: slowMoving, route: 'Slow Going' },
   ]);
 
   useFocusEffect(

@@ -56,6 +56,9 @@ import { Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
 
 import SideBar from '../components/SideBar';
 import LowStockScreen from '../screens/items/LowStockScreen';
+import { FastGoingScreen } from '../screens/reports/FastGoingScreen';
+import { ByCashScreen } from '../screens/reports/ByCashScreen';
+import { ByMobileScreen } from '../screens/reports/ByMobileScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -266,6 +269,9 @@ export function NavStack() {
           title: 'Low Stock',
         }}
       />
+      <Stack.Screen name="In Stock" component={SummaryReportScreen} options={{
+        title: 'In Stock',
+      }} />
       {/** Customer*/}
       <Stack.Screen
         name="New Customer"
@@ -309,6 +315,16 @@ export function NavStack() {
       />
       {/** Reports*/}
       <Stack.Screen name="Insights" component={SummaryReportScreen} />
+      <Stack.Screen name="Fast Going" component={FastGoingScreen} options={{
+        title: 'Fast Going',
+      }} />
+      <Stack.Screen name="By Cash" component={ByCashScreen} options={{
+        title: 'By Cash',
+      }} />
+      <Stack.Screen name="By Mobile" component={ByMobileScreen} options={{
+        title: 'By Mobile',
+      }} />
+
       {/** Settings*/}
       <Stack.Screen name="General Settings" component={SettingGeneralScreen} />
       <Stack.Screen name="Setting Edit" component={SettingEditScreen} />

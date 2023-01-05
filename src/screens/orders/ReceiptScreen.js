@@ -1,13 +1,14 @@
-import React, { useEffect, useState, useContext } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import React, { useEffect, useState, useContext, useCallback } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Image, InteractionManager } from "react-native";
 import ZigzagView from "react-native-zigzag-view";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { t } from "i18n-js";
 import { AuthContext } from "../../context/AuthProvider";
 import { number } from "../../helpers/Numbers";
 import CustomerService from "../../services/CustomerService";
 import { getSetting } from "../../models/AsyncStorage";
 import * as Print from 'expo-print';
+import { useFocusEffect } from "@react-navigation/native";
 export default function ReceiptScreen({ navigation, route }) {
   const { user } = useContext(AuthContext);
   const order = route.params.order;
@@ -17,6 +18,17 @@ export default function ReceiptScreen({ navigation, route }) {
   const [phone, setPhone] = useState(null);
   const [businessName, setBusinessName] = useState(null);
   const [currency, setCurrency] = useState(null);
+  const [tin, setTin] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [person, setPerson] = useState(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      const task = InteractionManager.runAfterInteractions(() => {
+        retrieveSetting();
+      });
+    }, [])
+  );
 
   useEffect(() => {
     // update nav
@@ -42,7 +54,6 @@ export default function ReceiptScreen({ navigation, route }) {
 
     // Fetch Customer
     getOrderCustomer();
-
     retrieveSetting();
   }, []);
 
@@ -54,6 +65,10 @@ export default function ReceiptScreen({ navigation, route }) {
     getSetting("contact_address").then(setAddress);
     getSetting("contact_phone").then(setPhone);
     getSetting("app_default_currency").then(setCurrency);
+    getSetting("TIN").then(setTin);
+    getSetting("contact_person").then(setPerson);
+    getSetting("contact_email").then(setEmail)
+
   }
 
   /**
@@ -75,6 +90,8 @@ export default function ReceiptScreen({ navigation, route }) {
         throw error;
       });
   }
+  const dayjs = require('dayjs');
+  const date = order.created_at;
   const html = `
   <html>
     <head>
@@ -196,11 +213,11 @@ export default function ReceiptScreen({ navigation, route }) {
           <table>
             <tr>
               <td class="title">
-               <img src="./images/logo.png" alt="Company logo" style="width: 100%; max-width: 300px" />
+                <img src="https://pbs.twimg.com/profile_images/1499441965762547712/V7a_I9qV_400x400.jpg" style="width:30%; max-width:300px;">
               </td>
   
               <td>
-                Invoice #: 123<br> Created: January 1, 2015<br> Due: February 1, 2015
+                Invoice #: S0D${order.id}<br> Created: ${dayjs(date).format('DD MMM YYYY')}<br> Time: ${dayjs(date).format('h:mm A')}
               </td>
             </tr>
           </table>
@@ -212,11 +229,13 @@ export default function ReceiptScreen({ navigation, route }) {
           <table>
             <tr>
               <td>
-                Sparksuite, Inc.<br> 12345 Sunny Road<br> Sunnyville, CA 12345
+                ${businessName}.<br> ${address}<br> 
+                ${tin}<br>
+              Customer:   ${customer.names}
               </td>
   
               <td>
-                Acme Corp.<br> John Doe<br> john@example.com
+                ${phone}}<br> ${person}<br> ${email}
               </td>
             </tr>
           </table>
@@ -225,37 +244,29 @@ export default function ReceiptScreen({ navigation, route }) {
   
       <tr class="heading">
         <td colspan="3">Payment Method</td>
-        <td>Check #</td>
+        <td>${payment.title} #</td>
       </tr>
   
       <tr class="details">
-        <td colspan="3">Check</td>
-        <td>1000</td>
+        <td colspan="3">Invoice #: S0D${order.id}</td>
+        <td style="color: #47a67f; font-weight: semibold; font-size: large">COMPLETED</td>
       </tr>
   
       <tr class="heading">
-        <td>Item</td>
-        <td>Unit Cost</td>
+        <td colspan="2">Item</td>
         <td>Quantity</td>
         <td>Price</td>
       </tr>
   
-      <tr class="item" v-for="item in items">
-        <td><input v-model="item.description" /></td>
-        <td>$<input type="number" v-model="item.price" /></td>
-        <td><input type="number" v-model="item.quantity" /></td>
-        <td>RWF</td>
-      </tr>
-  
-      <tr>
-        <td colspan="4">
-          <button class="btn-add-row" @click="addRow">Add row</button>
-        </td>
-      </tr>
+      <tr class="item">
+      <td colspan="2">Web Design</td>
+      <td>x 1</td>
+      <td>$300.00</td>
+  </tr>
   
       <tr class="total">
         <td colspan="3"></td>
-        <td>Total: RWF</td>
+        <td style="font-weight: bold"> Total: ${number(order.total)}</td>
       </tr>
     </table>
   </div>
@@ -346,9 +357,7 @@ export default function ReceiptScreen({ navigation, route }) {
             <Text style={styles.totalLabel}> {t("receipt.total")}</Text>
             <Text style={styles.totalAmount}>{number(order.total)}</Text>
           </View>
-          <View style={{ flexDirection: "row", justifyContent: "flex-end", paddingVertical: 10, marginVertical: 10 }}>
-            <Text>Powered by Dukapp <MaterialIcons name="copyright" size={15} color="black" /></Text>
-          </View>
+          <View></View>
         </View>
       </ZigzagView>
     </View>
