@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react';
 import { InteractionManager, ActivityIndicator, View } from 'react-native';
-import { t } from 'i18n-js';
-import { Title } from 'react-native-paper';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import React, { useCallback, useEffect, useState } from 'react';
+import ReportService from './../../services/ReportService';
 import { money, number } from '../../helpers/Numbers';
 import { getSetting } from '../../models/AsyncStorage';
-import RevenueBarChart from './RevenueBarChart';
-import ReportService from './../../services/ReportService';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { RenderReportItem } from './SummaryReportItem';
+import RevenueBarChart from './RevenueBarChart';
+import { Title } from 'react-native-paper';
+import { t } from 'i18n-js';
 
 export default function SummaryReportScreen() {
   const [currency, setCurrency] = useState(null);
@@ -53,7 +53,6 @@ export default function SummaryReportScreen() {
       const task = InteractionManager.runAfterInteractions(() => {
         // Expensive task
         refreshReportByDate(startDate, endDate);
-
       });
     }, [])
   );
@@ -171,7 +170,6 @@ export default function SummaryReportScreen() {
               value={money(item.value)}
               titleColor={item.color}
               route={item.route}
-
             />
           ))}
         </View>
@@ -195,7 +193,6 @@ export default function SummaryReportScreen() {
               titleColor={item.color}
               key={keyExtractor(index)}
               route={item.route}
-
             />
           ))}
         </View>

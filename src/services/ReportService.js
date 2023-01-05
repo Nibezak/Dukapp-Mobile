@@ -110,7 +110,7 @@ class ReportService {
     Database.execute(
       `SELECT
         name,
-        sum(quantity) slow_moving_items   
+        sum(quantity) fast_moving_items   
       FROM order_items
       WHERE (substr(order_items.created_at, 0, 11) BETWEEN ? AND ?)
       GROUP BY name
@@ -118,7 +118,8 @@ class ReportService {
       `,
       [startDate, endDate],
       (result) => {
-        setStock(result[0].fast_moving_items);
+        setStock(result.length);
+        return result.length;
       }
     );
   }
@@ -142,6 +143,7 @@ class ReportService {
       [startDate, endDate],
       (result) => {
         setStock(result.length);
+        return result.length;
       }
     );
   }
@@ -190,6 +192,32 @@ class ReportService {
         });
       }
     );
+  }
+
+  /**
+   * Get sales order by payment
+   *
+   * @param {string} paymentMethod
+   */
+  async getSaleOrdersByPayment(paymentMethod) {
+    {
+      /** If others is passed as method e */
+      return Database.execute(
+        `SELECT
+            *
+          FROM orders
+          WHERE orders.order_type = ? AND 
+                LOWER(orders.payments) LIKE '%` +
+          paymentMethod +
+          `%';
+          `,
+        ['sale'],
+
+        (results) => {
+          return results;
+        }
+      );
+    }
   }
 }
 
