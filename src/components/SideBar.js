@@ -1,6 +1,6 @@
 import { AntDesign, FontAwesome5, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity, Share } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { getSetting } from "../models/AsyncStorage";
 import { useNavigation } from "@react-navigation/native";
@@ -20,7 +20,6 @@ export default function SideBar() {
     const [selectedId, setSelectedId] = useState(null);
     const [businessName, setBusinessName] = useState(null);
     const [currency, setCurrency] = useState(null);
-
     const listArrayItem = [
         { icon: HomeIcon, title: 'Home', route: 'HomeScreen' },
         { icon: SupplierIcon, title: 'Suppliers', route: 'Supplier List' },
@@ -50,12 +49,38 @@ export default function SideBar() {
             order_type: 'sale',
         })
     }
+
+    // share a link to other friends
+
+    const onShare = async () => {
+        try {
+            await Share.share({
+                message: 'https://twitter.com/DukApp_',
+            });
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
+
     const renderItem = ({ item }) => {
         const backgroundColor = item.title === selectedId ? "white" : "white";
         const color = item.title === selectedId ? 'black' : 'black';
         return (
             <Item
                 onPress={() => navigate(item)}
+                title={item.title}
+                backgroundColor={backgroundColor}
+                color={color}
+                icon={item.icon} />
+        );
+    }
+
+    const renderLinks = ({ item }) => {
+        const backgroundColor = item.title === selectedId ? "white" : "white";
+        const color = item.title === selectedId ? 'black' : 'black';
+        return (
+            <Item
+                onPress={onShare}
                 title={item.title}
                 backgroundColor={backgroundColor}
                 color={color}
@@ -92,7 +117,7 @@ export default function SideBar() {
             <View style={{ flex: 0.25 }}>
                 <FlatList
                     data={bottomListItems}
-                    renderItem={renderItem}
+                    renderItem={renderLinks}
                 />
             </View>
         </View >

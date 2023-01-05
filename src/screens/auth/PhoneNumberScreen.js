@@ -13,6 +13,7 @@ import ButtonFilled from "../../components/ButtonFilled";
 import PhoneInput from "react-native-phone-number-input";
 import { AuthContext } from "../../context/AuthProvider";
 import { sendOTP } from "../../api/VerifyPhone";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function PhoneNumberScreen({ navigation }) {
   const [value, setValue] = useState("");
@@ -41,11 +42,9 @@ export default function PhoneNumberScreen({ navigation }) {
 
   return (
     <>
-      <View style={styles.container}>
-        <SafeAreaView style={styles.wrapper}>
+      <ScrollView style={styles.container}>
+        <View style={styles.wrapper}>
           <View style={styles.welcome}>
-            {/* <Text style={styles.appName}>{"Dukapp"}</Text>
-             */}
             <Image source={require('./../../../assets/snack-icon.png')} style={styles.appName} />
             <Text style={styles.pitch}>{t("auth.welcome_to_dukapp_app")}</Text>
             <Text style={styles.verifyPhone}>
@@ -96,8 +95,8 @@ export default function PhoneNumberScreen({ navigation }) {
           <ButtonFilled onPress={handleSendSmsVerification}>
             {t("auth.accept_tc_and_continue")}
           </ButtonFilled>
-        </SafeAreaView>
-      </View>
+        </View>
+      </ScrollView>
     </>
   );
 }

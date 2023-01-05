@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import ZigzagView from "react-native-zigzag-view";
 import { MaterialIcons } from "@expo/vector-icons";
 import { t } from "i18n-js";
@@ -7,8 +7,7 @@ import { AuthContext } from "../../context/AuthProvider";
 import { number } from "../../helpers/Numbers";
 import CustomerService from "../../services/CustomerService";
 import { getSetting } from "../../models/AsyncStorage";
-
-
+import * as Print from 'expo-print';
 export default function ReceiptScreen({ navigation, route }) {
   const { user } = useContext(AuthContext);
   const order = route.params.order;
@@ -26,7 +25,7 @@ export default function ReceiptScreen({ navigation, route }) {
       headerRight: () => (
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity
-            onPress={() => alert("Printing To Be Activated")}
+            onPress={print}
             style={{ paddingRight: 20 }}
           >
             <MaterialIcons name="print" size={24} />
@@ -35,7 +34,7 @@ export default function ReceiptScreen({ navigation, route }) {
             onPress={() => alert("Sharing To Be Activated")}
             style={{ paddingRight: 20 }}
           >
-            <MaterialIcons name="share" size={24} />
+            <MaterialIcons name="share" size={24} color={'#47a67f'} />
           </TouchableOpacity>
         </View>
       ),
@@ -76,6 +75,199 @@ export default function ReceiptScreen({ navigation, route }) {
         throw error;
       });
   }
+  const html = `
+  <html>
+    <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    </head>
+    <style>
+    .invoice-box {
+      max-width: 800px;
+      margin: auto;
+      padding: 30px;
+      border: 1px solid #eee;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+      font-size: 16px;
+      line-height: 24px;
+      font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+      color: #555;
+    }
+    
+    .invoice-box table {
+      width: 100%;
+      line-height: inherit;
+      text-align: left;
+    }
+    
+    .invoice-box table td {
+      padding: 5px;
+      vertical-align: top;
+    }
+    
+    .invoice-box table tr td:nth-child(n + 2) {
+      text-align: right;
+    }
+    
+    .invoice-box table tr.top table td {
+      padding-bottom: 20px;
+    }
+    
+    .invoice-box table tr.top table td.title {
+      font-size: 45px;
+      line-height: 45px;
+      color: #333;
+    }
+    
+    .invoice-box table tr.information table td {
+      padding-bottom: 40px;
+    }
+    
+    .invoice-box table tr.heading td {
+      background: #eee;
+      border-bottom: 1px solid #ddd;
+      font-weight: bold;
+    }
+    
+    .invoice-box table tr.details td {
+      padding-bottom: 20px;
+    }
+    
+    .invoice-box table tr.item td {
+      border-bottom: 1px solid #eee;
+    }
+    
+    .invoice-box table tr.item.last td {
+      border-bottom: none;
+    }
+    
+    .invoice-box table tr.item input {
+      padding-left: 5px;
+    }
+    
+    .invoice-box table tr.item td:first-child input {
+      margin-left: -5px;
+      width: 100%;
+    }
+    
+    .invoice-box table tr.total td:nth-child(2) {
+      border-top: 2px solid #eee;
+      font-weight: bold;
+    }
+    
+    .invoice-box input[type="number"] {
+      width: 60px;
+    }
+    
+    @media only screen and (max-width: 600px) {
+      .invoice-box table tr.top table td {
+        width: 100%;
+        display: block;
+        text-align: center;
+      }
+    
+      .invoice-box table tr.information table td {
+        width: 100%;
+        display: block;
+        text-align: center;
+      }
+    }
+    
+    /** RTL **/
+    .rtl {
+      direction: rtl;
+      font-family: Tahoma, "Helvetica Neue", "Helvetica", Helvetica, Arial,
+        sans-serif;
+    }
+    
+    .rtl table {
+      text-align: right;
+    }
+    
+    .rtl table tr td:nth-child(2) {
+      text-align: left;
+    }
+    
+    </style>
+    <body style="text-align: center;">
+    <div class="invoice-box">
+    <table cellpadding="0" cellspacing="0">
+      <tr class="top">
+        <td colspan="4">
+          <table>
+            <tr>
+              <td class="title">
+               <img src="./images/logo.png" alt="Company logo" style="width: 100%; max-width: 300px" />
+              </td>
+  
+              <td>
+                Invoice #: 123<br> Created: January 1, 2015<br> Due: February 1, 2015
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+  
+      <tr class="information">
+        <td colspan="4">
+          <table>
+            <tr>
+              <td>
+                Sparksuite, Inc.<br> 12345 Sunny Road<br> Sunnyville, CA 12345
+              </td>
+  
+              <td>
+                Acme Corp.<br> John Doe<br> john@example.com
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+  
+      <tr class="heading">
+        <td colspan="3">Payment Method</td>
+        <td>Check #</td>
+      </tr>
+  
+      <tr class="details">
+        <td colspan="3">Check</td>
+        <td>1000</td>
+      </tr>
+  
+      <tr class="heading">
+        <td>Item</td>
+        <td>Unit Cost</td>
+        <td>Quantity</td>
+        <td>Price</td>
+      </tr>
+  
+      <tr class="item" v-for="item in items">
+        <td><input v-model="item.description" /></td>
+        <td>$<input type="number" v-model="item.price" /></td>
+        <td><input type="number" v-model="item.quantity" /></td>
+        <td>RWF</td>
+      </tr>
+  
+      <tr>
+        <td colspan="4">
+          <button class="btn-add-row" @click="addRow">Add row</button>
+        </td>
+      </tr>
+  
+      <tr class="total">
+        <td colspan="3"></td>
+        <td>Total: RWF</td>
+      </tr>
+    </table>
+  </div>
+    </body>
+  </html>
+  `;
+  const print = async () => {
+    // On iOS/android prints the given html. On web prints the HTML from the current page.
+    await Print.printAsync({
+      html,
+    });
+  };
 
   return (
     <View>
@@ -84,7 +276,11 @@ export default function ReceiptScreen({ navigation, route }) {
           padding: 20,
         }}
       >
-        <Text>Powered by Dukapp <MaterialIcons name="copyright" size={15} color="black" /></Text>
+        <Image
+          source={require('./../../../assets/snack-icon.png')}
+          style={{ width: 120, height: 100 }}
+        />
+
         {/** RECEIPT HEADER */}
         <View style={styles.shopDetailsContainer}>
           <Text style={styles.shopName}>{businessName}</Text>
@@ -149,6 +345,9 @@ export default function ReceiptScreen({ navigation, route }) {
           <View style={styles.footer}>
             <Text style={styles.totalLabel}> {t("receipt.total")}</Text>
             <Text style={styles.totalAmount}>{number(order.total)}</Text>
+          </View>
+          <View style={{ flexDirection: "row", justifyContent: "flex-end", paddingVertical: 10, marginVertical: 10 }}>
+            <Text>Powered by Dukapp <MaterialIcons name="copyright" size={15} color="black" /></Text>
           </View>
         </View>
       </ZigzagView>

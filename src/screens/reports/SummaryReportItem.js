@@ -12,12 +12,14 @@ export function RenderReportItem({ value, title, titleColor, route }) {
 
   return (
     <View style={styles.card}>
-      <TouchableOpacity onPress={() => navigation.navigate(route, { order_type: 'sale' })}>
+      <TouchableOpacity onPress={() => navigation.navigate(route)}>
         <View style={styles.rowText}>
           <Text style={styles.value}>{value}</Text>
         </View>
-        <View style={styles.rowText}>
-          <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
+        <View style={styles.row}>
+          <View style={styles.rowText}>
+            <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
+          </View>
         </View>
       </TouchableOpacity>
     </View>
@@ -34,9 +36,12 @@ const styles = {
   card: {
     flex: 1,
     padding: 10,
-    // backgroundColor: '#f7fafc',
-  },
+    justifyContent: "center",
 
+  },
+  title: {
+    width: 70
+  },
   value: {
     textAlign: 'center',
     fontWeight: 'semi-bold',
