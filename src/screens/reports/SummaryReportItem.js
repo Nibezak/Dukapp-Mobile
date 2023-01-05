@@ -12,7 +12,7 @@ export function RenderReportItem({ value, title, titleColor, route }) {
 
   return (
     <View style={styles.card}>
-      <TouchableOpacity onPress={() => navigation.navigate(route)}>
+      <TouchableOpacity onPress={() => navigation.navigate(route, { order_type: 'sale' })}>
         <View style={styles.rowText}>
           <Text style={styles.value}>{value}</Text>
         </View>

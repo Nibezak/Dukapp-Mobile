@@ -3,19 +3,13 @@ import {
     StyleSheet,
     View,
     InteractionManager,
-    KeyboardAvoidingView,
     FlatList,
-    Keyboard,
     Dimensions,
     ActivityIndicator,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { t } from "i18n-js";
-import InputSend from "../../components/InputSend";
-import SuggestionButton from "../../components/SuggestionButton";
 import ItemService from "../../services/ItemService";
 import OrderService from "../../services/OrderService";
-import RenderOrder from "../orders/RenderOrder";
 import { ReceiptAnimation } from "../../components/ReceiptAnimation";
 import RenderReceipt from "../orders/RenderReceipt";
 
@@ -23,12 +17,8 @@ const windowHeight = Dimensions.get('window').height;
 
 // Constants
 export default function SaleReceiptsScreen({ navigation, route }) {
-    const [typing, setTyping] = useState("");
     const [orders, setOrders] = useState([]);
-    const [order, setOrder] = useState(route.params.order);
     const [orderType, setOrderType] = useState(route.params.order_type);
-    const [customer, setCustomer] = useState({ names: "Guest " });
-    const [lastOrder, setLastOrder] = useState({});
     const [items, setItems] = useState([]);
     const [showLoading, setShowLoading] = useState(true);
     useFocusEffect(
@@ -49,17 +39,19 @@ export default function SaleReceiptsScreen({ navigation, route }) {
     /**
      * Fetch Orders
      */
-    function refreshOrders() {
-        OrderService.ordersWithItems(setOrders, orderType).then((results) => {
-            setLastOrder(results[results.length - 1]);
-        });
-    }
 
     /**
      * Get Orders from DB
      */
+
     async function getItems() {
         ItemService.getItems().then(setItems).then(() => setShowLoading(false));
+    }
+
+    function refreshOrders() {
+        OrderService.ordersWithItems(setOrders, orderType).then((results) => {
+            setLastOrder(results[results.length - 1]).then(() => setShowLoading(false));
+        });
     }
 
 
@@ -72,8 +64,13 @@ export default function SaleReceiptsScreen({ navigation, route }) {
     ));
 
 
+
     const keyExtractor = useCallback((item, index) => index.toString(), []);
 
+    /**
+     * Show the activity indicator as long as the items are being fetched.
+     * This improves user experience by showing a loader.
+     */
     if (showLoading) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -81,6 +78,8 @@ export default function SaleReceiptsScreen({ navigation, route }) {
             </View>
         );
     }
+
+
     /**
      * Render to the screen
      */

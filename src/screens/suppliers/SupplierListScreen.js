@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
-import InputText from "../../components/InputText";
+import FieldText from "../../components/FieldText";
 import FloatingButton from "../../components/FloatingButton";
 import SupplierService from "../../services/SupplierService";
 import RightNavSearch from "../../components/RightNavSearch";
@@ -89,7 +89,7 @@ export default function CustomerListScreen({ navigation }) {
   function activateSearch() {
     navigation.setOptions({
       headerTitle: () => (
-        <InputText
+        <FieldText
           autoFocus={true}
           placeholder={"Search..."}
           onChangeText={searchSuppliers}

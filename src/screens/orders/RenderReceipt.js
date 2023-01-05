@@ -34,18 +34,7 @@ export default function RenderReceipt({ item }) {
      * Function to destroy an existing
      * Order
      */
-    async function handleDeleteOrder() {
-        /** Pass order to be deleted */
-        Order.destroy(order.id)
-            .then((result) => {
-                refreshOrders();
-            }).then((result) => {
-                ToastAndroid.show(t('welcome.order_deleted'), ToastAndroid.SHORT);
-            })
-            .catch((error) => {
-                console.log(error.message);
-            });
-    }
+
     async function refreshOrders() {
         return OrderService.ordersWithItems(setOrders, orderType, order.id, 8);
     }
@@ -58,7 +47,6 @@ export default function RenderReceipt({ item }) {
     const date = order.created_at;
     return (
         <TouchableOpacity
-            onLongPress={handleDeleteOrder}
             key={order.id}
             activeOpacity={0.8}
             onPress={() =>

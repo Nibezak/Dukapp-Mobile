@@ -39,10 +39,11 @@ class Order extends Model {
 
   /**
    * Create order table
-   *  @params
+   *  @params 
    *  1. payments = {method, title, transaction_id, amount, currency, date_paid}
    *  2. status = processing, completed, cancelled, suspended
    */
+
   async createTable() {
     return this.db.statement(
       `CREATE TABLE IF NOT EXISTS ` +

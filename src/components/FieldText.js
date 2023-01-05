@@ -28,6 +28,7 @@ export default function InputText(props) {
       ref={props.ref}
       autoFocus={props.autoFocus}
       defaultValue={props.defaultValue}
+      placeholder={props.placeholder}
       underlineColorAndroid={props.underlineColorAndroid}
       keyboardType={props.keyboardType}
     />

@@ -20,9 +20,9 @@ export default function SummaryReportScreen() {
   const [profit, setProfit] = useState(0);
   const [onCredit, setOnCredit] = useState(0);
   const [revenueSummaries, setRevenueSummaries] = useState([
-    { color: '#14b8a6', title: 'Sales', value: sales },
-    { color: '#4ade80', title: 'Profit', value: profit },
-    { color: '#f1c40f', title: 'On Credit', value: onCredit },
+    { color: '#14b8a6', title: 'Sales', value: sales, route: 'Insights' },
+    { color: '#4ade80', title: 'Profit', value: profit, route: 'Insights' },
+    { color: '#f1c40f', title: 'On Credit', value: onCredit, route: 'Insights' },
   ]);
 
   // Payment method summaries
@@ -30,9 +30,9 @@ export default function SummaryReportScreen() {
   const [byMobile, setByMobile] = useState(0);
   const [byCredit, setByCredit] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState([
-    { color: '#718096', title: 'By Cash', value: byCash },
+    { color: '#718096', title: 'By Cash', value: byCash, },
     { color: '#718096', title: 'By Mobile', value: byMobile },
-    { color: '#718096', title: 'All', value: byCredit },
+    { color: '#718096', title: 'All', value: byCredit, route: 'Sale Receipt' },
   ]);
 
   // Stock Summaries
@@ -44,8 +44,8 @@ export default function SummaryReportScreen() {
   const [stockSummaries, setStockSummaries] = useState([
     { color: '#4ade80', title: 'In Stock ', value: inStock, route: 'In Stock' },
     { color: '#facc15', title: 'Low Stock', value: lowStock, route: 'Low Stock' },
-    { color: '#84cc16', title: 'Fast Moving', value: fastMoving, },
-    { color: '#fb923c', title: 'Slow Moving', value: slowMoving, },
+    { color: '#84cc16', title: 'Fast Moving', value: fastMoving, route: 'Insights' },
+    { color: '#fb923c', title: 'Slow Moving', value: slowMoving, route: 'Insights' },
   ]);
 
   useFocusEffect(
@@ -170,6 +170,8 @@ export default function SummaryReportScreen() {
               title={item.title}
               value={money(item.value)}
               titleColor={item.color}
+              route={item.route}
+
             />
           ))}
         </View>
@@ -192,6 +194,8 @@ export default function SummaryReportScreen() {
               value={money(item.value)}
               titleColor={item.color}
               key={keyExtractor(index)}
+              route={item.route}
+
             />
           ))}
         </View>
