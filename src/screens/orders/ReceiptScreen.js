@@ -1,14 +1,23 @@
-import React, { useEffect, useState, useContext, useCallback } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, InteractionManager } from "react-native";
-import ZigzagView from "react-native-zigzag-view";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
-import { t } from "i18n-js";
-import { AuthContext } from "../../context/AuthProvider";
-import { number } from "../../helpers/Numbers";
-import CustomerService from "../../services/CustomerService";
-import { getSetting } from "../../models/AsyncStorage";
+import React, { useEffect, useState, useContext, useCallback } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  InteractionManager,
+  ActivityIndicator,
+} from 'react-native';
+import ZigzagView from 'react-native-zigzag-view';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
+import { t } from 'i18n-js';
+import { AuthContext } from '../../context/AuthProvider';
+import { money, number } from '../../helpers/Numbers';
+import CustomerService from '../../services/CustomerService';
+import { getSetting } from '../../models/AsyncStorage';
 import * as Print from 'expo-print';
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from '@react-navigation/native';
+
 export default function ReceiptScreen({ navigation, route }) {
   const { user } = useContext(AuthContext);
   const order = route.params.order;
@@ -33,17 +42,14 @@ export default function ReceiptScreen({ navigation, route }) {
   useEffect(() => {
     // update nav
     navigation.setOptions({
-      headerTitle: "",
+      headerTitle: '',
       headerRight: () => (
-        <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity
-            onPress={print}
-            style={{ paddingRight: 20 }}
-          >
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity onPress={printReceipt} style={{ paddingRight: 20 }}>
             <MaterialIcons name="print" size={24} />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => alert("Sharing To Be Activated")}
+            onPress={() => alert('Sharing To Be Activated')}
             style={{ paddingRight: 20 }}
           >
             <MaterialIcons name="share" size={24} color={'#47a67f'} />
@@ -55,20 +61,19 @@ export default function ReceiptScreen({ navigation, route }) {
     // Fetch Customer
     getOrderCustomer();
     retrieveSetting();
-  }, []);
+  }, [customer]);
 
   /**
    * Retrieve Settings
    */
   function retrieveSetting() {
-    getSetting("business_name").then(setBusinessName);
-    getSetting("contact_address").then(setAddress);
-    getSetting("contact_phone").then(setPhone);
-    getSetting("app_default_currency").then(setCurrency);
-    getSetting("TIN").then(setTin);
-    getSetting("contact_person").then(setPerson);
-    getSetting("contact_email").then(setEmail)
-
+    getSetting('business_name').then(setBusinessName);
+    getSetting('contact_address').then(setAddress);
+    getSetting('contact_phone').then(setPhone);
+    getSetting('app_default_currency').then(setCurrency);
+    getSetting('TIN').then(setTin);
+    getSetting('contact_person').then(setPerson);
+    getSetting('contact_email').then(setEmail);
   }
 
   /**
@@ -85,14 +90,32 @@ export default function ReceiptScreen({ navigation, route }) {
     CustomerService.find(order.customer_supplier_id)
       .then((result) => {
         setCustomer(result[0]);
+        showLoading(false);
       })
       .catch((error) => {
         throw error;
       });
   }
+
   const dayjs = require('dayjs');
   const date = order.created_at;
-  const html = `
+
+  /**
+   * Render items per order
+   *
+   * @returns html string
+   */
+  function renderInvoiceItemsHtml() {
+    return order.line_items.map((item, index) => {
+      return `<tr class="item">
+                      <td colspan="2">${item.name}</td>
+                      <td>x ${item.quantity}</td>
+                      <td>${money(item.total)}</td>
+                  </tr>`;
+    });
+  }
+
+  const receiptPdfhtml = `
   <html>
     <head>
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
@@ -215,9 +238,11 @@ export default function ReceiptScreen({ navigation, route }) {
               <td class="title">
                 <img src="https://pbs.twimg.com/profile_images/1499441965762547712/V7a_I9qV_400x400.jpg" style="width:30%; max-width:300px;">
               </td>
-  
+
               <td>
-                Invoice #: S0D${order.id}<br> Created: ${dayjs(date).format('DD MMM YYYY')}<br> Time: ${dayjs(date).format('h:mm A')}
+                Invoice #: S0D${order.id}<br> Created: ${dayjs(date).format(
+    'DD MMM YYYY'
+  )}<br> Time: ${dayjs(date).format('h:mm A')}
               </td>
             </tr>
           </table>
@@ -251,19 +276,16 @@ export default function ReceiptScreen({ navigation, route }) {
         <td colspan="3">Invoice #: S0D${order.id}</td>
         <td style="color: #47a67f; font-weight: semibold; font-size: large">COMPLETED</td>
       </tr>
-  
+
+      <thead>
+      
+      </thead>
       <tr class="heading">
         <td colspan="2">Item</td>
         <td>Quantity</td>
         <td>Price</td>
       </tr>
-  
-      <tr class="item">
-      <td colspan="2">Web Design</td>
-      <td>x 1</td>
-      <td>$300.00</td>
-  </tr>
-  
+      ${renderInvoiceItemsHtml()}
       <tr class="total">
         <td colspan="3"></td>
         <td style="font-weight: bold"> Total: ${number(order.total)}</td>
@@ -273,12 +295,16 @@ export default function ReceiptScreen({ navigation, route }) {
     </body>
   </html>
   `;
-  const print = async () => {
+
+  /**
+   * Print receipt in PDF format
+   */
+  async function printReceipt() {
     // On iOS/android prints the given html. On web prints the HTML from the current page.
     await Print.printAsync({
-      html,
+      receiptPdfhtml,
     });
-  };
+  }
 
   return (
     <View>
@@ -297,7 +323,7 @@ export default function ReceiptScreen({ navigation, route }) {
           <Text style={styles.shopName}>{businessName}</Text>
           <Text style={styles.shopAddress}>{address}</Text>
           <Text style={styles.shopAddress}>
-            {t("receipt.telephone")}
+            {t('receipt.telephone')}
             {phone}
           </Text>
         </View>
@@ -310,9 +336,7 @@ export default function ReceiptScreen({ navigation, route }) {
         {/** CUSTOMER DETAILS */}
         <View style={styles.customerContainer}>
           <Text style={styles.customerText}>
-            {order.order_type === "sale"
-              ? t("receipt.customer")
-              : t("receipt.supplier")}
+            {order.order_type === 'sale' ? t('receipt.customer') : t('receipt.supplier')}
             {customer.names}
           </Text>
         </View>
@@ -320,13 +344,13 @@ export default function ReceiptScreen({ navigation, route }) {
         {/** PAYMENT DETAILS */}
         <View style={styles.paymentsContainer}>
           <Text style={styles.paymentTitle}>
-            {t("receipt.payment")}
+            {t('receipt.payment')}
             {payment.title}
           </Text>
         </View>
         <View style={styles.paymentsContainer}>
           <Text style={styles.paymentTitle}>
-            {t("receipt.date")}
+            {t('receipt.date')}
             {order.created_at}
           </Text>
         </View>
@@ -335,9 +359,9 @@ export default function ReceiptScreen({ navigation, route }) {
         <View style={styles.itemContainer}>
           {/** HEADERS */}
           <View style={styles.itemHeader}>
-            <Text style={styles.itemNameHeader}> {t("receipt.item_name")}</Text>
+            <Text style={styles.itemNameHeader}> {t('receipt.item_name')}</Text>
             <Text style={styles.itemAmountHeader}>
-              {t("receipt.amount", { currency: currency })}
+              {t('receipt.amount', { currency: currency })}
             </Text>
           </View>
 
@@ -346,7 +370,7 @@ export default function ReceiptScreen({ navigation, route }) {
             <View key={index} style={styles.itemRow}>
               <Text style={styles.itemName}>
                 {item.name}
-                {" x "} {item.quantity}
+                {' x '} {item.quantity}
               </Text>
               <Text style={styles.itemAmount}>{number(item.total)}</Text>
             </View>
@@ -354,7 +378,7 @@ export default function ReceiptScreen({ navigation, route }) {
 
           {/** FOOTER */}
           <View style={styles.footer}>
-            <Text style={styles.totalLabel}> {t("receipt.total")}</Text>
+            <Text style={styles.totalLabel}> {t('receipt.total')}</Text>
             <Text style={styles.totalAmount}>{number(order.total)}</Text>
           </View>
           <View></View>
@@ -366,107 +390,107 @@ export default function ReceiptScreen({ navigation, route }) {
 
 const styles = StyleSheet.create({
   shopDetailsContainer: {
-    marginTop: 20
+    marginTop: 20,
   },
   shopName: {
-    textAlign: "center",
-    fontWeight: "700",
+    textAlign: 'center',
+    fontWeight: '700',
     fontSize: 18,
-    color: "#4a5568",
+    color: '#4a5568',
   },
   customerContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginTop: 5,
   },
-  customerText: { color: "#4a5568" },
+  customerText: { color: '#4a5568' },
   date: {
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: 10,
     marginTop: 10,
-    color: "#4a5568",
+    color: '#4a5568',
   },
   receiptNumber: {
-    textAlign: "center",
-    fontWeight: "700",
+    textAlign: 'center',
+    fontWeight: '700',
     fontSize: 20,
     margin: 20,
-    color: "#4a5568",
+    color: '#4a5568',
   },
   paymentsContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginTop: 5,
   },
   paymentTitle: {
     fontSize: 16,
-    color: "#4a5568",
+    color: '#4a5568',
   },
   paymentAmount: {
     paddingLeft: 10,
     fontSize: 16,
-    color: "#14532d",
+    color: '#14532d',
   },
   shopAddress: {
     fontSize: 15,
     padding: 5,
-    textAlign: "center",
-    color: "#4a5568",
+    textAlign: 'center',
+    color: '#4a5568',
   },
   itemContainer: {
     marginTop: 30,
   },
   itemHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    borderBottomColor: "#cbd5e0",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderBottomColor: '#cbd5e0',
     borderBottomWidth: 1,
   },
   itemNameHeader: {
     marginTop: 8,
     fontSize: 16,
-    fontWeight: "bold",
-    flexDirection: "row",
-    color: "#4a5568",
+    fontWeight: 'bold',
+    flexDirection: 'row',
+    color: '#4a5568',
   },
   itemAmountHeader: {
     marginTop: 8,
     fontSize: 16,
-    fontWeight: "bold",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    color: "#4a5568",
+    fontWeight: 'bold',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    color: '#4a5568',
   },
   itemRow: {
     marginTop: 8,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    color: "#4a5568",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    color: '#4a5568',
   },
   itemName: {
     fontSize: 15,
-    color: "#4a5568",
+    color: '#4a5568',
   },
   itemAmount: {
     fontSize: 15,
-    textDecorationStyle: "solid",
-    color: "#4a5568",
+    textDecorationStyle: 'solid',
+    color: '#4a5568',
   },
   footer: {
     borderTopWidth: 1,
-    borderTopColor: "#cbd5e0",
+    borderTopColor: '#cbd5e0',
     marginTop: 15,
     paddingTop: 10,
     fontSize: 15,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   totalLabel: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#4a5568",
+    fontWeight: 'bold',
+    color: '#4a5568',
   },
   totalAmount: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#4a5568",
+    fontWeight: 'bold',
+    color: '#4a5568',
   },
 });
