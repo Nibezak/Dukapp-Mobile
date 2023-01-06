@@ -59,8 +59,8 @@ class ReportService {
               orders.order_type = ? AND 
               (substr(orders.created_at, 0, 11) BETWEEN ? AND ?) AND
               LOWER(orders.payments) LIKE '%` +
-        method +
-        `%';
+      method +
+      `%';
         `,
       ['sale', startDate, endDate],
       (result) => setSales(result[0].sales)
@@ -208,13 +208,13 @@ class ReportService {
           FROM orders
           WHERE orders.order_type = ? AND 
                 LOWER(orders.payments) LIKE '%` +
-          paymentMethod +
-          `%';
+        paymentMethod +
+        `%';
           `,
         ['sale'],
 
         (results) => {
-          return results;
+          return console.log(results);
         }
       );
     }

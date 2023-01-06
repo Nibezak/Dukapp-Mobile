@@ -6,12 +6,15 @@ import {
   FlatList,
   Dimensions,
   ActivityIndicator,
+  Text,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import ItemService from '../../services/ItemService';
 import OrderService from '../../services/OrderService';
 import { ReceiptAnimation } from '../../components/ReceiptAnimation';
 import RenderReceipt from '../orders/RenderReceipt';
+import { AntDesign } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -28,7 +31,7 @@ export default function SaleReceiptsScreen({ navigation, route }) {
       const task = InteractionManager.runAfterInteractions(() => {
         // Expensive task
         refreshOrders();
-        getItems();
+        getItems().then(() => setShowLoading(false));
       });
     }, [])
   );
@@ -36,6 +39,7 @@ export default function SaleReceiptsScreen({ navigation, route }) {
   useEffect(() => {
     getItems();
     refreshOrders();
+    setHeader()
   }, [orderType]);
 
   /**
@@ -45,16 +49,34 @@ export default function SaleReceiptsScreen({ navigation, route }) {
   /**
    * Get Orders from DB
    */
+  function setHeader() {
+    navigation.setOptions({
+      headerTitleAlign: 'center',
+      headerRight: () => (
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text style={{ paddingHorizontal: 10, marginHorizontal: 10, fontWeight: "semibold", color: "green" }}>back</Text>
+        </TouchableOpacity>
+      ),
+      headerLeft: () => (
+        <AntDesign
+          name="menuunfold"
+          size={24}
+          color="green"
+          onPress={() => navigation.openDrawer()}
+          style={{ paddingLeft: 10 }}
+        />
+      ),
+    });
 
+  }
   async function getItems() {
     ItemService.getItems()
-      .then(setItems)
-      .then(() => setShowLoading(false));
+      .then(setItems);
   }
 
   function refreshOrders() {
     OrderService.ordersWithItems(setOrders, orderType).then((results) => {
-      setLastOrder(results[results.length - 1]).then(() => setShowLoading(false));
+      setLastOrder(results[results.length - 1]);
     });
   }
 

@@ -1,4 +1,4 @@
-import { InteractionManager, ActivityIndicator, View } from 'react-native';
+import { InteractionManager, ActivityIndicator, View, TouchableOpacity, Text } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
 import ReportService from './../../services/ReportService';
@@ -8,6 +8,7 @@ import { RenderReportItem } from './SummaryReportItem';
 import RevenueBarChart from './RevenueBarChart';
 import { Title } from 'react-native-paper';
 import { t } from 'i18n-js';
+import { AntDesign } from '@expo/vector-icons';
 
 export default function SummaryReportScreen() {
   const [currency, setCurrency] = useState(null);
@@ -30,9 +31,9 @@ export default function SummaryReportScreen() {
   const [byMobile, setByMobile] = useState(0);
   const [byCredit, setByCredit] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState([
-    { color: '#718096', title: 'By Cash', value: byCash, route: 'By Cash' },
-    { color: '#718096', title: 'By Mobile', value: byMobile, route: 'By Mobile' },
-    { color: '#718096', title: 'All', value: byCredit, route: 'Sale Receipt' },
+    { color: '#718096', title: 'By Cash', value: byCash, route: 'Insights' },
+    { color: '#718096', title: 'By Mobile', value: byMobile, route: 'Insights' },
+    { color: '#718096', title: 'Total ', value: byCredit, route: 'Insights' },
   ]);
 
   // Stock Summaries
@@ -42,10 +43,10 @@ export default function SummaryReportScreen() {
   const [fastMoving, setFastMoving] = useState(0);
   const [slowMoving, setSlowMoving] = useState(0);
   const [stockSummaries, setStockSummaries] = useState([
-    { color: '#4ade80', title: 'In Stock ', value: inStock, route: 'In Stock' },
-    { color: '#facc15', title: 'Low Stock', value: lowStock, route: 'Low Stock' },
-    { color: '#84cc16', title: 'Fast going', value: fastMoving, route: 'Fast Going' },
-    { color: '#fb923c', title: 'Slow going', value: slowMoving, route: 'Slow Going' },
+    { color: '#4ade80', title: 'In Stock ', value: inStock, route: 'Insights' },
+    { color: '#facc15', title: 'Low Stock', value: lowStock, route: 'Insights' },
+    { color: '#84cc16', title: 'Fast going', value: fastMoving, route: 'Insights' },
+    { color: '#fb923c', title: 'Slow going', value: slowMoving, route: 'Insights' },
   ]);
 
   useFocusEffect(
@@ -59,12 +60,33 @@ export default function SummaryReportScreen() {
 
   useEffect(() => {
     getSetting('app_default_currency').then(setCurrency);
-
+    setHeader();
     // Load data for the report
     refreshReportByDate(startDate, endDate);
   }, [stockSummaries, paymentMethod, revenueSummaries]);
 
   const keyExtractor = useCallback((index) => index.toString(), []);
+
+  function setHeader() {
+    navigation.setOptions({
+      headerTitleAlign: 'center',
+      headerRight: () => (
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text style={{ paddingHorizontal: 10, marginHorizontal: 10, fontWeight: "semibold", color: "green" }}>back</Text>
+        </TouchableOpacity>
+      ),
+      headerLeft: () => (
+        <AntDesign
+          name="menuunfold"
+          size={24}
+          color="green"
+          onPress={() => navigation.openDrawer()}
+          style={{ paddingLeft: 10 }}
+        />
+      ),
+    });
+
+  }
   /**
    * Fetch report from database based on the date
    * @param {string} startDate
