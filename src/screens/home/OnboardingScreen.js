@@ -23,12 +23,12 @@ export function OnboardingScreen() {
   const navigation = useNavigation();
 
   /** Set states for the settings input */
-  const [businessName, setBusinessName] = useState(null);
-  const [address, setAddress] = useState(null);
-  const [shopOwnerName, setShopOwnerName] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [currency, setCurrency] = useState('');
-  const [defaultPaymentMethod, setDefaultPaymentMethod] = useState('');
+  const [businessName, setBusinessName] = useState('Dukapp-Store');
+  const [address, setAddress] = useState('KK 509 ST GIK');
+  const [shopOwnerName, setShopOwnerName] = useState('Nibeza Kevin');
+  const [email, setEmail] = useState('email@example.com');
+  const [currency, setCurrency] = useState('RWF');
+  const [defaultPaymentMethod, setDefaultPaymentMethod] = useState('CASH');
   const [selectedValue, setSelectedValue] = useState('');
   /** This state determines if we need to show the loading screen */
   const [showLoading, setShowLoading] = useState(true);
@@ -135,7 +135,7 @@ export function OnboardingScreen() {
           value={businessName}
           onChangeText={setBusinessName}
           underlineColorAndroid="transparent"
-          placeholder={t('setting.shop_name_placeholder')}
+          placeholder={"Shop Name"}
         />
 
         {/* Business Address */}
@@ -144,7 +144,7 @@ export function OnboardingScreen() {
           value={address}
           onChangeText={setAddress}
           underlineColorAndroid="transparent"
-          placeholder={t('setting.address_placeholder')}
+          placeholder={"KK 509 ST"}
         />
 
         {/* Business Owner Name */}
@@ -154,7 +154,7 @@ export function OnboardingScreen() {
           value={shopOwnerName}
           onChangeText={setShopOwnerName}
           underlineColorAndroid="transparent"
-          placeholder={t('setting.shop_owner_name_placeholder')}
+          placeholder={'Nibeza Kevin'}
         />
 
         {/* Business Email */}
@@ -165,7 +165,7 @@ export function OnboardingScreen() {
           onChangeText={setEmail}
           underlineColorAndroid="transparent"
           keyboardType="email-address"
-          placeholder={t('setting.email_placeholder')}
+          placeholder={"email@example.com"}
         />
 
         <View style={{ width: "50%" }}>
