@@ -15,7 +15,6 @@ export default function SupplierCreateScreen({ navigation }) {
   const [address, setAddress] = useState("");
   const [note, setNote] = useState("");
 
-  const [customers, setCustomers] = useState([]);
 
   /**
    * Save a Customer in DB
@@ -95,7 +94,6 @@ export default function SupplierCreateScreen({ navigation }) {
             numberOfLines={5}
             onChangeText={setNote}
             underlineColorAndroid="transparent"
-            placeholder={t("supplier.note_placeholder")}
             style={{
               height: 200,
               textAlignVertical: "top",

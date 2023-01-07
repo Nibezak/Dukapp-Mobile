@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useCallback } from 'react';
+import React, { useEffect, useState, useContext, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -20,16 +20,18 @@ import { useFocusEffect } from '@react-navigation/native';
 
 export default function ReceiptScreen({ navigation, route }) {
   const { user } = useContext(AuthContext);
+  const isFirstRender = useRef(true);
   const order = route.params.order;
-  const payment = order.payments[0];
+  const payment = order?.payments[0];
   const [customer, setCustomer] = useState(route.params?.customer);
-  const [address, setAddress] = useState(null);
-  const [phone, setPhone] = useState(null);
-  const [businessName, setBusinessName] = useState(null);
-  const [currency, setCurrency] = useState(null);
-  const [tin, setTin] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [person, setPerson] = useState(null);
+  const [address, setAddress] = useState([]);
+  const [phone, setPhone] = useState([]);
+  const [businessName, setBusinessName] = useState([]);
+  const [currency, setCurrency] = useState([]);
+  const [tin, setTin] = useState([]);
+  const [email, setEmail] = useState([]);
+  const [person, setPerson] = useState([]);
+  const [showLoading, setShowLoading] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -41,6 +43,7 @@ export default function ReceiptScreen({ navigation, route }) {
 
   useEffect(() => {
     // update nav
+
     navigation.setOptions({
       headerTitle: '',
       headerRight: () => (
@@ -49,7 +52,10 @@ export default function ReceiptScreen({ navigation, route }) {
             <MaterialIcons name="print" size={24} />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => alert('Sharing To Be Activated')}
+            onPress={() => navigation.navigate('Order Receipt', {
+              order: order,
+              customer: customer,
+            })}
             style={{ paddingRight: 20 }}
           >
             <MaterialIcons name="share" size={24} color={'#47a67f'} />
@@ -60,13 +66,16 @@ export default function ReceiptScreen({ navigation, route }) {
 
     // Fetch Customer
     getOrderCustomer();
-    retrieveSetting();
   }, [customer]);
-
+  useEffect(() => {
+    navigation.addListener('fous', async () => {
+      await retrieveSetting()
+    })
+  }, [])
   /**
    * Retrieve Settings
    */
-  function retrieveSetting() {
+  async function retrieveSetting() {
     getSetting('business_name').then(setBusinessName);
     getSetting('contact_address').then(setAddress);
     getSetting('contact_phone').then(setPhone);
@@ -90,7 +99,7 @@ export default function ReceiptScreen({ navigation, route }) {
     CustomerService.find(order.customer_supplier_id)
       .then((result) => {
         setCustomer(result[0]);
-        showLoading(false);
+        setShowLoading(false);
       })
       .catch((error) => {
         throw error;
@@ -99,6 +108,7 @@ export default function ReceiptScreen({ navigation, route }) {
 
   const dayjs = require('dayjs');
   const date = order.created_at;
+  const name = businessName;
 
   /**
    * Render items per order
@@ -115,7 +125,15 @@ export default function ReceiptScreen({ navigation, route }) {
     });
   }
 
-  const receiptPdfhtml = `
+  if (showLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+      </View>
+    );
+  }
+
+  const html = `
   <html>
     <head>
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
@@ -234,19 +252,7 @@ export default function ReceiptScreen({ navigation, route }) {
       <tr class="top">
         <td colspan="4">
           <table>
-            <tr>
-              <td class="title">
-                <img src="https://pbs.twimg.com/profile_images/1499441965762547712/V7a_I9qV_400x400.jpg" style="width:30%; max-width:300px;">
-              </td>
 
-              <td>
-                Invoice #: S0D${order.id}<br> Created: ${dayjs(date).format(
-    'DD MMM YYYY'
-  )}<br> Time: ${dayjs(date).format('h:mm A')}
-              </td>
-            </tr>
-          </table>
-        </td>
       </tr>
   
       <tr class="information">
@@ -257,10 +263,19 @@ export default function ReceiptScreen({ navigation, route }) {
                 ${businessName}.<br> ${address}<br> 
                 ${tin}<br>
               Customer:   ${customer.names}
+              
+              <td>
+                Invoice #: S0D${order.id}<br> Created: ${dayjs(date).format(
+    'DD MMM YYYY'
+  )}<br> Time: ${dayjs(date).format('h:mm A')}
+              </td>
+            </tr>
+          </table>
+        </td>
               </td>
   
               <td>
-                ${phone}}<br> ${person}<br> ${email}
+                ${phone}<br> ${person}<br> ${email}
               </td>
             </tr>
           </table>
@@ -275,11 +290,7 @@ export default function ReceiptScreen({ navigation, route }) {
       <tr class="details">
         <td colspan="3">Invoice #: S0D${order.id}</td>
         <td style="color: #47a67f; font-weight: semibold; font-size: large">COMPLETED</td>
-      </tr>
 
-      <thead>
-      
-      </thead>
       <tr class="heading">
         <td colspan="2">Item</td>
         <td>Quantity</td>
@@ -302,7 +313,7 @@ export default function ReceiptScreen({ navigation, route }) {
   async function printReceipt() {
     // On iOS/android prints the given html. On web prints the HTML from the current page.
     await Print.printAsync({
-      receiptPdfhtml,
+      html,
     });
   }
 
@@ -326,6 +337,7 @@ export default function ReceiptScreen({ navigation, route }) {
             {t('receipt.telephone')}
             {phone}
           </Text>
+
         </View>
 
         {/** ORDER DETAILS */}

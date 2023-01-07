@@ -1,6 +1,5 @@
-import { t } from "i18n-js";
+
 import { Image, StyleSheet, Text, useWindowDimensions, View } from "react-native";
-import ButtonFilled from "../../components/ButtonFilled";
 import { useNavigation } from "@react-navigation/native";
 export function FastGoingScreen() {
     const { width } = useWindowDimensions();

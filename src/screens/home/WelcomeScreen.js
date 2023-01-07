@@ -59,11 +59,15 @@ export default function WelcomeScreen({ navigation }) {
   }
 
 
+
   // Fetch Orders
   async function refreshOrders() {
     return OrderService.ordersWithItems(setOrders, orderType, null, 8).then((result) =>
       setShowLoading(false)
     );
+  }
+  function retrieveSetting() {
+    getSetting("app_default_currency").then(setCurrency);
   }
 
   /**

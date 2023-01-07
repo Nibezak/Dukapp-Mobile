@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Text, View, TouchableOpacity, ToastAndroid, InteractionManager } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Text, View, TouchableOpacity } from 'react-native';
 import { t } from 'i18n-js';
 import { money } from '../../helpers/Numbers';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { getSetting } from '../../models/AsyncStorage';
-import OrderService from '../../services/OrderService';
 
 export default function RenderOrder({ item, parentRefresher }) {
   const navigation = useNavigation();
@@ -13,9 +12,13 @@ export default function RenderOrder({ item, parentRefresher }) {
   const [currency, setCurrency] = useState(null);
 
   useEffect(() => {
-    getSetting('app_default_currency').then(setCurrency);
+    retrieveSetting();
   }, []);
 
+
+  function retrieveSetting() {
+    getSetting("app_default_currency").then(setCurrency);
+  }
   const dayjs = require('dayjs');
   const date = order.created_at;
 
@@ -29,6 +32,7 @@ export default function RenderOrder({ item, parentRefresher }) {
         })
       }
     >
+
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 2 }}>
         <Text
           style={{ paddingHorizontal: 5, paddingVertical: 2, borderRadius: 30, color: '#62656b' }}
