@@ -410,7 +410,7 @@ export default class Model {
     // Run against db
     return this.db.statement(this.queryString, this.queryParameters).then((res) => {
       // Upon saving, update online server in realtime
-      realTimeBackup(this.queryString, this.queryParameters);
+      // realTimeBackup(this.queryString, this.queryParameters);
 
       return res;
     });
