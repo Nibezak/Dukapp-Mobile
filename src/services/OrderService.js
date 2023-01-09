@@ -231,7 +231,7 @@ class OrderService {
   async setItemTotalManually(item, customItemTotal) {
     return OrderItem.refresh()
       .where('id', item.id)
-      .update({ total: parseFloat(customItemTotal) })
+      .update({ total: customItemTotal })
       .then((results) => {
         // Recalculate order total
         return Database.statement(

@@ -38,10 +38,14 @@ export default function RenderOrderLineItem({
 
       <View style={styles.quantityColumn}>
         <TouchableOpacity onPress={onReduceQuantity}>
-          <MaterialIcons name="remove" size={30} color="#eab308" />
+          <MaterialIcons name="remove" size={30} color="red" />
         </TouchableOpacity>
 
-        <Text style={styles.quantityInput}>{number(item.quantity)}</Text>
+        <TextInput style={styles.quantityInput}
+          defaultValue={number(item.quantity)}
+          onChangeText={onChangingQuantity}
+          keyboardType="numeric"
+        />
 
         <TouchableOpacity onPress={onIncreaseQuantity}>
           <MaterialIcons name="add" size={30} color="#16a34a" />
@@ -68,7 +72,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#a0aec0",
   },
@@ -76,7 +80,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingVertical: 5,
     color: "#2d3748",
-    backgroundColor: "#fff",
+    borderRadius: 10,
+    width: 90,
+    backgroundColor: "#cfd8dc",
   },
   itemName: {
     paddingRight: 5,
@@ -92,6 +98,7 @@ const styles = StyleSheet.create({
   },
   priceColumn: {
     flex: 2,
+    width: "100%",
     marginRight: 5,
     alignContent: "center",
     alignItems: "center",
@@ -105,13 +112,17 @@ const styles = StyleSheet.create({
     alignContent: "center",
     alignItems: "center",
     justifyContent: "center",
+    marginHorizontal: 40,
   },
   quantityInput: {
-    paddingHorizontal: 5,
+    paddingHorizontal: 20,
+    backgroundColor: "#cfd8dc",
     paddingVertical: 5,
     color: "#2d3748",
-
+    marginHorizontal: 2,
     fontSize: 13,
+    height: "50%",
+    borderRadius: 30,
     alignSelf: "center",
     textAlign: "center",
   },

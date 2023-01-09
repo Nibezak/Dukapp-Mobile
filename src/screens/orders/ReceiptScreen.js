@@ -7,9 +7,11 @@ import {
   Image,
   InteractionManager,
   ActivityIndicator,
+  Alert,
+  ToastAndroid,
 } from 'react-native';
 import ZigzagView from 'react-native-zigzag-view';
-import { Feather, MaterialIcons } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { t } from 'i18n-js';
 import { AuthContext } from '../../context/AuthProvider';
 import { money, number } from '../../helpers/Numbers';
@@ -17,10 +19,14 @@ import CustomerService from '../../services/CustomerService';
 import { getSetting } from '../../models/AsyncStorage';
 import * as Print from 'expo-print';
 import { useFocusEffect } from '@react-navigation/native';
+import ViewShot from 'react-native-view-shot';
+import { ScrollView } from 'react-native-gesture-handler';
+import * as Sharing from "expo-sharing"
 
 export default function ReceiptScreen({ navigation, route }) {
   const { user } = useContext(AuthContext);
-  const isFirstRender = useRef(true);
+  const ref = useRef();
+  const { imageUri, setImageUri } = useState();
   const order = route.params.order;
   const payment = order?.payments[0];
   const [customer, setCustomer] = useState(route.params?.customer);
@@ -49,20 +55,26 @@ export default function ReceiptScreen({ navigation, route }) {
       headerRight: () => (
         <View style={{ flexDirection: 'row' }}>
           <TouchableOpacity onPress={printReceipt} style={{ paddingRight: 20 }}>
-            <MaterialIcons name="print" size={24} />
+            <MaterialIcons name="print" size={24} color="gray" />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Order Receipt', {
-              order: order,
-              customer: customer,
-            })}
+            onPress={() => {
+              ref.current.capture().then(uri => {
+                console.log("capture receipt uri ", uri);
+                setImageUri(uri)
+              });
+            }}
             style={{ paddingRight: 20 }}
           >
-            <MaterialIcons name="share" size={24} color={'#47a67f'} />
+            <MaterialCommunityIcons name="fit-to-screen" size={24} color="#47a67f" onPress={captureAndShareReceipt}
+              onLongPress={() => ToastAndroid.show(('Share receipt on other platforms'), ToastAndroid.SHORT)}
+            />
+
           </TouchableOpacity>
         </View>
       ),
     });
+
 
     // Fetch Customer
     getOrderCustomer();
@@ -84,7 +96,19 @@ export default function ReceiptScreen({ navigation, route }) {
     getSetting('contact_person').then(setPerson);
     getSetting('contact_email').then(setEmail);
   }
+  /**
+   * the function below will be used to capture screenshots of the receipt
+   */
 
+  // Capture and share screenshot
+
+  function captureAndShareReceipt() {
+    ref.current.capture().then((uri) => {
+      console.log("file uri ", uri);
+      Sharing.shareAsync("file://" + uri);
+    }),
+      (error) => console.error("Oops, snapshot failed", error);
+  };
   /**
    * Get Customer By Id
    */
@@ -288,7 +312,7 @@ export default function ReceiptScreen({ navigation, route }) {
       </tr>
   
       <tr class="details">
-        <td colspan="3">Invoice #: S0D${order.id}</td>
+        <td colspan="3">Invoice #: S0D-${order.id}</td>
         <td style="color: #47a67f; font-weight: semibold; font-size: large">COMPLETED</td>
 
       <tr class="heading">
@@ -318,85 +342,99 @@ export default function ReceiptScreen({ navigation, route }) {
   }
 
   return (
-    <View>
-      <ZigzagView
-        contentContainerStyle={{
-          padding: 20,
-        }}
-      >
-        <Image
-          source={require('./../../../assets/snack-icon.png')}
-          style={{ width: 120, height: 100 }}
-        />
+    <View style={{ backgroundColor: "#f1f1f1" }}>
+      <ScrollView style={{ backgroundColor: "#f1f1f1" }}>
+        <ViewShot
+          options={{
+            fileName: `S0D-${order.id} Invoice statement`,
+            format: "png",
+            quality: 1.0,
+          }}
+          style={{ backgroundColor: "#f1f1f1" }}
+          ref={ref}>
+          <ZigzagView
+            contentContainerStyle={{
+              padding: 20,
+            }}
+          >
+            <Image
+              source={require('./../../../assets/snack-icon.png')}
+              style={{ width: 120, height: 100 }}
+            />
 
-        {/** RECEIPT HEADER */}
-        <View style={styles.shopDetailsContainer}>
-          <Text style={styles.shopName}>{businessName}</Text>
-          <Text style={styles.shopAddress}>{address}</Text>
-          <Text style={styles.shopAddress}>
-            {t('receipt.telephone')}
-            {phone}
-          </Text>
-
-        </View>
-
-        {/** ORDER DETAILS */}
-        <View style={styles.orderDetails}>
-          <Text style={styles.receiptNumber}>#Invoice-number: {order.id}</Text>
-        </View>
-
-        {/** CUSTOMER DETAILS */}
-        <View style={styles.customerContainer}>
-          <Text style={styles.customerText}>
-            {order.order_type === 'sale' ? t('receipt.customer') : t('receipt.supplier')}
-            {customer.names}
-          </Text>
-        </View>
-
-        {/** PAYMENT DETAILS */}
-        <View style={styles.paymentsContainer}>
-          <Text style={styles.paymentTitle}>
-            {t('receipt.payment')}
-            {payment.title}
-          </Text>
-        </View>
-        <View style={styles.paymentsContainer}>
-          <Text style={styles.paymentTitle}>
-            {t('receipt.date')}
-            {order.created_at}
-          </Text>
-        </View>
-
-        {/** ORDER LINE ITEMS */}
-        <View style={styles.itemContainer}>
-          {/** HEADERS */}
-          <View style={styles.itemHeader}>
-            <Text style={styles.itemNameHeader}> {t('receipt.item_name')}</Text>
-            <Text style={styles.itemAmountHeader}>
-              {t('receipt.amount', { currency: currency })}
-            </Text>
-          </View>
-
-          {/** ITEM LINES */}
-          {order.line_items.map((item, index) => (
-            <View key={index} style={styles.itemRow}>
-              <Text style={styles.itemName}>
-                {item.name}
-                {' x '} {item.quantity}
+            {/** RECEIPT HEADER */}
+            <View style={styles.shopDetailsContainer}>
+              <Text style={styles.shopName}>{businessName}</Text>
+              <Text style={styles.shopAddress}>{address}</Text>
+              <Text style={styles.shopAddress}>
+                {t('receipt.telephone')}
+                {phone}
               </Text>
-              <Text style={styles.itemAmount}>{number(item.total)}</Text>
+              <Text style={styles.shopAddress}>
+                {email}
+              </Text>
             </View>
-          ))}
 
-          {/** FOOTER */}
-          <View style={styles.footer}>
-            <Text style={styles.totalLabel}> {t('receipt.total')}</Text>
-            <Text style={styles.totalAmount}>{number(order.total)}</Text>
-          </View>
-          <View></View>
-        </View>
-      </ZigzagView>
+            {/** ORDER DETAILS */}
+            <View style={styles.orderDetails}>
+              <Text style={styles.receiptNumber}>#Invoice-number: SOD-{order.id}</Text>
+            </View>
+
+            {/** CUSTOMER DETAILS */}
+            <View style={styles.customerContainer}>
+              <Text style={styles.customerText}>
+                {order.order_type === 'sale' ? t('receipt.customer') : t('receipt.supplier')}
+                {customer.names}
+              </Text>
+            </View>
+
+            {/** PAYMENT DETAILS */}
+            <View style={styles.paymentsContainer}>
+              <Text style={styles.paymentTitle}>
+                {t('receipt.payment')}
+                {payment.title}
+              </Text>
+            </View>
+            <View style={styles.paymentsContainer}>
+              <Text style={styles.paymentTitle}>
+                {t('receipt.date')}
+                {order.created_at}
+              </Text>
+            </View>
+
+            {/** ORDER LINE ITEMS */}
+            <View style={styles.itemContainer}>
+              {/** HEADERS */}
+              <View style={styles.itemHeader}>
+                <Text style={styles.itemNameHeader}> {t('receipt.item_name')}</Text>
+                <Text style={styles.itemAmountHeader}>
+                  {t('receipt.amount', { currency: currency })}
+                </Text>
+              </View>
+
+              {/** ITEM LINES */}
+              {order.line_items.map((item, index) => (
+                <View key={index} style={styles.itemRow}>
+                  <Text style={styles.itemName}>
+                    {item.name}
+                    {' x '} {item.quantity}
+                  </Text>
+                  <Text style={styles.itemAmount}>{number(item.total)}</Text>
+                </View>
+              ))}
+
+              {/** FOOTER */}
+              <View style={styles.footer}>
+                <Text style={styles.totalLabel}> {t('receipt.total')}</Text>
+                <Text style={styles.totalAmount}>{number(order.total)}</Text>
+              </View>
+              <View></View>
+            </View>
+          </ZigzagView>
+        </ViewShot>
+      </ScrollView>
     </View>
+
   );
 }
 

@@ -7,6 +7,7 @@ import {
   FlatList,
   Keyboard,
   Dimensions,
+  Text,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { t } from 'i18n-js';
@@ -15,6 +16,8 @@ import SuggestionButton from '../../components/SuggestionButton';
 import ItemService from '../../services/ItemService';
 import OrderService from './../../services/OrderService';
 import RenderOrder from './RenderOrder';
+import { AntDesign } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -44,6 +47,7 @@ export default function OrderScreen({ navigation, route }) {
     getItems();
     refreshOrders();
     resetToDefaultSuggestion();
+    setHeader();
   }, [orderType]);
 
   /**
@@ -55,6 +59,26 @@ export default function OrderScreen({ navigation, route }) {
     });
   }
 
+  function setHeader() {
+    navigation.setOptions({
+      headerTitleAlign: 'center',
+      headerRight: () => (
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ paddingHorizontal: 10, marginHorizontal: 10, }}>
+          <AntDesign name="minuscircleo" size={24} color="red" style={{ fontWeight: "semibold" }} />
+        </TouchableOpacity>
+      ),
+      headerLeft: () => (
+        <AntDesign
+          name="menuunfold"
+          size={24}
+          color="green"
+          onPress={() => navigation.openDrawer()}
+          style={{ paddingLeft: 10 }}
+        />
+      ),
+    });
+
+  }
   /**
    * Get Orders from DB
    */

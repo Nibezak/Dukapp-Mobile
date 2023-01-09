@@ -55,7 +55,7 @@ export default function SideBar() {
     const onShare = async () => {
         try {
             await Share.share({
-                message: 'https://twitter.com/DukApp_',
+                message: 'http://143.198.135.41:8001',
             });
         } catch (error) {
             console.log(error.message);
@@ -113,6 +113,9 @@ export default function SideBar() {
                     data={listArrayItem}
                     renderItem={renderItem}
                 />
+            </View>
+            <View style={{ flex: 0.25 }}>
+
             </View>
             <View style={{ flex: 0.25 }}>
                 <FlatList

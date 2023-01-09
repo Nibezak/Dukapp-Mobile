@@ -6,7 +6,6 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
-  ToastAndroid,
 } from 'react-native';
 import ItemService from '../../services/ItemService';
 import AsyncStorage from '@react-native-async-storage/async-storage';

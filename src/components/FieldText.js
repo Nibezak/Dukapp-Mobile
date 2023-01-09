@@ -31,6 +31,9 @@ export default function InputText(props) {
       placeholder={props.placeholder}
       underlineColorAndroid={props.underlineColorAndroid}
       keyboardType={props.keyboardType}
+      editable={props.editable}
+      selectTextOnFocus={props.selectTextOnFocus}
+
     />
   );
 }

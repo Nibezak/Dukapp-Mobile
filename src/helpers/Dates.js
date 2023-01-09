@@ -18,7 +18,7 @@ export function today() {
  * Get unix time stamp
  */
 export function unixTimeStamp() {
-  return Math.round(new Date().getTime() / 1000);
+  return Math.round(new Date());
 }
 
 /**

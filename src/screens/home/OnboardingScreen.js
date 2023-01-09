@@ -17,6 +17,11 @@ import { Picker } from '@react-native-picker/picker';
 import Button from '../../components/Button';
 import FieldText from '../../components/FieldText';
 import InputSelect from '../../components/InputSelect';
+import Customer from '../../models/Customer';
+import Item from '../../models/Item';
+import Order from '../../models/Order';
+import OrderItem from '../../models/OrderItem';
+import Supplier from '../../models/Supplier';
 
 export function OnboardingScreen() {
   /** Access navigation. It is needed for redirection */
@@ -74,12 +79,21 @@ export function OnboardingScreen() {
     AsyncStorage.setItem('@contact_person', shopOwnerName);
     AsyncStorage.setItem('@contact_email', email);
     AsyncStorage.setItem('@app_default_currency', currency);
-    AsyncStorage.setItem('@app_default_payment_method', defaultPaymentMethod).then((result) => {
+    AsyncStorage.setItem('@app_default_payment_method', defaultPaymentMethod).then(() => handleDatabaseReset()).then((result) => {
       ToastAndroid.show(t('setting.setting_updated'), ToastAndroid.SHORT);
       return navigation.navigate('home');
     });
   }
+  async function handleDatabaseReset() {
+    // 1. Drop all tables
+    Customer.reset();
+    Item.reset();
+    Order.reset();
+    OrderItem.reset();
+    Supplier.reset();
 
+    // ToastAndroid.show(t("setting.database_has_been_reset"), ToastAndroid.SHORT);
+  }
   var paymentOptions = [
     { value: "cash", label: "Cash" },
     { value: "mobile_mtn_momo", label: "MTN MoMo" },

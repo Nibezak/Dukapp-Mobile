@@ -6,6 +6,7 @@ import FieldText from "../../components/FieldText";
 import InputSelect from "../../components/InputSelect";
 import { getSetting } from "../../models/AsyncStorage";
 import { t } from "i18n-js";
+import InputText from "../../components/FieldText";
 
 var paymentOptions = [
   { value: "cash", label: "Cash" },
@@ -77,10 +78,12 @@ export default function OrderPaymentScreen({ navigation, route }) {
       <View style={styles.row}>
         <FieldText
           defaultValue={order.total.toString()}
-          title={"amount in " + currency}
-          onChangeText={setAmount}
+          title={"the about amount in " + currency + " Currency"}
+          // onChangeText={setAmount}
           underlineColorAndroid="transparent"
           keyboardType="numeric"
+          editable={false}
+          selectTextOnFocus={false}
         />
       </View>
       <View style={[styles.row, { borderBottomWidth: 0 }]}>

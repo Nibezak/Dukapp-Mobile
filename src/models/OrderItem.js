@@ -12,8 +12,8 @@ class OrderItem extends Model {
   async createTable() {
     return this.db.statement(
       `CREATE TABLE IF NOT EXISTS ` +
-        this.getTableName() +
-        `(
+      this.getTableName() +
+      `(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               name TEXT,
               item_id INTEGER NOT NULL,

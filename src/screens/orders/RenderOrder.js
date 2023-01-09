@@ -42,7 +42,7 @@ export default function RenderOrder({ item, parentRefresher }) {
         <Text
           style={{ paddingHorizontal: 5, paddingVertical: 2, borderRadius: 30, color: '#62656b' }}
         >
-          {dayjs(date).format('h:mm A   ')}
+          {/* {dayjs(date).format('h:mm A')} */}
         </Text>
       </View>
       <View style={styles.rows}>

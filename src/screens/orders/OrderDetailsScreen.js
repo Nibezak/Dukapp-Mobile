@@ -313,6 +313,8 @@ export default function OrderDetailsScreen({ navigation, route }) {
    * Manually update order price item
    *
    */
+
+
   async function handlePriceManualChange(customTotal, itemToUpdate) {
     // To proceed if this is not a number
     const sanitizedTotal = parseFloat(numberFromString(customTotal));

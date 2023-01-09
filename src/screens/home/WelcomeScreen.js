@@ -15,6 +15,7 @@ import { Title, ActivityIndicator } from 'react-native-paper';
 import RevenueBarChart from '../reports/RevenueBarChart';
 import { AntDesign } from '@expo/vector-icons';
 import { WelcomeAnimation } from '../../components/WelcomeAnimation';
+import { getSetting } from '../../models/AsyncStorage';
 /**
  * Screen component
  */
@@ -22,7 +23,7 @@ export default function WelcomeScreen({ navigation }) {
   const [orders, setOrders] = useState([]);
   const [orderType, setOrderType] = useState('sale');
   const [showLoading, setShowLoading] = useState(true);
-
+  const [currency, setCurrency] = useState('RWF');
   useFocusEffect(
     useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
@@ -34,6 +35,7 @@ export default function WelcomeScreen({ navigation }) {
 
   useEffect(() => {
     setHeader();
+    retrieveCurrency()
     refreshOrders();
   }, []);
 
@@ -62,11 +64,9 @@ export default function WelcomeScreen({ navigation }) {
 
   // Fetch Orders
   async function refreshOrders() {
-    return OrderService.ordersWithItems(setOrders, orderType, null, 8).then((result) =>
-      setShowLoading(false)
-    );
+    return OrderService.ordersWithItems(setOrders, orderType, null, 8).then(() => setShowLoading(false))
   }
-  function retrieveSetting() {
+  function retrieveCurrency() {
     getSetting("app_default_currency").then(setCurrency);
   }
 
