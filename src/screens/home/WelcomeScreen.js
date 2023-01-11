@@ -52,7 +52,7 @@ export default function WelcomeScreen({ navigation }) {
         <AntDesign
           name="menuunfold"
           size={24}
-          color="green"
+          color="#47a67f"
           onPress={() => navigation.openDrawer()}
           style={{ paddingLeft: 10 }}
         />

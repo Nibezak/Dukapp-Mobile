@@ -1,62 +1,90 @@
-import React, { useEffect, useState, useContext, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
-  Text,
-  StyleSheet,
   TouchableOpacity,
-  Image,
   InteractionManager,
-  ActivityIndicator,
-  Alert,
+  StyleSheet,
+  FlatList,
+  Dimensions,
   ToastAndroid,
+  ScrollView,
+  Image,
+  Text,
 } from 'react-native';
-import ZigzagView from 'react-native-zigzag-view';
-import { Feather, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { t } from 'i18n-js';
-import { AuthContext } from '../../context/AuthProvider';
-import { money, number } from '../../helpers/Numbers';
 import CustomerService from '../../services/CustomerService';
-import { getSetting } from '../../models/AsyncStorage';
-import * as Print from 'expo-print';
 import { useFocusEffect } from '@react-navigation/native';
+import { money, number } from '../../helpers/Numbers';
+import OrderService from '../../services/OrderService';
+import ItemService from '../../services/ItemService';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import Order from '../../models/Order';
+import ReceiptOrderItems from './ReceiptOrderItems';
+import ZigzagView from 'react-native-zigzag-view';
+import { getSetting } from '../../models/AsyncStorage';
 import ViewShot from 'react-native-view-shot';
-import { ScrollView } from 'react-native-gesture-handler';
 import * as Sharing from "expo-sharing"
+import * as Print from 'expo-print';
 
-export default function ReceiptScreen({ navigation, route }) {
-  const { user } = useContext(AuthContext);
+// Retrieve user windows height
+const windowHeight = Dimensions.get('window').height;
+
+export default function OrderDetailsScreen({ navigation, route }) {
+  const [order, setOrder] = useState(route.params.order);
   const ref = useRef();
-  const { imageUri, setImageUri } = useState();
-  const order = route.params.order;
   const payment = order?.payments[0];
-  const [customer, setCustomer] = useState(route.params?.customer);
+  const [orderType, setOrderType] = useState(order.order_type);
+  const [customer, setCustomer] = useState({ names: 'Guest ' });
+  const [items, setItems] = useState([]);
   const [address, setAddress] = useState([]);
-  const [phone, setPhone] = useState([]);
   const [businessName, setBusinessName] = useState([]);
-  const [currency, setCurrency] = useState([]);
-  const [tin, setTin] = useState([]);
+  const [phone, setPhone] = useState([]);
   const [email, setEmail] = useState([]);
+  const [tin, setTin] = useState([]);
   const [person, setPerson] = useState([]);
-  const [showLoading, setShowLoading] = useState(false);
+  const [currency, setCurrency] = useState(null);
 
   useFocusEffect(
     useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
-        retrieveSetting();
+        // Expensive task
+        refreshOrder();
       });
     }, [])
   );
-
   useEffect(() => {
-    // update nav
-
+    // Update the order detail nav
     navigation.setOptions({
-      headerTitle: '',
+      headerTitle:
+        orderType.substr(0, 4).charAt(0).toUpperCase() + ' #' + route.params.order.id.toString(),
+    });
+    updateNavRight();
+
+    // Get Items for suggestions
+    getItems();
+
+    //  Get order Customer
+    getOrderCustomer();
+
+    //Fetch app settings
+    retrieveSetting()
+    // Fetch order from the database
+
+    refreshOrder();
+  }, []);
+
+  /**
+   * Method to update the top right navitation
+   */
+  function updateNavRight() {
+    navigation.setOptions({
       headerRight: () => (
         <View style={{ flexDirection: 'row' }}>
           <TouchableOpacity onPress={printReceipt} style={{ paddingRight: 20 }}>
             <MaterialIcons name="print" size={24} color="gray" />
           </TouchableOpacity>
+
+          {/* Capture ScreenShot */}
           <TouchableOpacity
             onPress={() => {
               ref.current.capture().then(uri => {
@@ -74,41 +102,35 @@ export default function ReceiptScreen({ navigation, route }) {
         </View>
       ),
     });
-
-
-    // Fetch Customer
-    getOrderCustomer();
-  }, [customer]);
-  useEffect(() => {
-    navigation.addListener('fous', async () => {
-      await retrieveSetting()
-    })
-  }, [])
-  /**
-   * Retrieve Settings
-   */
-  async function retrieveSetting() {
-    getSetting('business_name').then(setBusinessName);
-    getSetting('contact_address').then(setAddress);
-    getSetting('contact_phone').then(setPhone);
-    getSetting('app_default_currency').then(setCurrency);
-    getSetting('TIN').then(setTin);
-    getSetting('contact_person').then(setPerson);
-    getSetting('contact_email').then(setEmail);
   }
-  /**
-   * the function below will be used to capture screenshots of the receipt
-   */
 
-  // Capture and share screenshot
+  /**
+   * Handle Delete button, but start by confirming with the user
+   * of the application before proceeding
+   */
 
   function captureAndShareReceipt() {
     ref.current.capture().then((uri) => {
+      // capture the screenshot
       console.log("file uri ", uri);
+      //after capturing , send the screeenshot
+
       Sharing.shareAsync("file://" + uri);
     }),
       (error) => console.error("Oops, snapshot failed", error);
   };
+
+
+  /**
+   * Method to destroy the order from the database
+   */
+  async function printReceipt() {
+    // On iOS/android prints the given html. On web prints the HTML from the current page.
+    await Print.printAsync({
+      html,
+    });
+  }
+
   /**
    * Get Customer By Id
    */
@@ -122,23 +144,43 @@ export default function ReceiptScreen({ navigation, route }) {
     // Find Customer for this order and attach to the order
     CustomerService.find(order.customer_supplier_id)
       .then((result) => {
-        setCustomer(result[0]);
-        setShowLoading(false);
+        if (result.length > 0) {
+          setCustomer(result[0]);
+        }
       })
       .catch((error) => {
         throw error;
       });
   }
+  //retrive app settings
 
-  const dayjs = require('dayjs');
-  const date = order.created_at;
-  const name = businessName;
+  async function retrieveSetting() {
+    getSetting('business_name').then(setBusinessName);
+    getSetting('contact_address').then(setAddress);
+    getSetting('contact_phone').then(setPhone);
+    getSetting('app_default_currency').then(setCurrency);
+    getSetting('TIN').then(setTin);
+    getSetting('contact_person').then(setPerson);
+    getSetting('contact_email').then(setEmail);
+  }
 
   /**
-   * Render items per order
-   *
-   * @returns html string
+   * Get orders
    */
+  async function refreshOrder() {
+    OrderService.ordersWithItems(setOrder, orderType, order.id).then((result) => {
+      // 1. Update the customer
+      getOrderCustomer();
+    });
+  }
+
+  /**
+   * Get Orders from DB
+   */
+  async function getItems() {
+    ItemService.getItems().then(setItems);
+  }
+
   function renderInvoiceItemsHtml() {
     return order.line_items.map((item, index) => {
       return `<tr class="item">
@@ -149,13 +191,10 @@ export default function ReceiptScreen({ navigation, route }) {
     });
   }
 
-  if (showLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
-      </View>
-    );
-  }
+
+  const dayjs = require('dayjs');
+  const date = order.created_at;
+
 
   const html = `
   <html>
@@ -331,19 +370,20 @@ export default function ReceiptScreen({ navigation, route }) {
   </html>
   `;
 
-  /**
-   * Print receipt in PDF format
-   */
-  async function printReceipt() {
-    // On iOS/android prints the given html. On web prints the HTML from the current page.
-    await Print.printAsync({
-      html,
-    });
-  }
+
+  const ReceiptItems = useCallback(({ item }) => {
+    return (
+      <ReceiptOrderItems
+        item={item}
+      />
+    );
+  }, []);
+
+  const keyExtractor = useCallback((item, index) => index.toString(), []);
 
   return (
-    <View style={{ backgroundColor: "#f1f1f1" }}>
-      <ScrollView style={{ backgroundColor: "#f1f1f1" }}>
+    <View style={styles.container}>
+      <ScrollView>
         <ViewShot
           options={{
             fileName: `S0D-${order.id} Invoice statement`,
@@ -352,22 +392,17 @@ export default function ReceiptScreen({ navigation, route }) {
           }}
           style={{ backgroundColor: "#f1f1f1" }}
           ref={ref}>
-          <ZigzagView
-            contentContainerStyle={{
-              padding: 20,
-            }}
-          >
+          <ZigzagView>
             <Image
               source={require('./../../../assets/snack-icon.png')}
-              style={{ width: 120, height: 100 }}
+              style={{ width: 120, height: 100, marginHorizontal: 30 }}
             />
-
             {/** RECEIPT HEADER */}
+
             <View style={styles.shopDetailsContainer}>
               <Text style={styles.shopName}>{businessName}</Text>
               <Text style={styles.shopAddress}>{address}</Text>
               <Text style={styles.shopAddress}>
-                {t('receipt.telephone')}
                 {phone}
               </Text>
               <Text style={styles.shopAddress}>
@@ -376,33 +411,31 @@ export default function ReceiptScreen({ navigation, route }) {
             </View>
 
             {/** ORDER DETAILS */}
-            <View style={styles.orderDetails}>
-              <Text style={styles.receiptNumber}>#Invoice-number: SOD-{order.id}</Text>
-            </View>
+            <View style={styles.orderContainer}>
+              <View style={styles.orderDetails}>
+                <Text style={styles.receiptNumber}># SOD-CKL{order.id}</Text>
+              </View>
 
-            {/** CUSTOMER DETAILS */}
-            <View style={styles.customerContainer}>
-              <Text style={styles.customerText}>
-                {order.order_type === 'sale' ? t('receipt.customer') : t('receipt.supplier')}
-                {customer.names}
-              </Text>
-            </View>
+              <View style={styles.customerContainer}>
+                <Text style={styles.customerText}>
+                  {order.order_type === 'sale' ? t('receipt.customer') : t('receipt.supplier')}
+                  {customer.names}
+                </Text>
+              </View>
 
-            {/** PAYMENT DETAILS */}
-            <View style={styles.paymentsContainer}>
-              <Text style={styles.paymentTitle}>
-                {t('receipt.payment')}
-                {payment.title}
-              </Text>
+              <View style={styles.paymentsContainer}>
+                <Text style={styles.paymentTitle}>
+                  {t('receipt.payment')}
+                  {payment.title}
+                </Text>
+              </View>
+              <View style={styles.paymentsContainer}>
+                <Text style={styles.paymentTitle}>
+                  {t('receipt.date')}
+                  {order.created_at}
+                </Text>
+              </View>
             </View>
-            <View style={styles.paymentsContainer}>
-              <Text style={styles.paymentTitle}>
-                {t('receipt.date')}
-                {order.created_at}
-              </Text>
-            </View>
-
-            {/** ORDER LINE ITEMS */}
             <View style={styles.itemContainer}>
               {/** HEADERS */}
               <View style={styles.itemHeader}>
@@ -411,19 +444,12 @@ export default function ReceiptScreen({ navigation, route }) {
                   {t('receipt.amount', { currency: currency })}
                 </Text>
               </View>
+              <FlatList
+                data={order.line_items}
+                renderItem={ReceiptItems}
+                keyExtractor={keyExtractor}
+              />
 
-              {/** ITEM LINES */}
-              {order.line_items.map((item, index) => (
-                <View key={index} style={styles.itemRow}>
-                  <Text style={styles.itemName}>
-                    {item.name}
-                    {' x '} {item.quantity}
-                  </Text>
-                  <Text style={styles.itemAmount}>{number(item.total)}</Text>
-                </View>
-              ))}
-
-              {/** FOOTER */}
               <View style={styles.footer}>
                 <Text style={styles.totalLabel}> {t('receipt.total')}</Text>
                 <Text style={styles.totalAmount}>{number(order.total)}</Text>
@@ -434,11 +460,21 @@ export default function ReceiptScreen({ navigation, route }) {
         </ViewShot>
       </ScrollView>
     </View>
-
   );
+
+
 }
 
+/**
+ * Styles for the
+ */
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  orderContainer: {
+    paddingHorizontal: 30
+  },
   shopDetailsContainer: {
     marginTop: 20,
   },
@@ -446,6 +482,27 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '700',
     fontSize: 18,
+    color: '#4a5568',
+  },
+  shopAddress: {
+    fontSize: 15,
+    padding: 5,
+    textAlign: 'center',
+    color: '#4a5568',
+  },
+  itemName: {
+    fontWeight: 'bold',
+    paddingRight: 10,
+    paddingVertical: 10,
+  },
+  itemDescription: {
+    paddingRight: 10,
+  },
+  receiptNumber: {
+    textAlign: 'center',
+    fontWeight: '700',
+    fontSize: 20,
+    margin: 20,
     color: '#4a5568',
   },
   customerContainer: {
@@ -459,13 +516,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: '#4a5568',
   },
-  receiptNumber: {
-    textAlign: 'center',
-    fontWeight: '700',
-    fontSize: 20,
-    margin: 20,
-    color: '#4a5568',
-  },
+
   paymentsContainer: {
     flexDirection: 'row',
     marginTop: 5,
@@ -478,51 +529,6 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     fontSize: 16,
     color: '#14532d',
-  },
-  shopAddress: {
-    fontSize: 15,
-    padding: 5,
-    textAlign: 'center',
-    color: '#4a5568',
-  },
-  itemContainer: {
-    marginTop: 30,
-  },
-  itemHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderBottomColor: '#cbd5e0',
-    borderBottomWidth: 1,
-  },
-  itemNameHeader: {
-    marginTop: 8,
-    fontSize: 16,
-    fontWeight: 'bold',
-    flexDirection: 'row',
-    color: '#4a5568',
-  },
-  itemAmountHeader: {
-    marginTop: 8,
-    fontSize: 16,
-    fontWeight: 'bold',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    color: '#4a5568',
-  },
-  itemRow: {
-    marginTop: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    color: '#4a5568',
-  },
-  itemName: {
-    fontSize: 15,
-    color: '#4a5568',
-  },
-  itemAmount: {
-    fontSize: 15,
-    textDecorationStyle: 'solid',
-    color: '#4a5568',
   },
   footer: {
     borderTopWidth: 1,
@@ -543,4 +549,33 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#4a5568',
   },
+  itemContainer: {
+    marginTop: 30,
+    padding: 30
+  },
+  itemHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderBottomColor: '#cbd5e0',
+    borderBottomWidth: 0.3,
+    padding: 5,
+    marginBottom: 3
+  },
+  itemNameHeader: {
+    marginTop: 8,
+    fontSize: 16,
+    fontWeight: 'bold',
+    flexDirection: 'row',
+    color: '#4a5568',
+  },
+  itemAmountHeader: {
+    marginTop: 8,
+    fontSize: 16,
+    fontWeight: 'bold',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    color: '#4a5568',
+  },
 });
+
+

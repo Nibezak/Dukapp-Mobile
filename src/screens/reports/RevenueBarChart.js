@@ -31,6 +31,7 @@ const graphStyles = {
   paddingVertical: 1,
   margin: 8,
   borderRadius: 16,
+
 };
 
 export default function RevenueBarChart() {
@@ -83,7 +84,13 @@ export default function RevenueBarChart() {
           {t("report.weekly_summary")}
         </Title>
         <LineChart
-          style={graphStyles}
+          style={{
+            padding: 2,
+            paddingVertical: 1,
+            margin: 8,
+            borderRadius: 10,
+            // elevation: 
+          }}
           data={barData}
           width={screenWidth}
           height={220}

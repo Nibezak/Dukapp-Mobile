@@ -34,7 +34,7 @@ export default function GeneralSettingsScreen() {
                 <TouchableOpacity
                     style={{ paddingLeft: 10 }}
                 >
-                    <AntDesign name="menuunfold" size={24} color="green" onPress={() => navigation.openDrawer()} />
+                    <AntDesign name="menuunfold" size={24} color="#47a67f" onPress={() => navigation.openDrawer()} />
                 </TouchableOpacity>
             ),
         });

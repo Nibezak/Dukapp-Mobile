@@ -44,11 +44,12 @@ export default function SummaryReportScreen() {
   const [slowMoving, setSlowMoving] = useState(0);
   const [stockSummaries, setStockSummaries] = useState([
     { color: '#4ade80', title: 'In Stock ', value: inStock, route: 'Insights' },
-    { color: '#facc15', title: 'Low Stock', value: lowStock, route: 'Insights' },
+    { color: '#fb923c', title: 'Low Stock', value: lowStock, route: 'Insights' },
     { color: '#84cc16', title: 'Fast going', value: fastMoving, route: 'Insights' },
-    { color: '#fb923c', title: 'Slow going', value: slowMoving, route: 'Insights' },
+    { color: '#facc15', title: 'Slow going', value: slowMoving, route: 'Insights' },
   ]);
-
+  // #47a67f
+  // facc15
   useFocusEffect(
     useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
@@ -79,7 +80,7 @@ export default function SummaryReportScreen() {
         <AntDesign
           name="menuunfold"
           size={24}
-          color="green"
+          color="#47a67f"
           onPress={() => navigation.openDrawer()}
           style={{ paddingLeft: 10 }}
         />
@@ -171,6 +172,7 @@ export default function SummaryReportScreen() {
           paddingHorizontal: 10,
           marginHorizontal: 10,
           borderRadius: 10,
+          paddingVertical: "15%"
         }}
       >
         <View
@@ -186,11 +188,12 @@ export default function SummaryReportScreen() {
           </Title>
         </View>
         <View style={styles.row}>
-          {revenueSummaries.map((item) => (
+          {revenueSummaries.map((item, index) => (
             <RenderReportItem
               title={item.title}
               value={money(item.value)}
               titleColor={item.color}
+              key={keyExtractor(index)}
               route={item.route}
             />
           ))}

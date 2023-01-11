@@ -144,7 +144,7 @@ function NavTab() {
         component={WelcomeScreen}
         options={{
           tabBarLabel: '',
-          tabBarActiveTintColor: 'green',
+          tabBarActiveTintColor: '#47a67f',
           tabBarIcon: ({ color, size }) => <Ionicons name="md-home" size={size} color={color} />,
         }}
       />
@@ -155,7 +155,7 @@ function NavTab() {
         options={{
           title: 'Stock Items',
           tabBarLabel: '',
-          tabBarActiveTintColor: 'green',
+          tabBarActiveTintColor: '#47a67f',
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="list-alt" size={size} color={color} />
           ),
@@ -173,7 +173,7 @@ function NavTab() {
         options={{
           title: 'Orders',
           tabBarLabel: '',
-          tabBarActiveTintColor: 'green',
+          tabBarActiveTintColor: '#47a67f',
           tabBarIcon: ({ color, size }) => (
             <Ionicons
               name="md-add-circle"
@@ -198,7 +198,7 @@ function NavTab() {
         options={{
           title: 'Customers',
           tabBarLabel: '',
-          tabBarActiveTintColor: 'green',
+          tabBarActiveTintColor: '#47a67f',
           tabBarIcon: ({ color, size }) => <Ionicons name="person" size={24} color={color} />,
         }}
       />
@@ -209,7 +209,7 @@ function NavTab() {
         options={{
           title: 'General Settings',
           tabBarLabel: '',
-          tabBarActiveTintColor: 'green',
+          tabBarActiveTintColor: '#47a67f',
           tabBarIcon: ({ color, size }) => <Feather name="settings" size={size} color={color} />,
         }}
       />

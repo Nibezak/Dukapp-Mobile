@@ -51,6 +51,7 @@ export default function OtpScreen({ route, navigation }) {
         codeInputFieldStyle={styles.underlineStyleBase}
         codeInputHighlightStyle={styles.underlineStyleHighLighted}
         onCodeFilled={handleOtpVerification}
+        onCodeChanged={handleOtpVerification}
         placeholderCharacter="_"
       />
       {invalidCode && (

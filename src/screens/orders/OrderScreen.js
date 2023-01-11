@@ -71,7 +71,7 @@ export default function OrderScreen({ navigation, route }) {
         <AntDesign
           name="menuunfold"
           size={24}
-          color="green"
+          color="#47a67f"
           onPress={() => navigation.openDrawer()}
           style={{ paddingLeft: 10 }}
         />
@@ -265,13 +265,13 @@ export default function OrderScreen({ navigation, route }) {
       )}
 
       <KeyboardAvoidingView keyboardDismissMode="on-drag" enabled={false}>
-        {/** Type to sell */}
+        {/**Quick sale */}
         <InputSend
           style={{ bottom: 140, position: 'absolute' }}
           onChangeText={handleTypingSuggestions}
           onPress={sellNewItem}
           value={typing}
-          placeholder={t('order.type_to_sell')}
+          placeholder={'Quick sale'}
         />
       </KeyboardAvoidingView>
     </View>

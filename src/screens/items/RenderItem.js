@@ -89,7 +89,7 @@ export default function RenderItem({ item, index, onPress }) {
           </Text>
         </View>
         <Text>
-          <MaterialIcons name="chevron-right" size={32} color="#a0aec0" />
+          <MaterialIcons name="chevron-right" size={32} color="#47a67f" />
         </Text>
       </View>
     </TouchableOpacity>
