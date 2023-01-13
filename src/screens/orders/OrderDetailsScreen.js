@@ -13,8 +13,8 @@ import {
 import { t } from 'i18n-js';
 import SuggestionButton from '../../components/SuggestionButton';
 import CustomerService from '../../services/CustomerService';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { numberFromString } from '../../helpers/Numbers';
+import { useFocusEffect } from '@react-navigation/native';
+import { numberFromString, number } from '../../helpers/Numbers';
 import RenderOrderLineItem from './RenderOrderLineItem';
 import OrderService from '../../services/OrderService';
 import ItemService from '../../services/ItemService';
@@ -313,17 +313,18 @@ export default function OrderDetailsScreen({ navigation, route }) {
    * Manually update order price item
    *
    */
-
-
   async function handlePriceManualChange(customTotal, itemToUpdate) {
     // To proceed if this is not a number
-    const sanitizedTotal = parseFloat(numberFromString(customTotal));
+    const sanitizedTotal = parseFloat(customTotal.replace(',', ''));
 
     if (isNaN(sanitizedTotal)) {
       throw customTotal + ' is not a valid number!';
     }
 
     var cleanCustomTotal = Math.abs(sanitizedTotal);
+
+    console.log(cleanCustomTotal);
+
     OrderService.setItemTotalManually(itemToUpdate, cleanCustomTotal).then((result) => {
       // Refresh the entire order
       refreshOrder();
@@ -335,7 +336,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
    */
   async function handleQuantityManualChange(customQuantity, itemToUpdate) {
     // To proceed if this is not a number
-    const sanitizedTotal = parseFloat(numberFromString(customQuantity));
+    const sanitizedTotal = parseFloat(parseFloat(customQuantity.replace(',', '')));
     if (isNaN(sanitizedTotal)) {
       throw customQuantity + ' is not a valid number!';
     }
