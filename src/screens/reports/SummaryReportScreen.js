@@ -31,7 +31,7 @@ export default function SummaryReportScreen() {
   const [byMobile, setByMobile] = useState(0);
   const [byCredit, setByCredit] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState([
-    { color: '#718096', title: 'By Cash', value: byCash, route: 'Insights' },
+    { color: '#718096', title: 'By Cash', value: byCash, route: 'Stock' },
     { color: '#718096', title: 'By Mobile', value: byMobile, route: 'Insights' },
     { color: '#718096', title: 'Total ', value: byCredit, route: 'Insights' },
   ]);
@@ -175,17 +175,8 @@ export default function SummaryReportScreen() {
           paddingVertical: "15%"
         }}
       >
-        <View
-          style={{
-            paddingVertical: 2,
-            paddingHorizontal: 2,
-            flexDirection: 'row',
-            justifyContent: 'center',
-          }}
-        >
-          <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>
-            {t('report.revenue_summary')}
-          </Title>
+        <View style={{ flexDirection: "row", justifyContent: "center", paddingVertical: 5 }}>
+          <Text style={{ color: "#818096" }}>In a Nutshell</Text>
         </View>
         <View style={styles.row}>
           {revenueSummaries.map((item, index) => (

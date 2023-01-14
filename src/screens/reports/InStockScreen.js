@@ -7,7 +7,7 @@ import { Feather } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
 import { getSetting } from '../../models/AsyncStorage';
 
-export function ByCashScreen() {
+export function InStockScreen() {
     const { width } = useWindowDimensions();
     const navigation = useNavigation();
     const [orders, setOrders] = useState([]);
@@ -51,7 +51,7 @@ export function ByCashScreen() {
                     <View style={styles.box}>
                         <Text>  S#{order.id} Coffe Late</Text>
                         <Feather name="check-circle" size={13} color="#47a67f" > Complete <Feather name="check-circle" size={13} color="#47a67f" /> </Feather>
-                        <Text style={{ color: "#47a67f", fontFamily: "Roboto-Bold" }}>  {currency} {order.total}</Text>
+                        <Text style={{ color: "#47a67f" }}>  {currency} {order.total}</Text>
                     </View>
                 );
             })}

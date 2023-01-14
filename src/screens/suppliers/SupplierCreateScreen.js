@@ -6,6 +6,7 @@ import Button from "../../components/Button";
 
 import SupplierService from "../../services/SupplierService";
 import { ScrollView } from "react-native-gesture-handler";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function SupplierCreateScreen({ navigation }) {
   const [companyName, setCompanyName] = useState("");
@@ -36,8 +37,8 @@ export default function SupplierCreateScreen({ navigation }) {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <KeyboardAvoidingView mode="padding">
+    <KeyboardAwareScrollView>
+      <ScrollView style={styles.container}>
         <View style={styles.row}>
           <FieldText
             autoFocus={true}
@@ -45,7 +46,7 @@ export default function SupplierCreateScreen({ navigation }) {
             title={t("supplier.company_name")}
             onChangeText={setCompanyName}
             underlineColorAndroid="transparent"
-            placeholder={t("supplier.company_name_placeholder")}
+            placeholder={"Company Name"}
           />
         </View>
         <View style={styles.row}>
@@ -55,7 +56,7 @@ export default function SupplierCreateScreen({ navigation }) {
             onChangeText={setPhone}
             keyboardType={"phone-pad"}
             underlineColorAndroid="transparent"
-            placeholder={t("supplier.phone_placeholder")}
+            placeholder={'250788000000'}
           />
         </View>
         <View style={styles.row}>
@@ -65,7 +66,7 @@ export default function SupplierCreateScreen({ navigation }) {
             onChangeText={setEmail}
             keyboardType={"email-address"}
             underlineColorAndroid="transparent"
-            placeholder={t("supplier.email_placeholder")}
+            placeholder={'dukappcommunity@gmail.com'}
           />
         </View>
         <View style={styles.row}>
@@ -74,7 +75,7 @@ export default function SupplierCreateScreen({ navigation }) {
             title={t("supplier.tax_identification_number")}
             onChangeText={setTin}
             underlineColorAndroid="transparent"
-            placeholder={t("supplier.tin_placeholder")}
+            placeholder={'10229 Dukapp'}
           />
         </View>
         <View style={styles.row}>
@@ -83,7 +84,7 @@ export default function SupplierCreateScreen({ navigation }) {
             title={t("supplier.address")}
             onChangeText={setAddress}
             underlineColorAndroid="transparent"
-            placeholder={t("supplier.address_placeholder")}
+            placeholder={"Type Something"}
           />
         </View>
 
@@ -102,16 +103,16 @@ export default function SupplierCreateScreen({ navigation }) {
             }}
           />
         </View>
-      </KeyboardAvoidingView>
-      <View style={[styles.row, { marginVertical: 10 }]}>
-        <Button onPress={() => navigation.goBack()} color={"#f1f1f1"} backgroundColor={'#f59e0b'}>
-          {t("common.cancel")}
-        </Button>
-        <Button onPress={handleSaveSupplier} color={"#f1f1f1"} backgroundColor={'#47a67f'}>
-          {t("common.save")}
-        </Button>
-      </View>
-    </ScrollView>
+        <View style={[styles.row, { marginVertical: 10 }]}>
+          <Button onPress={() => navigation.goBack()} color={"#f1f1f1"} backgroundColor={'#f59e0b'}>
+            {t("common.cancel")}
+          </Button>
+          <Button onPress={handleSaveSupplier} color={"#f1f1f1"} backgroundColor={'#47a67f'}>
+            {t("common.save")}
+          </Button>
+        </View>
+      </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
 

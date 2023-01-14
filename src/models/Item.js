@@ -81,8 +81,8 @@ class Item extends BaseModel {
   async createTable() {
     this.db.statement(
       `CREATE TABLE IF NOT EXISTS ` +
-        this.getTableName() +
-        `(
+      this.getTableName() +
+      `(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               name TEXT UNIQUE,
               description TEXT NULL,

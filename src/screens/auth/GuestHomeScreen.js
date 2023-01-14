@@ -8,6 +8,8 @@ import {
 } from "react-native";
 import { t } from "i18n-js";
 import ButtonFilled from "../../components/ButtonFilled";
+import KeyboardAvoidingView from "react-native/Libraries/Components/Keyboard/KeyboardAvoidingView";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function GuestHomeScreen({ navigation }) {
   // Ensure database tables are created
@@ -22,23 +24,25 @@ export default function GuestHomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.wrapper}>
-      <Text style={styles.appName}>{"Dukapp"}</Text>
-      <Text style={styles.prompt}>{t("auth.welcome_to_dukapp_app")}</Text>
-      <Text style={styles.message}>
-        {t("auth.welcome_to_dukapp_app_description")}
-      </Text>
+      <KeyboardAwareScrollView>
+        <Text style={styles.appName}>{"Dukapp"}</Text>
+        <Text style={styles.prompt}>{t("auth.welcome_to_dukapp_app")}</Text>
+        <Text style={styles.message}>
+          {t("auth.welcome_to_dukapp_app_description")}
+        </Text>
 
-      <TouchableOpacity
-        onPress={async () => {
-          // Checking if the link is supported for links with custom URL scheme.
-          const supported = await Linking.canOpenURL("https://butike.app");
-        }}
-      >
-        <Text style={styles.termsLink}>{t("common.terms_and_condition")}</Text>
-      </TouchableOpacity>
-      <ButtonFilled onPress={() => navigation.navigate("PhoneNumber")}>
-        {t("auth.accept_tc_and_continue")}
-      </ButtonFilled>
+        <TouchableOpacity
+          onPress={async () => {
+            // Checking if the link is supported for links with custom URL scheme.
+            const supported = await Linking.canOpenURL("https://butike.app");
+          }}
+        >
+          <Text style={styles.termsLink}>{t("common.terms_and_condition")}</Text>
+        </TouchableOpacity>
+        <ButtonFilled onPress={() => navigation.navigate("PhoneNumber")}>
+          {t("auth.accept_tc_and_continue")}
+        </ButtonFilled>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }

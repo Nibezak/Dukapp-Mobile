@@ -82,110 +82,112 @@ export default function CreateItemScreen({ navigation, route }) {
   return (
 
     <>
-      <ScrollView>
-        <View
-          style={{
-            flexDirection: "row",
-            paddingLeft: 10,
-            paddingRight: 10,
-            borderWidth: 1,
-            borderBottomColor: "#cbd5e0",
-          }}
-        >
-          <InputSwitch
-            onValueChange={toggleSwitch}
-            value={isService}
-            title={t("item.is_item_service")}
-          />
-        </View>
-        <View style={styles.row}>
-          <FieldText
-            value={name}
-            title={t("item.name")}
-            onChangeText={setName}
-            underlineColorAndroid="transparent"
-            placeholder={t("item.name_placeholder")}
-          />
-        </View>
-        <View style={styles.row}>
-          <FieldText
-            title={t("item.description")}
-            onChangeText={setDescription}
-            underlineColorAndroid="transparent"
-            placeholder={t("item.description_placeholder")}
-          />
-        </View>
-        <View style={styles.row}>
-          <FieldText
-            title={t("item.category")}
-            onChangeText={setCategory}
-            underlineColorAndroid="transparent"
-            placeholder={t("item.category_placeholder")}
-          />
-        </View>
+      <KeyboardAwareScrollView>
+        <ScrollView>
+          <View
+            style={{
+              flexDirection: "row",
+              paddingLeft: 10,
+              paddingRight: 10,
+              borderWidth: 1,
+              borderBottomColor: "#cbd5e0",
+            }}
+          >
+            <InputSwitch
+              onValueChange={toggleSwitch}
+              value={isService}
+              title={t("item.is_item_service")}
+            />
+          </View>
+          <View style={styles.row}>
+            <FieldText
+              value={name}
+              title={t("item.name")}
+              onChangeText={setName}
+              underlineColorAndroid="transparent"
+              placeholder={t("item.name_placeholder")}
+            />
+          </View>
+          <View style={styles.row}>
+            <FieldText
+              title={t("item.description")}
+              onChangeText={setDescription}
+              underlineColorAndroid="transparent"
+              placeholder={t("item.description_placeholder")}
+            />
+          </View>
+          <View style={styles.row}>
+            <FieldText
+              title={t("item.category")}
+              onChangeText={setCategory}
+              underlineColorAndroid="transparent"
+              placeholder={t("item.category_placeholder")}
+            />
+          </View>
 
-        {/** Only display this section if this is not a service */}
-        {
-          isService ? (
-            <></>
-          ) : (
-            <>
-              <View style={styles.row}>
-                <FieldText
-                  title={t("item.re_order_level")}
-                  value={reOrderLevel.toString()}
-                  onChangeText={setReorderLevel}
-                  underlineColorAndroid="transparent"
-                  placeholder={t("item.re_order_level_placeholder")}
-                  keyboardType="numeric"
-                />
-              </View>
+          {/** Only display this section if this is not a service */}
+          {
+            isService ? (
+              <></>
+            ) : (
+              <>
+                <View style={styles.row}>
+                  <FieldText
+                    title={t("item.re_order_level")}
+                    value={reOrderLevel.toString()}
+                    onChangeText={setReorderLevel}
+                    underlineColorAndroid="transparent"
+                    placeholder={t("item.re_order_level_placeholder")}
+                    keyboardType="numeric"
+                  />
+                </View>
 
-              <View style={styles.row}>
-                <FieldText
-                  title={t("item.quantity")}
-                  value={quantity.toString()}
-                  onChangeText={setQuantity}
-                  underlineColorAndroid="transparent"
-                  placeholder={t("item.quantity_placeholder")}
-                  keyboardType="numeric"
-                />
-              </View>
+                <View style={styles.row}>
+                  <FieldText
+                    title={t("item.quantity")}
+                    value={quantity.toString()}
+                    onChangeText={setQuantity}
+                    underlineColorAndroid="transparent"
+                    placeholder={t("item.quantity_placeholder")}
+                    keyboardType="numeric"
+                  />
+                </View>
 
-              <View style={styles.row}>
-                <FieldText
-                  title={t("item.unit_cost_price")}
-                  value={unitPrice.toString()}
-                  onChangeText={setUnitPrice}
-                  underlineColorAndroid="transparent"
-                  placeholder={t("item.unit_cost_price_placeholder")}
-                  keyboardType="numeric"
-                />
-              </View>
-            </>
-          )
-        }
-        {/** END OF NON SERVICE PRODUCT */}
-        <View style={styles.row}>
-          <FieldText
-            title={t("item.unit_sale_price")}
-            onChangeText={setSalePrice}
-            underlineColorAndroid="transparent"
-            placeholder={t("item.unit_sale_price_placeholder")}
-            keyboardType="numeric"
-          />
-        </View>
+                <View style={styles.row}>
+                  <FieldText
+                    title={t("item.unit_cost_price")}
+                    value={unitPrice.toString()}
+                    onChangeText={setUnitPrice}
+                    underlineColorAndroid="transparent"
+                    placeholder={t("item.unit_cost_price_placeholder")}
+                    keyboardType="numeric"
+                  />
+                </View>
+              </>
+            )
+          }
+          {/** END OF NON SERVICE PRODUCT */}
+          <View style={styles.row}>
+            <FieldText
+              title={t("item.unit_sale_price")}
+              onChangeText={setSalePrice}
+              underlineColorAndroid="transparent"
+              placeholder={t("item.unit_sale_price_placeholder")}
+              keyboardType="numeric"
+            />
+          </View>
 
-        <View style={styles.row}>
-          <Button onPress={() => navigation.goBack()} color={"#f1f1f1"} backgroundColor={"#f59e0b"}>
-            {t("common.cancel")}
-          </Button>
-          <Button onPress={addStock} color={"#f1f1f1"} backgroundColor={"#47a67f"}>
-            {t("common.save")}
-          </Button>
+          <View style={styles.row}>
+            <Button onPress={() => navigation.goBack()} color={"#f1f1f1"} backgroundColor={"#f59e0b"}>
+              {t("common.cancel")}
+            </Button>
+            <Button onPress={addStock} color={"#f1f1f1"} backgroundColor={"#47a67f"}>
+              {t("common.save")}
+            </Button>
 
-        </View>
-      </ScrollView>
+          </View>
+        </ScrollView>
+      </KeyboardAwareScrollView>
     </>
   );
 }

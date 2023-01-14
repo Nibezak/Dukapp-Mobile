@@ -30,9 +30,8 @@ export default function OrderScreen({ navigation, route }) {
   const [items, setItems] = useState([]);
 
   /** Fix the undefined order_type error */
-  const routeParams = route.params;
-  const orderType = routeParams.order_type == undefined ? 'sale' : routeParams.order_type;
-
+  const orderType = route.order_type == undefined ? 'sale' : routeParams.order_type;
+  // const orderType = 'sale'
   useFocusEffect(
     useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
@@ -264,7 +263,7 @@ export default function OrderScreen({ navigation, route }) {
         <></>
       )}
 
-      <KeyboardAvoidingView keyboardDismissMode="on-drag" enabled={false}>
+      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={1} keyboardDismissMode="on-drag" enabled={false}>
         {/**Quick sale */}
         <InputSend
           style={{ bottom: 140, position: 'absolute' }}

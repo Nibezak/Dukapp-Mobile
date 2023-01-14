@@ -6,6 +6,7 @@ import { t } from "i18n-js";
 import OrderService from "../../services/OrderService";
 import CustomerService from "../../services/CustomerService";
 import { ScrollView } from "react-native-gesture-handler";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function CustomerCreateScreen({ navigation, route }) {
   const [names, setNames] = useState("");
@@ -45,71 +46,73 @@ export default function CustomerCreateScreen({ navigation, route }) {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.row}>
-        <FieldText
-          value={names}
-          autoFocus={true}
-          title={t("customer.names")}
-          onChangeText={setNames}
-          underlineColorAndroid="transparent"
-          placeholder={t("common.example_name")}
-        />
-      </View>
-      <View style={styles.row}>
-        <FieldText
-          value={phone}
-          title={t("customer.phone")}
-          onChangeText={setPhone}
-          keyboardType={"phone-pad"}
-          underlineColorAndroid="transparent"
-          placeholder={t("customer.phone")}
-        />
-      </View>
-      <View style={styles.row}>
-        <FieldText
-          value={email}
-          title={t("customer.email")}
-          onChangeText={setEmail}
-          keyboardType={"email-address"}
-          underlineColorAndroid="transparent"
-          placeholder={t("customer.email")}
-        />
-      </View>
-      <View style={styles.row}>
-        <FieldText
-          value={address}
-          title={t("customer.address")}
-          onChangeText={setAddress}
-          underlineColorAndroid="transparent"
-          placeholder={t("customer.address")}
-        />
-      </View>
-      <View style={styles.row}>
-        <FieldText
-          value={note}
-          title={t("customer.note")}
-          numberOfLines={5}
-          onChangeText={setNote}
-          underlineColorAndroid="transparent"
-          placeholder={t("customer.enter_customer_note")}
-          style={{
-            height: 200,
-            textAlignVertical: "top",
-            borderWidth: 0.5,
-            borderColor: "#e2e8f0",
-          }}
-        />
-      </View>
-      <View style={[styles.row, { borderBottomWidth: 0 }]}>
-        <Button onPress={() => navigation.goBack()} color={"#f1f1f1"} backgroundColor={"#f59e0b"}>
-          {t("common.cancel")}
-        </Button>
-        <Button onPress={handleSaveCustomer} color={"#f1f1f1"} backgroundColor={"#47a67f"}>
-          {t("common.save")}
-        </Button>
-      </View>
-    </ScrollView>
+    <KeyboardAwareScrollView>
+      <ScrollView style={styles.container}>
+        <View style={styles.row}>
+          <FieldText
+            value={names}
+            autoFocus={true}
+            title={t("customer.names")}
+            onChangeText={setNames}
+            underlineColorAndroid="transparent"
+            placeholder={t("common.example_name")}
+          />
+        </View>
+        <View style={styles.row}>
+          <FieldText
+            value={phone}
+            title={t("customer.phone")}
+            onChangeText={setPhone}
+            keyboardType={"phone-pad"}
+            underlineColorAndroid="transparent"
+            placeholder={t("customer.phone")}
+          />
+        </View>
+        <View style={styles.row}>
+          <FieldText
+            value={email}
+            title={t("customer.email")}
+            onChangeText={setEmail}
+            keyboardType={"email-address"}
+            underlineColorAndroid="transparent"
+            placeholder={t("customer.email")}
+          />
+        </View>
+        <View style={styles.row}>
+          <FieldText
+            value={address}
+            title={t("customer.address")}
+            onChangeText={setAddress}
+            underlineColorAndroid="transparent"
+            placeholder={t("customer.address")}
+          />
+        </View>
+        <View style={styles.row}>
+          <FieldText
+            value={note}
+            title={t("customer.note")}
+            numberOfLines={5}
+            onChangeText={setNote}
+            underlineColorAndroid="transparent"
+            placeholder={t("customer.enter_customer_note")}
+            style={{
+              height: 200,
+              textAlignVertical: "top",
+              borderWidth: 0.5,
+              borderColor: "#e2e8f0",
+            }}
+          />
+        </View>
+        <View style={[styles.row, { borderBottomWidth: 0 }]}>
+          <Button onPress={() => navigation.goBack()} color={"#f1f1f1"} backgroundColor={"#f59e0b"}>
+            {t("common.cancel")}
+          </Button>
+          <Button onPress={handleSaveCustomer} color={"#f1f1f1"} backgroundColor={"#47a67f"}>
+            {t("common.save")}
+          </Button>
+        </View>
+      </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
 

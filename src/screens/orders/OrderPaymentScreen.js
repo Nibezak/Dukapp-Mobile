@@ -68,7 +68,7 @@ export default function OrderPaymentScreen({ navigation, route }) {
           mode={"dropdown"}
           title={"Payment Method"}
           selectedValue={method}
-          style={{ height: 50, width: 150 }}
+          style={{ height: 150, width: 150 }}
           onValueChange={(itemValue, itemIndex) =>
             handleSetMethod(itemValue, itemIndex)
           }
@@ -109,6 +109,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 10,
+    marginTop: 30
   },
   amount: {
     fontSize: 14,

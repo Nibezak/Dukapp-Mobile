@@ -391,7 +391,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
       )}
 
       {/** Allow Items Search Entry */}
-      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={5} enabled={false}>
+      <KeyboardAvoidingView behavior="height" keyboardVerticalOffset={1} enabled={true}>
         <InputSend
           onChangeText={handleTypingSuggestions}
           onPress={sellNewItem}

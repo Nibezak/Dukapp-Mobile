@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Image,
   InteractionManager,
+  ScrollView,
 } from 'react-native';
 import HomeSummary from './HomeSummary';
 import { t } from 'i18n-js';
@@ -113,14 +114,17 @@ export default function WelcomeScreen({ navigation }) {
           <HomeSummary />
 
           <RevenueBarChart />
-          <Title style={styles.title}>{orders.length > 0 ? t('welcome.last_4_orders') : ''}</Title>
-          <View>
+          {/* <Title style={styles.title}>{orders.length > 0 ? t('welcome.last_4_orders') : ''}</Title> */}
+          <ScrollView>
+
             <FlatList
-              data={orders.slice(0, 4)}
+              data={orders.slice(0, 5)}
               renderItem={renderOrder}
               keyExtractor={keyExtractor}
+              nestedScrollEnabled
             />
-          </View>
+
+          </ScrollView>
         </>
       )}
     </View>

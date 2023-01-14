@@ -1,14 +1,16 @@
 import React from "react";
-import { View, TouchableOpacity, Text } from "react-native";
+import { View, TouchableOpacity, Text, ScrollView } from "react-native";
 
 /**
  * Suggestion button
  */
 export default function SuggestionButton(props) {
   return (
-    <TouchableOpacity style={styles.suggestionButton} onPress={props.onPress}>
-      <Text style={styles.suggestionText}>{props.title}</Text>
-    </TouchableOpacity>
+    <ScrollView>
+      <TouchableOpacity style={styles.suggestionButton} onPress={props.onPress}>
+        <Text style={styles.suggestionText}>{props.title}</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
