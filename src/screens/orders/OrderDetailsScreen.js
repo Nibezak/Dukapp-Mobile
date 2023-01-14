@@ -323,8 +323,6 @@ export default function OrderDetailsScreen({ navigation, route }) {
 
     var cleanCustomTotal = Math.abs(sanitizedTotal);
 
-    console.log(cleanCustomTotal);
-
     OrderService.setItemTotalManually(itemToUpdate, cleanCustomTotal).then((result) => {
       // Refresh the entire order
       refreshOrder();

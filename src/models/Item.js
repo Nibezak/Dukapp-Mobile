@@ -1,9 +1,9 @@
-import BaseModel from "./Model";
+import BaseModel from './Model';
 
 class Item extends BaseModel {
   constructor() {
     super();
-    this.tableName = "items";
+    this.tableName = 'items';
   }
 
   /**
@@ -53,7 +53,7 @@ class Item extends BaseModel {
    */
   async updateOrCreate(item) {
     return await this.refresh()
-      .where("name", item.name)
+      .where('name', item.name)
       .get()
       .then((items) => {
         // If we have items this item exists
