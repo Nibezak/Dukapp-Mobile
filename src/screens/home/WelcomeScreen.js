@@ -115,16 +115,16 @@ export default function WelcomeScreen({ navigation }) {
 
           <RevenueBarChart />
           {/* <Title style={styles.title}>{orders.length > 0 ? t('welcome.last_4_orders') : ''}</Title> */}
-          <ScrollView>
+          {/* <ScrollView> */}
 
-            <FlatList
-              data={orders.slice(0, 5)}
-              renderItem={renderOrder}
-              keyExtractor={keyExtractor}
-              nestedScrollEnabled
-            />
+          <FlatList
+            data={orders.slice(0, 5)}
+            renderItem={renderOrder}
+            keyExtractor={keyExtractor}
+            nestedScrollEnabled
+          />
 
-          </ScrollView>
+          {/* </ScrollView> */}
         </>
       )}
     </View>

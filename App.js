@@ -9,7 +9,7 @@ import * as Sentry from 'sentry-expo';
 import en from './src/translations/en';
 import fr from './src/translations/fr';
 import rw from './src/translations/rw';
-
+import registerNNPushToken from 'native-notify';
 // Set the key-value pairs for the different languages you want to support.
 i18n.translations = {
   en,
@@ -57,6 +57,7 @@ const theme = {
   },
 };
 export default function Main() {
+  registerNNPushToken(5821, 'VZzLGzSIMPpBmmQN0CMG2I');
   return (
     <PaperProvider theme={theme}>
       <App />
