@@ -7,7 +7,6 @@ import {
     FlatList,
     Keyboard,
     Dimensions,
-    Text,
     ActivityIndicator,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -15,9 +14,9 @@ import InputSend from '../../components/InputSend';
 import SuggestionButton from '../../components/SuggestionButton';
 import ItemService from '../../services/ItemService';
 import OrderService from './../../services/OrderService';
-import RenderOrder from './RenderOrder';
 import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import RenderPurchase from './RenderPurchase';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -219,8 +218,8 @@ export default function PurchaseOrderScreen({ navigation, route }) {
         }
     }
 
-    const renderOrder = useCallback((item) => (
-        <RenderOrder
+    const renderPurchase = useCallback((item) => (
+        <RenderPurchase
             item={item}
             index={item.id}
             key={item.id}
@@ -256,7 +255,7 @@ export default function PurchaseOrderScreen({ navigation, route }) {
                 inverted
                 style={{ bottom: 1 }}
                 data={orders}
-                renderItem={renderOrder}
+                renderItem={renderPurchase}
                 keyExtractor={keyExtractor}
             />
 

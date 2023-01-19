@@ -27,14 +27,14 @@ export default function RenderPayment({ order, customer }) {
   return (
     <View style={{ flexDirection: 'row' }}>
       {/* CUSTOMER SECTION */}
-      <View style={{ flex: 1 }}>
+      {/* <View style={{ flex: 1 }}>
         <ButtonFilled onPress={handleOnPressCustomer} color={'#a3a3a3'} labelColor={'#fafafa'}>
           <MaterialCommunityIcons name={'account'} size={16} />{' '}
           {t('order.customer_paid_by', {
             customer: customer.names,
           })}
         </ButtonFilled>
-      </View>
+      </View> */}
 
       {/* PAYMENT METHOD SECTION */}
       <View style={{ flex: 1 }}>
