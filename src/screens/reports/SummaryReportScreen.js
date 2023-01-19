@@ -6,7 +6,7 @@ import { money, number } from '../../helpers/Numbers';
 import { getSetting } from '../../models/AsyncStorage';
 import { RenderReportItem } from './SummaryReportItem';
 import RevenueBarChart from './RevenueBarChart';
-import { Title } from 'react-native-paper';
+import { Title, Button } from 'react-native-paper';
 import { t } from 'i18n-js';
 import { AntDesign } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -16,9 +16,11 @@ export default function SummaryReportScreen() {
   const [showLoading, setshowLoading] = useState(true);
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
   const navigation = useNavigation();
 
-  // Date Picker 
+  // Date Picker
   const [datePicker, setDatePicker] = useState(false);
   const [date, setDate] = useState(new Date());
   // Revenue summaries
@@ -53,23 +55,27 @@ export default function SummaryReportScreen() {
     { color: '#84cc16', title: 'Fast going', value: fastMoving, route: 'Insights' },
     { color: '#facc15', title: 'Slow going', value: slowMoving, route: 'Insights' },
   ]);
-  // #47a67f
-  // facc15
+  // Display on back button
   useFocusEffect(
     useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
         // Expensive task
         refreshReportByDate(startDate, endDate);
       });
-    }, [])
+    }, [startDate, endDate])
   );
+
+  /** FORCE RERENDER ON STATE CHANGE */
+  useCallback(() => {
+    refreshReportByDate(startDate, endDate);
+  }, [startDate, endDate]);
 
   useEffect(() => {
     getSetting('app_default_currency').then(setCurrency);
     setHeader();
     // Load data for the report
     refreshReportByDate(startDate, endDate);
-  }, [stockSummaries, paymentMethod, revenueSummaries]);
+  }, [startDate, endDate]);
 
   const keyExtractor = useCallback((index) => index.toString(), []);
 
@@ -78,12 +84,12 @@ export default function SummaryReportScreen() {
       headerTitleAlign: 'center',
       headerRight: () => (
         <>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity onPress={showDatePicker} style={{ paddingHorizontal: 5, marginHorizontal: 5, }}>
-              <AntDesign name="calendar" size={24} color="#47a67f" style={{ fontWeight: "semibold" }} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={{ paddingHorizontal: 10, marginHorizontal: 10, }}>
-              <AntDesign name="minuscircleo" size={24} color="red" style={{ fontWeight: "semibold" }} />
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{ paddingHorizontal: 10, marginHorizontal: 10 }}
+            >
+              <AntDesign name="home" size={24} color="#718096" style={{ fontWeight: 'semibold' }} />
             </TouchableOpacity>
           </View>
         </>
@@ -98,7 +104,6 @@ export default function SummaryReportScreen() {
         />
       ),
     });
-
   }
   /**
    * Fetch report from database based on the date
@@ -163,11 +168,13 @@ export default function SummaryReportScreen() {
     );
   }
 
-  // date picker function 
+  const handleDatePickerChange = (date) => {
+    // Format date to YYYY-MM-DD
+    const formatedDate = date.toISOString().slice(0, 10);
+    setStartDate(date);
+    setEndDate(date);
+  };
 
-  function showDatePicker() {
-    setDatePicker(true);
-  }
   function onDateSelected(event, value) {
     setDate(value);
     setDatePicker(false);
@@ -187,29 +194,63 @@ export default function SummaryReportScreen() {
 
   return (
     <View>
-      <Title style={styles.title}>Insights of : {dayjs(date).format('DD MMM YYYY')}</Title>
+      {/* DISPLAY CHART */}
       <RevenueBarChart />
-      {datePicker && (
+
+      <View style={[styles.title, { flexDirection: 'row' }]}>
+        {/* SECTION FOR DATE PICKER */}
+        <TouchableOpacity onPress={() => setShowStartDatePicker(true)} style={styles.dateSelector}>
+          <Text style={styles.title}>{startDate.toString()}</Text>
+        </TouchableOpacity>
+        <Text style={[styles.title, { fontWeight: 'bold' }]}> {'-'} </Text>
+        <TouchableOpacity onPress={() => setShowEndDatePicker(true)} style={styles.dateSelector}>
+          <Text style={styles.title}>{endDate.toString()}</Text>
+        </TouchableOpacity>
+      </View>
+      {showStartDatePicker && (
         <DateTimePicker
-          value={date}
+          value={new Date(startDate)}
           mode={'date'}
           display={'default'}
-          is24Hour={true}
-          onChange={onDateSelected}
+          accentColor={'#718096'}
+          onChange={(event, date) => {
+            /** Hide the end date */
+            setShowStartDatePicker(false);
+            /** Update the start date */
+            setStartDate(date.toISOString().slice(0, 10));
+          }}
         />
-
       )}
+
+      {showEndDatePicker && (
+        <DateTimePicker
+          value={new Date(startDate)}
+          mode={'date'}
+          display={'default'}
+          accentColor={'#718096'}
+          // Ensure This is always greator than start date
+          minimumDate={new Date(startDate)}
+          onChange={(event, date) => {
+            /** Hide the end date */
+            setShowEndDatePicker(false);
+            /** Update the start date */
+            setEndDate(date.toISOString().slice(0, 10));
+          }}
+        />
+      )}
+
+      {/* END DATE PICKER SECTION */}
       <View
         style={{
           backgroundColor: 'white',
           paddingHorizontal: 10,
           marginHorizontal: 10,
           borderRadius: 10,
-          paddingVertical: "5%"
+          paddingVertical: '5%',
         }}
       >
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <Text style={{ color: "#818096" }}>In a Nutshell</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+          <Text style={{ color: '#818096' }}>Summary</Text>
         </View>
         <View style={styles.row}>
           {revenueSummaries.map((item, index) => (
@@ -302,11 +343,19 @@ const styles = {
   },
   title: {
     marginTop: 5,
-    fontSize: 18,
+    fontSize: 16,
     alignSelf: 'center',
+    fontWeight: 'bold',
     justifyContent: 'center',
     textAlign: 'center',
     color: '#718096',
+  },
+  dateSelector: {
+    borderBottomColor: '#718096',
+    borderBottomWidth: 1,
+    paddingHorizontal: 5,
+    marginHorizontal: 5,
+    flexDirection: 'row',
   },
   value: {
     textAlign: 'center',
@@ -315,5 +364,4 @@ const styles = {
     alignSelf: 'center',
     color: '#4a5568',
   },
-
 };
