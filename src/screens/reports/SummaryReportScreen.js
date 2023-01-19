@@ -187,7 +187,9 @@ export default function SummaryReportScreen() {
 
   return (
     <View>
-      <Title style={styles.title}>Insights of : {dayjs(date).format('DD MMM YYYY')}</Title>
+      <Title style={styles.title}>Insights of :
+        {dayjs(date).format('DD MMM YYYY')}
+      </Title>
       <RevenueBarChart />
       {datePicker && (
         <DateTimePicker

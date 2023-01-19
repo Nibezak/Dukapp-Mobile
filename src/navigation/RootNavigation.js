@@ -60,6 +60,7 @@ import { FastGoingScreen } from '../screens/reports/FastGoingScreen';
 import { ByMobileScreen } from '../screens/reports/ByMobileScreen';
 import { InStockScreen } from '../screens/reports/InStockScreen';
 import PurchaseOrderScreen from '../screens/orders/PurchaseOrderScreen';
+import PurchaseDetailsScreen from '../screens/orders/PurchaseDetailsScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -219,6 +220,7 @@ export function NavStack() {
 
       <Stack.Screen name="Orders" component={OrderScreen} options={{ presentation: "modal", }} />
       <Stack.Screen name="Order Details" component={OrderDetailsSCreen} />
+      <Stack.Screen name="Purchase Details" component={PurchaseDetailsScreen} />
       <Stack.Screen name="Add Payment To Order" component={OrderPaymentScreen} />
       <Stack.Screen name="Order Receipt" component={ReceiptScreen} />
       <Stack.Screen name="Sale Receipt" component={SaleReceiptsScreen} />
