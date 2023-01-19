@@ -67,7 +67,7 @@ export default function OrderScreen({ navigation, route }) {
       headerTitleAlign: 'center',
       headerRight: () => (
         <TouchableOpacity onPress={() => navigation.goBack()} style={{ paddingHorizontal: 10, marginHorizontal: 10, }}>
-          <AntDesign name="minuscircleo" size={24} color="red" style={{ fontWeight: "semibold" }} />
+          <AntDesign name="minuscircleo" size={24} color="#718096" style={{ fontWeight: "semibold" }} />
         </TouchableOpacity>
       ),
       headerLeft: () => (

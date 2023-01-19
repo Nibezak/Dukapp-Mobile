@@ -1,3 +1,4 @@
+import { unixTimeStamp } from "../helpers/Dates";
 import Model from "./Model";
 
 class Order extends Model {
@@ -28,7 +29,7 @@ class Order extends Model {
         {
           method: "cash",
           title: "Cash",
-          transaction_id: "P" + new Date(),
+          transaction_id: "P" + unixTimeStamp(),
           amount: 0,
           currency: "RWF",
           date_paid: new Date(),

@@ -212,7 +212,7 @@ class OrderService {
         {
           method: defaultPaymentMethod,
           title: defaultPaymentMethod,
-          transaction_id: 'P' + unixSecondsStamp() / 1000,
+          transaction_id: 'P' + unixTimeStamp(),
           amount: orderTotal,
           currency: currency,
           date_paid: ` ${unixHourStamp()}:${unixMinuteStamp()}`,

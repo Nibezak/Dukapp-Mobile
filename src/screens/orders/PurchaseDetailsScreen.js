@@ -20,8 +20,8 @@ import OrderService from '../../services/OrderService';
 import ItemService from '../../services/ItemService';
 import InputSend from '../../components/InputSend';
 import { MaterialIcons } from '@expo/vector-icons';
-import RenderPayment from './RenderPayment';
 import Order from '../../models/Order';
+import PurchaseOrderPayment from './PurchaseOrderPayment';
 
 // Retrieve user windows height
 const windowHeight = Dimensions.get('window').height;
@@ -353,7 +353,7 @@ export default function PurchaseDetailsScreen({ navigation, route }) {
     return (
         <View style={styles.container}>
             {/** Order Payment*/}
-            <RenderPayment customer={customer} order={order} />
+            <PurchaseOrderPayment customer={customer} order={order} />
 
             {/** Order customer */}
 

@@ -7,7 +7,7 @@ import InputSelect from "../../components/InputSelect";
 import { getSetting } from "../../models/AsyncStorage";
 import { t } from "i18n-js";
 import InputText from "../../components/FieldText";
-import { unixHourStamp, unixMinuteStamp } from "../../helpers/Dates";
+import { unixHourStamp, unixMinuteStamp, unixTimeStamp } from "../../helpers/Dates";
 
 var paymentOptions = [
   { value: "cash", label: "Cash" },
@@ -50,7 +50,7 @@ export default function OrderPaymentScreen({ navigation, route }) {
       {
         method: method,
         title: title,
-        transaction_id: "P" + new Date(),
+        transaction_id: "P" + unixTimeStamp(),
         amount: amount,
         currency: currency,
         date_paid: ` ${unixHourStamp()}:${unixMinuteStamp()}`,
