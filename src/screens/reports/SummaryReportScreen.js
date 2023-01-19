@@ -9,6 +9,7 @@ import RevenueBarChart from './RevenueBarChart';
 import { Title } from 'react-native-paper';
 import { t } from 'i18n-js';
 import { AntDesign } from '@expo/vector-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function SummaryReportScreen() {
   const [currency, setCurrency] = useState(null);
@@ -16,6 +17,10 @@ export default function SummaryReportScreen() {
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
   const navigation = useNavigation();
+
+  // Date Picker 
+  const [datePicker, setDatePicker] = useState(false);
+  const [date, setDate] = useState(new Date());
   // Revenue summaries
   const [sales, setSales] = useState(0);
   const [profit, setProfit] = useState(0);
@@ -72,9 +77,16 @@ export default function SummaryReportScreen() {
     navigation.setOptions({
       headerTitleAlign: 'center',
       headerRight: () => (
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ paddingHorizontal: 10, marginHorizontal: 10, }}>
-          <AntDesign name="minuscircleo" size={24} color="red" style={{ fontWeight: "semibold" }} />
-        </TouchableOpacity>
+        <>
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity onPress={showDatePicker} style={{ paddingHorizontal: 5, marginHorizontal: 5, }}>
+              <AntDesign name="calendar" size={24} color="#47a67f" style={{ fontWeight: "semibold" }} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={{ paddingHorizontal: 10, marginHorizontal: 10, }}>
+              <AntDesign name="minuscircleo" size={24} color="red" style={{ fontWeight: "semibold" }} />
+            </TouchableOpacity>
+          </View>
+        </>
       ),
       headerLeft: () => (
         <AntDesign
@@ -151,6 +163,16 @@ export default function SummaryReportScreen() {
     );
   }
 
+  // date picker function 
+
+  function showDatePicker() {
+    setDatePicker(true);
+  }
+  function onDateSelected(event, value) {
+    setDate(value);
+    setDatePicker(false);
+  }
+  const dayjs = require('dayjs');
   /**
    * Show the activity indicator as long as the items are being fetched.
    * This improves user experience by showing a loader.
@@ -165,17 +187,28 @@ export default function SummaryReportScreen() {
 
   return (
     <View>
+      <Title style={styles.title}>Insights of : {dayjs(date).format('DD MMM YYYY')}</Title>
       <RevenueBarChart />
+      {datePicker && (
+        <DateTimePicker
+          value={date}
+          mode={'date'}
+          display={'default'}
+          is24Hour={true}
+          onChange={onDateSelected}
+        />
+
+      )}
       <View
         style={{
           backgroundColor: 'white',
           paddingHorizontal: 10,
           marginHorizontal: 10,
           borderRadius: 10,
-          paddingVertical: "15%"
+          paddingVertical: "5%"
         }}
       >
-        <View style={{ flexDirection: "row", justifyContent: "center", paddingVertical: 5 }}>
+        <View style={{ flexDirection: "row", justifyContent: "center" }}>
           <Text style={{ color: "#818096" }}>In a Nutshell</Text>
         </View>
         <View style={styles.row}>
@@ -244,7 +277,6 @@ const styles = {
   row: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    paddingVertical: 5,
     paddingHorizontal: 1,
     marginHorizontal: 7,
     borderBottomWidth: 1,
@@ -270,8 +302,7 @@ const styles = {
   },
   title: {
     marginTop: 5,
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 18,
     alignSelf: 'center',
     justifyContent: 'center',
     textAlign: 'center',
@@ -284,4 +315,5 @@ const styles = {
     alignSelf: 'center',
     color: '#4a5568',
   },
+
 };

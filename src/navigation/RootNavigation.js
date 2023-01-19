@@ -59,6 +59,7 @@ import LowStockScreen from '../screens/items/LowStockScreen';
 import { FastGoingScreen } from '../screens/reports/FastGoingScreen';
 import { ByMobileScreen } from '../screens/reports/ByMobileScreen';
 import { InStockScreen } from '../screens/reports/InStockScreen';
+import PurchaseOrderScreen from '../screens/orders/PurchaseOrderScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -221,6 +222,9 @@ export function NavStack() {
       <Stack.Screen name="Add Payment To Order" component={OrderPaymentScreen} />
       <Stack.Screen name="Order Receipt" component={ReceiptScreen} />
       <Stack.Screen name="Sale Receipt" component={SaleReceiptsScreen} />
+
+      {/** Order Purchase Screen */}
+      <Stack.Screen name="Purchase Orders" component={PurchaseOrderScreen} options={{ presentation: "modal", }} />
       {/** Items*/}
       <Stack.Screen
         name="New Item"

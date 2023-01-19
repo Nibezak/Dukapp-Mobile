@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Image,
   InteractionManager,
-  ScrollView,
 } from 'react-native';
 import HomeSummary from './HomeSummary';
 import { t } from 'i18n-js';
@@ -56,6 +55,19 @@ export default function WelcomeScreen({ navigation }) {
           color="#47a67f"
           onPress={() => navigation.openDrawer()}
           style={{ paddingLeft: 10 }}
+        />
+      ),
+
+      headerRight: () => (
+        <AntDesign name="shoppingcart"
+          size={24}
+          color="#47a67f"
+          onPress={() =>
+            navigation.navigate("Purchase Orders", {
+              order_type: "purchase",
+            })
+          }
+          style={{ paddingRight: 10 }}
         />
       ),
     });
