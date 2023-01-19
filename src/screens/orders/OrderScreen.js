@@ -8,6 +8,7 @@ import {
   Keyboard,
   Dimensions,
   Text,
+  ActivityIndicator,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { t } from 'i18n-js';
@@ -28,11 +29,11 @@ export default function OrderScreen({ navigation, route }) {
   const [lastOrder, setLastOrder] = useState({});
   const [suggestions, setSuggestions] = useState([]);
   const [items, setItems] = useState([]);
+  const [showIsLoading, setShowIsLoading] = useState(true);
 
   /** Fix the undefined order_type error */
-  const routeParams = route.params;
-  const orderType = routeParams.order_type == undefined ? 'sale' : routeParams.order_type;
-
+  const orderType = route.order_type == undefined ? 'sale' : routeParams.order_type;
+  // const orderType = 'sale'
   useFocusEffect(
     useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
@@ -56,7 +57,9 @@ export default function OrderScreen({ navigation, route }) {
   function refreshOrders() {
     OrderService.ordersWithItems(setOrders, orderType).then((results) => {
       setLastOrder(results[results.length - 1]);
-    });
+    }).then(() =>
+      setShowIsLoading(false)
+    );
   }
 
   function setHeader() {
@@ -236,6 +239,14 @@ export default function OrderScreen({ navigation, route }) {
 
   const keyExtractor = useCallback((item, index) => index.toString(), []);
 
+  if (showIsLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+      </View>
+    )
+  }
+
   /**
    * Render to the screen
    */
@@ -264,10 +275,10 @@ export default function OrderScreen({ navigation, route }) {
         <></>
       )}
 
-      <KeyboardAvoidingView keyboardDismissMode="on-drag" enabled={false}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} enabled>
         {/**Quick sale */}
         <InputSend
-          style={{ bottom: 140, position: 'absolute' }}
+          style={{ bottom: 140 }}
           onChangeText={handleTypingSuggestions}
           onPress={sellNewItem}
           value={typing}
@@ -289,10 +300,10 @@ const styles = StyleSheet.create({
     width: '95%',
     borderRadius: 3,
     alignSelf: 'center',
-    height: windowHeight / 2.5,
-    position: 'absolute',
-    bottom: 60,
-    backgroundColor: '#fff',
+    height: windowHeight,
+    position: 'relative',
+    backgroundColor: '#f1f1f1',
+    elevation: 15,
   },
   row: {
     flexDirection: 'row',

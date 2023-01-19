@@ -7,6 +7,7 @@ import InputSelect from "../../components/InputSelect";
 import { getSetting } from "../../models/AsyncStorage";
 import { t } from "i18n-js";
 import InputText from "../../components/FieldText";
+import { unixHourStamp, unixMinuteStamp } from "../../helpers/Dates";
 
 var paymentOptions = [
   { value: "cash", label: "Cash" },
@@ -52,7 +53,7 @@ export default function OrderPaymentScreen({ navigation, route }) {
         transaction_id: "P" + new Date(),
         amount: amount,
         currency: currency,
-        date_paid: new Date(),
+        date_paid: ` ${unixHourStamp()}:${unixMinuteStamp()}`,
       },
     ];
 
@@ -68,7 +69,7 @@ export default function OrderPaymentScreen({ navigation, route }) {
           mode={"dropdown"}
           title={"Payment Method"}
           selectedValue={method}
-          style={{ height: 50, width: 150 }}
+          style={{ height: 150, width: 150 }}
           onValueChange={(itemValue, itemIndex) =>
             handleSetMethod(itemValue, itemIndex)
           }
@@ -109,6 +110,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 10,
+    marginTop: 30
   },
   amount: {
     fontSize: 14,

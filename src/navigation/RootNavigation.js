@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, Button, ActivityIndicator, Text } from 'react-native';
-import { NavigationContainer, useNavigation, useRoute } from '@react-navigation/native';
+import { View, ActivityIndicator } from 'react-native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 // Before rendering any navigation stack
@@ -52,16 +52,18 @@ import SettingEditScreen from '../screens/settings/SettingEditScreen';
 import SettingOptionsScreen from '../screens/settings/SettingOptionsScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
+import { Feather, FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 import SideBar from '../components/SideBar';
 import LowStockScreen from '../screens/items/LowStockScreen';
 import { FastGoingScreen } from '../screens/reports/FastGoingScreen';
-import { ByCashScreen } from '../screens/reports/ByCashScreen';
 import { ByMobileScreen } from '../screens/reports/ByMobileScreen';
+import { InStockScreen } from '../screens/reports/InStockScreen';
+import PurchaseOrderScreen from '../screens/orders/PurchaseOrderScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
+const OrderType = 'sale'
 function AuthStackNavigator() {
   enableScreens();
   return (
@@ -164,11 +166,6 @@ function NavTab() {
 
       <Tab.Screen
         component={OrderScreen}
-        onPress={() =>
-          navigation.navigate('Orders', {
-            order_type: 'sale',
-          })
-        }
         name="Order Sale"
         options={{
           title: 'Orders',
@@ -180,17 +177,10 @@ function NavTab() {
               size={36}
               component={OrderScreen}
               color={color}
-              onPress={() =>
-                navigation.navigate('Orders', {
-                  order_type: 'sale',
-                })
-              }
             />
           ),
         }}
       />
-
-      {/* <Tab.Screen name="Order Details" component={OrderDetailsSCreen} />  */}
 
       <Tab.Screen
         name="Clients"
@@ -222,29 +212,26 @@ export function NavStack() {
   const navigation = useNavigation();
 
   return (
-    <Stack.Navigator initialRouteName="Welcome">
+    <Stack.Navigator initialRouteName="Welcome" animationEnabled={true} >
       <Stack.Screen name="InitialSettings" component={OnboardingScreen} />
       <Stack.Screen name="Welcome" component={NavTab} options={{ headerShown: false }} />
       {/** Orders*/}
-      <Stack.Screen
-        name="Orders"
-        component={OrderScreen}
-        onPress={() =>
-          navigation.navigate('Orders', {
-            order_type: 'sale',
-          })
-        }
-      />
+
+      <Stack.Screen name="Orders" component={OrderScreen} options={{ presentation: "modal", }} />
       <Stack.Screen name="Order Details" component={OrderDetailsSCreen} />
       <Stack.Screen name="Add Payment To Order" component={OrderPaymentScreen} />
       <Stack.Screen name="Order Receipt" component={ReceiptScreen} />
       <Stack.Screen name="Sale Receipt" component={SaleReceiptsScreen} />
+
+      {/** Order Purchase Screen */}
+      <Stack.Screen name="Purchase Orders" component={PurchaseOrderScreen} options={{ presentation: "modal", }} />
       {/** Items*/}
       <Stack.Screen
         name="New Item"
         component={ItemCreateScreen}
         options={{
           ...TransitionPresets.ModalTransition,
+          headerBackTitle: ''
         }}
       />
       <Stack.Screen name="Edit Item" component={ItemEditScreen} />
@@ -253,6 +240,7 @@ export function NavStack() {
         component={ItemSearchScreen}
         options={{
           headerShown: false,
+          headerBackTitle: ''
         }}
       />
       <Stack.Screen
@@ -260,6 +248,7 @@ export function NavStack() {
         component={ItemListScreen}
         options={{
           title: 'Stock Items',
+          headerBackTitle: ''
         }}
       />
       <Stack.Screen
@@ -267,10 +256,13 @@ export function NavStack() {
         component={LowStockScreen}
         options={{
           title: 'Low Stock',
+          headerBackTitle: ''
         }}
       />
       <Stack.Screen name="In Stock" component={SummaryReportScreen} options={{
         title: 'In Stock',
+        headerBackTitle: ''
+
       }} />
       {/** Customer*/}
       <Stack.Screen
@@ -278,6 +270,8 @@ export function NavStack() {
         component={CustomerCreateScreen}
         options={{
           ...TransitionPresets.ModalTransition,
+          headerBackTitle: ''
+
         }}
       />
       <Stack.Screen name="Edit Customer" component={CustomerEditScreen} />
@@ -317,12 +311,16 @@ export function NavStack() {
       <Stack.Screen name="Insights" component={SummaryReportScreen} />
       <Stack.Screen name="Fast Going" component={FastGoingScreen} options={{
         title: 'Fast Going',
+        headerBackTitle: ''
       }} />
-      <Stack.Screen name="By Cash" component={ByCashScreen} options={{
-        title: 'By Cash',
+      <Stack.Screen name="Stock" component={InStockScreen} options={{
+        title: 'In Stock',
+        headerBackTitle: ''
+
       }} />
       <Stack.Screen name="By Mobile" component={ByMobileScreen} options={{
         title: 'By Mobile',
+        headerBackTitle: ''
       }} />
 
       {/** Settings*/}

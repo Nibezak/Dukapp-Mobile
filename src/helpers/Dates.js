@@ -17,10 +17,21 @@ export function today() {
 /**
  * Get unix time stamp
  */
-export function unixTimeStamp() {
-  return Math.round(new Date());
+export function unixHourStamp() {
+  return Math.round(new Date().getHours());
 }
-
+export function unixMinuteStamp() {
+  return Math.round(new Date().getMinutes());
+}
+export function unixTimeStamp() {
+  return Math.round(new Date().getTime());
+}
+export function unixSecondsStamp() {
+  return Math.round(new Date().getSeconds())
+}
+export function unixYearStamp() {
+  return Math.round(new Date().getFullYear())
+}
 /**
  * Get Last X days
  * @returns

@@ -15,6 +15,7 @@ import Header from "../../components/Header";
 import InputText from "../../components/InputText";
 import { t } from "i18n-js";
 import OrderService from "../../services/OrderService";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function CustomerSearchScreen({ navigation, route }) {
   const [customers, setCustomers] = useState([]);
@@ -107,42 +108,44 @@ export default function CustomerSearchScreen({ navigation, route }) {
   const keyExtractor = useCallback((item) => item.id.toString(), []);
 
   return (
-    <View style={styles.container}>
-      <Header>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{ paddingLeft: 10, marginTop: 10, marginRight: 20 }}
-        >
-          <MaterialIcons name="arrow-back" size={24} color="black" />
-        </TouchableOpacity>
+    <KeyboardAwareScrollView>
+      <View style={styles.container}>
+        <Header>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={{ paddingLeft: 10, marginTop: 10, marginRight: 20 }}
+          >
+            <MaterialIcons name="arrow-back" size={24} color="black" />
+          </TouchableOpacity>
 
-        <InputText
-          value={searchTerm}
-          autoFocus={true}
-          onChangeText={handleSearch}
-          placeholder={t("common.search_placeholder")}
-          style={{ borderBottomWidth: 0, color: "#f2f2f2" }}
-          placeholderTextColor={"#f2f2f2"}
+          <InputText
+            value={searchTerm}
+            autoFocus={true}
+            onChangeText={handleSearch}
+            placeholder={t("common.search_placeholder")}
+            style={{ borderBottomWidth: 0, color: "#f2f2f2" }}
+            placeholderTextColor={"#f2f2f2"}
+          />
+
+          <TouchableOpacity
+            style={{ paddingRight: 10, marginTop: 10 }}
+            onPress={() => {
+              setSearchTerm("");
+              handleSearch("");
+            }}
+          >
+            <MaterialIcons name="close" size={24} color="#fff" />
+          </TouchableOpacity>
+        </Header>
+        <FlatList
+          style={{ marginTop: 20 }}
+          data={customers}
+          renderItem={renderCustomer}
+          keyExtractor={keyExtractor}
+          maxToRenderPerBatch={6}
         />
-
-        <TouchableOpacity
-          style={{ paddingRight: 10, marginTop: 10 }}
-          onPress={() => {
-            setSearchTerm("");
-            handleSearch("");
-          }}
-        >
-          <MaterialIcons name="close" size={24} color="#fff" />
-        </TouchableOpacity>
-      </Header>
-      <FlatList
-        style={{ marginTop: 20 }}
-        data={customers}
-        renderItem={renderCustomer}
-        keyExtractor={keyExtractor}
-        maxToRenderPerBatch={6}
-      />
-    </View>
+      </View>
+    </KeyboardAwareScrollView>
   );
 }
 

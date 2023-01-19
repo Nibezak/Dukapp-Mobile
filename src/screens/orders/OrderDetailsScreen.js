@@ -388,9 +388,8 @@ export default function OrderDetailsScreen({ navigation, route }) {
       ) : (
         <></>
       )}
-
-      {/** Allow Items Search Entry */}
-      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={5} enabled={false}>
+      <KeyboardAvoidingView behavior="height" enabled={true}>
+        {/** Allow Items Search Entry */}
         <InputSend
           onChangeText={handleTypingSuggestions}
           onPress={sellNewItem}
@@ -398,7 +397,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
           placeholder={t('order.type_to_sell')}
         />
       </KeyboardAvoidingView>
-    </View>
+    </View >
   );
 }
 

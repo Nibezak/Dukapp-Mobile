@@ -73,6 +73,8 @@ class ReportService {
   inStockItems(setStockItems) {
     Database.execute(
       `SELECT
+          id,
+          name,
           count(1) in_stock
         FROM items
         WHERE quantity > reorder_level 
@@ -80,6 +82,7 @@ class ReportService {
       [],
       (result) => {
         setStockItems(result[0].in_stock);
+        console.log(result)
       }
     );
   }

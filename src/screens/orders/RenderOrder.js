@@ -4,6 +4,7 @@ import { t } from 'i18n-js';
 import { money } from '../../helpers/Numbers';
 import { useNavigation } from '@react-navigation/native';
 import { getSetting } from '../../models/AsyncStorage';
+import { Feather } from '@expo/vector-icons';
 
 export default function RenderOrder({ item, parentRefresher }) {
   const navigation = useNavigation();
@@ -20,10 +21,12 @@ export default function RenderOrder({ item, parentRefresher }) {
     getSetting("app_default_currency").then(setCurrency);
   }
   const dayjs = require('dayjs');
-  const date = order.created_at;
+  const date = order.created_at
+  const orderDate = payment.date_paid
 
   return (
     <TouchableOpacity
+      style={{ backgroundColor: "white", padding: 5, borderRadius: 10, marginBottom: 7, elevation: 2.5, marginTop: 3.5 }}
       key={order.id}
       activeOpacity={0.8}
       onPress={() =>
@@ -42,7 +45,8 @@ export default function RenderOrder({ item, parentRefresher }) {
         <Text
           style={{ paddingHorizontal: 5, paddingVertical: 2, borderRadius: 30, color: '#62656b' }}
         >
-          {/* {dayjs(date).format('h:mm A')} */}
+          {/* {dayjs(date).format('h: mm A')} */}
+          {orderDate}
         </Text>
       </View>
       <View style={styles.rows}>
@@ -55,9 +59,8 @@ export default function RenderOrder({ item, parentRefresher }) {
             ? order.line_items[0].name.slice(0, 20)
             : t('order.items', { count: order.line_items.length })}
         </Text>
-
+        <Text style={[styles.amount]}>{money(order.total, currency)}</Text>
         <View style={styles.itemPriceColumn}>
-          <Text style={[styles.amount]}>{money(order.total, currency)}</Text>
           <Text
             style={[
               styles.paymentMethod,
@@ -68,6 +71,8 @@ export default function RenderOrder({ item, parentRefresher }) {
           >
             {payment.title?.slice(0, 6).toUpperCase()}
           </Text>
+          <Feather name="check-circle" size={18} color="#10b981" style={{ marginLeft: 10 }} />
+
         </View>
       </View>
     </TouchableOpacity>
@@ -80,9 +85,8 @@ const styles = {
     justifyContent: 'space-evenly',
     marginVertical: 1.8,
     paddingHorizontal: 1,
-    marginHorizontal: 7,
-    borderBottomWidth: 1,
-    borderBottomColor: '#cbd5e0',
+    marginHorizontal: 3,
+
   },
 
   amount: {
@@ -100,7 +104,7 @@ const styles = {
     justifyContent: 'center',
   },
   itemNameColumn: {
-    flex: 4,
+    flex: 3,
     marginHorizontal: 5,
   },
   itemPriceColumn: {
@@ -110,10 +114,11 @@ const styles = {
   paymentMethod: {
     flex: 1,
     marginRight: 5,
+    marginLeft: 10,
     paddingTop: 3,
-    paddingBottom: 3,
+    paddingBottom: 5,
     paddingRight: 8,
-    paddingLeft: 8,
+    // paddingLeft: ,
   },
   rightArrow: {
     flexDirection: 'row',

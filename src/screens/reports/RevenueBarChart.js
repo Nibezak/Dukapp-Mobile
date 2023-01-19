@@ -2,7 +2,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { t } from "i18n-js";
 import React, { useCallback, useEffect, useState } from "react";
 import { View, Dimensions, Text, InteractionManager } from "react-native";
-import { BarChart, LineChart } from "react-native-chart-kit";
+import { BarChart, LineChart, ProgressChart } from "react-native-chart-kit";
 import { Title } from "react-native-paper";
 import Metric from "../../components/Metric";
 import ReportService from "../../services/ReportService";
@@ -80,24 +80,71 @@ export default function RevenueBarChart() {
   return (
     <>
       <View>
-        <Title style={{ alignSelf: "center", color: "#718096" }}>
+        {/* <Title style={{ alignSelf: "center", color: "#718096" }}>
           {t("report.weekly_summary")}
-        </Title>
+        </Title> */}
         <LineChart
           style={{
-            padding: 2,
-            paddingVertical: 1,
             margin: 8,
             borderRadius: 10,
-            // elevation: 
+            elevation: 5
           }}
           data={barData}
           width={screenWidth}
-          height={220}
+          height={280}
           chartConfig={chartConfig}
           formatYLabel={(value) => formatNumber(value)}
           bezier
         />
+        {/* 
+        <ProgressChart
+          data={[0.4, 0.6, 0.8]}
+          width={Dimensions.get('window').width - 16}
+          height={220}
+          chartConfig={{
+            backgroundColor: '#f7fafc',
+            backgroundGradientFrom: '#f7fafc',
+            backgroundGradientTo: '#f7fafc',
+            decimalPlaces: 2,
+            color: (opacity = 1) => `rgba(226, 226, 226, 1)`,
+            // color: (opacity = 1) => `rgba(247, 250, 252, ${opacity})`,
+
+            style: {
+              borderRadius: 16,
+            },
+          }}
+          style={{
+            marginVertical: 8,
+            borderRadius: 16,
+          }}
+        /> */}
+        {/* <BarChart
+          data={{
+            labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+            datasets: [
+              {
+                data: [20, 45, 28, 80, 99, 43],
+              },
+            ],
+          }}
+          width={Dimensions.get('window').width - 16}
+          height={220}
+          yAxisLabel={'Rs'}
+          chartConfig={{
+            backgroundColor: '#1cc910',
+            backgroundGradientFrom: '#eff3ff',
+            backgroundGradientTo: '#efefef',
+            decimalPlaces: 2,
+            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            style: {
+              borderRadius: 16,
+            },
+          }}
+          style={{
+            marginVertical: 8,
+            borderRadius: 16,
+          }}
+        /> */}
       </View>
     </>
   );

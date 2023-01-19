@@ -1,52 +1,32 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Text, View, TouchableOpacity, ToastAndroid, InteractionManager } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Text, View, TouchableOpacity } from 'react-native';
 import { t } from 'i18n-js';
 import { money } from '../../helpers/Numbers';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { getSetting } from '../../models/AsyncStorage';
-import Order from '../../models/Order';
-import OrderService from '../../services/OrderService';
+import { Feather } from '@expo/vector-icons';
 
-export default function RenderReceipt({ item }) {
+export default function RenderOrder({ item, parentRefresher }) {
     const navigation = useNavigation();
     const order = item.item;
     const payment = order.payments[0];
-    const [customer, setCustomer] = useState({ names: "Guest " });
+    const [customer, setCustomer] = useState({ name: 'Guest' })
     const [currency, setCurrency] = useState(null);
 
-
-
-    useFocusEffect(
-        useCallback(() => {
-            const task = InteractionManager.runAfterInteractions(() => {
-                // Expensive task
-                refreshOrders();
-            });
-        }, [])
-    );
-
     useEffect(() => {
-        getSetting('app_default_currency').then(setCurrency);
-        refreshOrders();
+        retrieveSetting();
     }, []);
 
-    /**
-     * Function to destroy an existing
-     * Order
-     */
 
-    async function refreshOrders() {
-        return OrderService.ordersWithItems(setOrders, orderType, order.id, 8);
+    function retrieveSetting() {
+        getSetting("app_default_currency").then(setCurrency);
     }
-
-
-
-
-
     const dayjs = require('dayjs');
     const date = order.created_at;
+
     return (
         <TouchableOpacity
+            style={{ backgroundColor: "white", padding: 5, borderRadius: 10, marginBottom: 7, elevation: 2.5, marginTop: 3.5 }}
             key={order.id}
             activeOpacity={0.8}
             onPress={() =>
@@ -56,6 +36,7 @@ export default function RenderReceipt({ item }) {
                 })
             }
         >
+
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 2 }}>
                 <Text
                     style={{ paddingHorizontal: 5, paddingVertical: 2, borderRadius: 30, color: '#62656b' }}
@@ -65,7 +46,7 @@ export default function RenderReceipt({ item }) {
                 <Text
                     style={{ paddingHorizontal: 5, paddingVertical: 2, borderRadius: 30, color: '#62656b' }}
                 >
-                    {dayjs(date).format('H:mm A   ZZ')}
+                    {dayjs(date).format('h:mm A')}
                 </Text>
             </View>
             <View style={styles.rows}>
@@ -78,9 +59,8 @@ export default function RenderReceipt({ item }) {
                         ? order.line_items[0].name.slice(0, 20)
                         : t('order.items', { count: order.line_items.length })}
                 </Text>
-
+                <Text style={[styles.amount]}>{money(order.total, currency)}</Text>
                 <View style={styles.itemPriceColumn}>
-                    <Text style={[styles.amount]}>{money(order.total, currency)}</Text>
                     <Text
                         style={[
                             styles.paymentMethod,
@@ -91,6 +71,8 @@ export default function RenderReceipt({ item }) {
                     >
                         {payment.title?.slice(0, 6).toUpperCase()}
                     </Text>
+                    <Feather name="check-circle" size={18} color="#10b981" style={{ marginLeft: 10 }} />
+
                 </View>
             </View>
         </TouchableOpacity>
@@ -103,9 +85,8 @@ const styles = {
         justifyContent: 'space-evenly',
         marginVertical: 1.8,
         paddingHorizontal: 1,
-        marginHorizontal: 7,
-        borderBottomWidth: 1,
-        borderBottomColor: '#cbd5e0',
+        marginHorizontal: 3,
+
     },
 
     amount: {
@@ -123,7 +104,7 @@ const styles = {
         justifyContent: 'center',
     },
     itemNameColumn: {
-        flex: 4,
+        flex: 3,
         marginHorizontal: 5,
     },
     itemPriceColumn: {
@@ -133,10 +114,11 @@ const styles = {
     paymentMethod: {
         flex: 1,
         marginRight: 5,
+        marginLeft: 10,
         paddingTop: 3,
-        paddingBottom: 3,
+        paddingBottom: 5,
         paddingRight: 8,
-        paddingLeft: 8,
+        // paddingLeft: ,
     },
     rightArrow: {
         flexDirection: 'row',

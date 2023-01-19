@@ -193,7 +193,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
 
 
   const dayjs = require('dayjs');
-  const date = order.created_at;
+  const date = payment.date_paid;
 
 
   const html = `
@@ -328,7 +328,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
               Customer:   ${customer.names}
               
               <td>
-                Invoice #: S0D${order.id}<br> Created: ${dayjs(date).format(
+                Invoice #: ${payment.transaction_idf}<br> Created: ${dayjs(date).format(
     'DD MMM YYYY'
   )}<br> Time: ${dayjs(date).format('h:mm A')}
               </td>
@@ -384,80 +384,82 @@ export default function OrderDetailsScreen({ navigation, route }) {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <ViewShot
-          options={{
-            fileName: `S0D-${order.id} Invoice statement`,
-            format: "png",
-            quality: 1.0,
-          }}
-          style={{ backgroundColor: "#f1f1f1" }}
-          ref={ref}>
-          <ZigzagView>
-            <Image
-              source={require('./../../../assets/snack-icon.png')}
-              style={{ width: 120, height: 100, marginHorizontal: 30 }}
-            />
-            {/** RECEIPT HEADER */}
-
-            <View style={styles.shopDetailsContainer}>
-              <Text style={styles.shopName}>{businessName}</Text>
-              <Text style={styles.shopAddress}>{address}</Text>
-              <Text style={styles.shopAddress}>
-                {phone}
-              </Text>
-              <Text style={styles.shopAddress}>
-                {email}
-              </Text>
-            </View>
-
-            {/** ORDER DETAILS */}
-            <View style={styles.orderContainer}>
-              <View style={styles.orderDetails}>
-                <Text style={styles.receiptNumber}># SOD-CKL{order.id}</Text>
-              </View>
-
-              <View style={styles.customerContainer}>
-                <Text style={styles.customerText}>
-                  {order.order_type === 'sale' ? t('receipt.customer') : t('receipt.supplier')}
-                  {customer.names}
-                </Text>
-              </View>
-
-              <View style={styles.paymentsContainer}>
-                <Text style={styles.paymentTitle}>
-                  {t('receipt.payment')}
-                  {payment.title}
-                </Text>
-              </View>
-              <View style={styles.paymentsContainer}>
-                <Text style={styles.paymentTitle}>
-                  {t('receipt.date')}
-                  {order.created_at}
-                </Text>
-              </View>
-            </View>
-            <View style={styles.itemContainer}>
-              {/** HEADERS */}
-              <View style={styles.itemHeader}>
-                <Text style={styles.itemNameHeader}> {t('receipt.item_name')}</Text>
-                <Text style={styles.itemAmountHeader}>
-                  {t('receipt.amount', { currency: currency })}
-                </Text>
-              </View>
-              <FlatList
-                data={order.line_items}
-                renderItem={ReceiptItems}
-                keyExtractor={keyExtractor}
+        <View>
+          <ViewShot
+            options={{
+              fileName: `S0D-${order.id} Invoice statement`,
+              format: "png",
+              quality: 1.0,
+            }}
+            style={{ backgroundColor: "#f1f1f1" }}
+            ref={ref}>
+            <ZigzagView>
+              <Image
+                source={require('./../../../assets/snack-icon.png')}
+                style={{ width: 120, height: 100, marginHorizontal: 30 }}
               />
+              {/** RECEIPT HEADER */}
 
-              <View style={styles.footer}>
-                <Text style={styles.totalLabel}> {t('receipt.total')}</Text>
-                <Text style={styles.totalAmount}>{number(order.total)}</Text>
+              <View style={styles.shopDetailsContainer}>
+                <Text style={styles.shopName}>{businessName}</Text>
+                <Text style={styles.shopAddress}>{address}</Text>
+                <Text style={styles.shopAddress}>
+                  {phone}
+                </Text>
+                <Text style={styles.shopAddress}>
+                  {email}
+                </Text>
               </View>
-              <View></View>
-            </View>
-          </ZigzagView>
-        </ViewShot>
+
+              {/** ORDER DETAILS */}
+              <View style={styles.orderContainer}>
+                <View style={styles.orderDetails}>
+                  <Text style={styles.receiptNumber}># {payment.transaction_id}</Text>
+                </View>
+
+                <View style={styles.customerContainer}>
+                  <Text style={styles.customerText}>
+                    {order.order_type === 'sale' ? t('receipt.customer') : t('receipt.supplier')}
+                    {customer.names}
+                  </Text>
+                </View>
+
+                <View style={styles.paymentsContainer}>
+                  <Text style={styles.paymentTitle}>
+                    {t('receipt.payment')}
+                    {payment.title}
+                  </Text>
+                </View>
+                <View style={styles.paymentsContainer}>
+                  <Text style={styles.paymentTitle}>
+                    {t('receipt.date')}
+                    {order.created_at}
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.itemContainer}>
+                {/** HEADERS */}
+                <View style={styles.itemHeader}>
+                  <Text style={styles.itemNameHeader}> {t('receipt.item_name')}</Text>
+                  <Text style={styles.itemAmountHeader}>
+                    {t('receipt.amount', { currency: currency })}
+                  </Text>
+                </View>
+                <FlatList
+                  data={order.line_items}
+                  renderItem={ReceiptItems}
+                  keyExtractor={keyExtractor}
+                />
+
+                <View style={styles.footer}>
+                  <Text style={styles.totalLabel}> {t('receipt.total')}</Text>
+                  <Text style={styles.totalAmount}>{number(order.total)}</Text>
+                </View>
+                <View></View>
+              </View>
+            </ZigzagView>
+          </ViewShot>
+        </View>
       </ScrollView>
     </View>
   );

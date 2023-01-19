@@ -1,9 +1,25 @@
+<<<<<<< HEAD
 import React, { useState, useContext } from 'react';
 import { SafeAreaView, StyleSheet, ActivityIndicator, Image, Text } from 'react-native';
 import { t } from 'i18n-js';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import { AuthContext } from '../../context/AuthProvider';
 import ButtonFilled from '../../components/ButtonFilled';
+=======
+import React, { useState, useContext } from "react";
+import {
+  SafeAreaView,
+  StyleSheet,
+  ActivityIndicator,
+  Image,
+  Text,
+} from "react-native";
+import { t } from "i18n-js";
+import OTPInputView from "@twotalltotems/react-native-otp-input";
+import { AuthContext } from "../../context/AuthProvider";
+import ButtonFilled from "../../components/ButtonFilled";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+>>>>>>> 51c4f8f107d0c5201965dc44a13fe96b53ee62a0
 
 export default function OtpScreen({ route, navigation }) {
   const { phoneNumber } = route.params;
@@ -22,6 +38,7 @@ export default function OtpScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.wrapper}>
+<<<<<<< HEAD
       <Image source={require('./../../../assets/snack-icon.png')} style={styles.appName} />
       <Text style={styles.prompt}>Enter the code we sent you</Text>
       <Text style={styles.message}>
@@ -44,6 +61,39 @@ export default function OtpScreen({ route, navigation }) {
         placeholderCharacter="_"
       />
       {invalidCode && <Text style={styles.error}>{t('auth.incorrect_code')}</Text>}
+=======
+      <KeyboardAwareScrollView>
+        <Image source={require('./../../../assets/snack-icon.png')} style={styles.appName} />
+        <Text style={styles.prompt}>Enter the code we sent you</Text>
+        <Text style={styles.message}>
+          {t(
+            "auth.Your_phone_will_be_used_to_protect_your_account_each_time_you_log_in",
+            { phone_number: phoneNumber }
+          )}
+        </Text>
+        <ButtonFilled onPress={() => navigation.goBack()}>
+          {t("auth.edit_phone_number")}
+        </ButtonFilled>
+
+        {isLoading && (
+          <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+        )}
+
+        <OTPInputView
+          style={{ width: "70%", height: 200, marginHorizontal: 50 }}
+          pinCount={6}
+          autoFocusOnLoad
+          codeInputFieldStyle={styles.underlineStyleBase}
+          codeInputHighlightStyle={styles.underlineStyleHighLighted}
+          onCodeFilled={handleOtpVerification}
+          onCodeChanged={handleOtpVerification}
+          placeholderCharacter="_"
+        />
+        {invalidCode && (
+          <Text style={styles.error}>{t("auth.incorrect_code")}</Text>
+        )}
+      </KeyboardAwareScrollView>
+>>>>>>> 51c4f8f107d0c5201965dc44a13fe96b53ee62a0
     </SafeAreaView>
   );
 }

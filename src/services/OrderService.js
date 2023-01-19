@@ -1,7 +1,7 @@
 import Item from '../models/Item';
 import Order from '../models/Order';
 import OrderItem from '../models/OrderItem';
-import { unixTimeStamp } from '../helpers/Dates';
+import { unixTimeStamp, unixHourStamp, unixMinuteStamp, unixSecondsStamp, unixYearStamp } from '../helpers/Dates';
 import Database from '../database/Database';
 import { getSetting } from '../models/AsyncStorage';
 /**
@@ -212,10 +212,10 @@ class OrderService {
         {
           method: defaultPaymentMethod,
           title: defaultPaymentMethod,
-          transaction_id: 'P' + unixTimeStamp(),
+          transaction_id: 'P' + unixSecondsStamp() / 1000,
           amount: orderTotal,
           currency: currency,
-          date_paid: unixTimeStamp(),
+          date_paid: ` ${unixHourStamp()}:${unixMinuteStamp()}`,
         },
       ]),
     };
@@ -231,7 +231,7 @@ class OrderService {
   async setItemTotalManually(item, customItemTotal) {
     return OrderItem.refresh()
       .where('id', item.id)
-      .update({ total: customItemTotal })
+      .update({ total: parseFloat(customItemTotal) })
       .then((results) => {
         // Recalculate order total
         return Database.statement(

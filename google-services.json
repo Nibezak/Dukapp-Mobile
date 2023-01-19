@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "982167414537",
+    "project_id": "dukapp-18ba7",
+    "storage_bucket": "dukapp-18ba7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:982167414537:android:fa12bf825e64d1a49015d8",
+        "android_client_info": {
+          "package_name": "com.dukapp.com"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "982167414537-3q4fv0hmm2l8ef2e6vpj3uc99gjem3q0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYswSjLx-mgpJ_YNDHQrxxZVjjoH8BALY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "982167414537-3q4fv0hmm2l8ef2e6vpj3uc99gjem3q0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
