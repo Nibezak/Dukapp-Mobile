@@ -195,6 +195,7 @@ export default function SummaryReportScreen() {
   return (
     <View>
       {/* DISPLAY CHART */}
+      <Title style={styles.title}>{'Last 7 Days Sales'}</Title>
       <RevenueBarChart />
 
       <View style={[styles.title, { flexDirection: 'row' }]}>
@@ -215,7 +216,8 @@ export default function SummaryReportScreen() {
           accentColor={'#718096'}
           onChange={(event, date) => {
             /** Hide the end date */
-            setShowStartDatePicker(false);
+            setShowStartDatePicker(!showStartDatePicker);
+
             /** Update the start date */
             setStartDate(date.toISOString().slice(0, 10));
           }}
@@ -232,7 +234,7 @@ export default function SummaryReportScreen() {
           minimumDate={new Date(startDate)}
           onChange={(event, date) => {
             /** Hide the end date */
-            setShowEndDatePicker(false);
+            setShowEndDatePicker(!showEndDatePicker);
             /** Update the start date */
             setEndDate(date.toISOString().slice(0, 10));
           }}
