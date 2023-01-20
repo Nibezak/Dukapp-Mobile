@@ -84,7 +84,7 @@ export default function SummaryReportScreen() {
       headerTitleAlign: 'center',
       headerRight: () => (
         <>
-          <View style={{ flexDirection: 'row' }}>
+          <View>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={{ paddingHorizontal: 10, marginHorizontal: 10 }}
@@ -185,8 +185,7 @@ export default function SummaryReportScreen() {
   return (
     <View>
       {/* DISPLAY CHART */}
-      <Title style={styles.title}>{'Last 7 Days Sales'}</Title>
-      <RevenueBarChart />
+      {/* <RevenueBarChart /> */}
 
       <View style={[styles.datePicker, { flexDirection: 'row' }]}>
         {/* SECTION FOR DATE PICKER */}
@@ -246,69 +245,71 @@ export default function SummaryReportScreen() {
           marginHorizontal: 10,
           borderRadius: 10,
           width: '100%',
-          height: 300,
+          height: 500,
         }}
       >
         <ScrollView>
-          <View style={{ flexDirection: 'row', justifyContent: 'center', paddingVertical: 10 }}>
-            <Text style={{ color: '#818096' }}>Summary</Text>
-          </View>
-          <View style={styles.row}>
-            {revenueSummaries.map((item, index) => (
-              <RenderReportItem
-                title={item.title}
-                value={money(item.value)}
-                titleColor={item.color}
-                key={keyExtractor(index)}
-                route={item.route}
-              />
-            ))}
-          </View>
-          <View
-            style={{
-              paddingVertical: 2,
-              paddingHorizontal: 2,
-              flexDirection: 'row',
-              justifyContent: 'center',
-            }}
-          >
-            <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>
-              {t('report.payment_summary')}
-            </Title>
-          </View>
-          <View style={styles.row}>
-            {paymentMethod.map((item, index) => (
-              <RenderReportItem
-                title={item.title}
-                value={money(item.value)}
-                titleColor={item.color}
-                key={keyExtractor(index)}
-                route={item.route}
-              />
-            ))}
-          </View>
-          <View
-            style={{
-              paddingVertical: 2,
-              paddingHorizontal: 2,
-              flexDirection: 'row',
-              justifyContent: 'center',
-            }}
-          >
-            <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>
-              {t('report.items_summary')}
-            </Title>
-          </View>
-          <View style={styles.row2}>
-            {stockSummaries.map((item, index) => (
-              <RenderReportItem
-                title={item.title}
-                value={number(item.value)}
-                titleColor={item.color}
-                route={item.route}
-                key={keyExtractor(index)}
-              />
-            ))}
+          <View style={{ backgroundColor: "white", marginRight: "1%", elevation: 30 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', paddingVertical: 10 }}>
+              <Text style={{ color: '#818096' }}>Summary</Text>
+            </View>
+            <View style={styles.row}>
+              {revenueSummaries.map((item, index) => (
+                <RenderReportItem
+                  title={item.title}
+                  value={money(item.value)}
+                  titleColor={item.color}
+                  key={keyExtractor(index)}
+                  route={item.route}
+                />
+              ))}
+            </View>
+            <View
+              style={{
+                paddingVertical: 2,
+                paddingHorizontal: 2,
+                flexDirection: 'row',
+                justifyContent: 'center',
+              }}
+            >
+              <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>
+                {t('report.payment_summary')}
+              </Title>
+            </View>
+            <View style={styles.row}>
+              {paymentMethod.map((item, index) => (
+                <RenderReportItem
+                  title={item.title}
+                  value={money(item.value)}
+                  titleColor={item.color}
+                  key={keyExtractor(index)}
+                  route={item.route}
+                />
+              ))}
+            </View>
+            <View
+              style={{
+                paddingVertical: 2,
+                paddingHorizontal: 2,
+                flexDirection: 'row',
+                justifyContent: 'center',
+              }}
+            >
+              <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>
+                {t('report.items_summary')}
+              </Title>
+            </View>
+            <View style={styles.row2}>
+              {stockSummaries.map((item, index) => (
+                <RenderReportItem
+                  title={item.title}
+                  value={number(item.value)}
+                  titleColor={item.color}
+                  route={item.route}
+                  key={keyExtractor(index)}
+                />
+              ))}
+            </View>
           </View>
         </ScrollView>
       </View>
@@ -317,25 +318,7 @@ export default function SummaryReportScreen() {
 }
 
 const styles = {
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    paddingHorizontal: 1,
-    marginHorizontal: 7,
-    borderBottomWidth: 1,
-    borderBottomColor: '#cbd5e0',
-    borderRadius: 100,
-  },
-  row2: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    paddingHorizontal: 1,
-    marginHorizontal: 7,
-    borderBottomWidth: 1,
-    borderBottomColor: '#cbd5e0',
-    borderRadius: 100,
-    marginBottom: 60,
-  },
+
   subHeader: {
     paddingHorizontal: 7,
     color: '#718096',
@@ -368,7 +351,8 @@ const styles = {
     paddingVertical: 20,
     borderRadius: 10,
     backgroundColor: "#f9f9f9",
-    marginBottom: 10,
+
+    marginVertical: 30,
     elevation: 5
 
   },
