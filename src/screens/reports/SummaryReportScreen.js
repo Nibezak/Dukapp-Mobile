@@ -182,17 +182,6 @@ export default function SummaryReportScreen() {
   }
 
 
-  function handleChangeDates(date) {
-    Alert.alert(
-      'you are going back ',
-      'You are going to travel # ' + endDate.toString(),
-      [
-        { text: 'Okay', onPress: () => setEndDate(endDate) },
-      ]
-    );
-  }
-
-
   return (
     <View>
       {/* DISPLAY CHART */}
@@ -242,7 +231,6 @@ export default function SummaryReportScreen() {
           maximumDate={new Date()}
           onChange={(event, date) => {
             /** Hide the end date */
-            handleChangeDates();
             setShowEndDatePicker(!showEndDatePicker);
             /** Update the start date */
             setEndDate(date.toISOString().slice(0, 10));
