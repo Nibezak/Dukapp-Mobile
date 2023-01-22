@@ -7,6 +7,18 @@ class Item extends BaseModel {
   }
 
   /**
+   * Retrieves and existing item by ID
+   *
+   * @param {integer} itemId
+   * @returns object
+   */
+  async find(itemId) {
+    return this.refresh()
+      .where('id', itemId)
+      .get()
+      .then((result) => result[0]);
+  }
+  /**
    * Increase stock for an order
    *
    * @param {numeric} quantityToIncrease
@@ -81,8 +93,8 @@ class Item extends BaseModel {
   async createTable() {
     this.db.statement(
       `CREATE TABLE IF NOT EXISTS ` +
-      this.getTableName() +
-      `(
+        this.getTableName() +
+        `(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               name TEXT UNIQUE,
               description TEXT NULL,

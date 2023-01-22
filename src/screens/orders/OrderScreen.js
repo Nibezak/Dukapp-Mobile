@@ -55,19 +55,22 @@ export default function OrderScreen({ navigation, route }) {
    * Fetch Orders
    */
   function refreshOrders() {
-    OrderService.ordersWithItems(setOrders, orderType).then((results) => {
-      setLastOrder(results[results.length - 1]);
-    }).then(() =>
-      setShowIsLoading(false)
-    );
+    OrderService.ordersWithItems(setOrders, orderType)
+      .then((results) => {
+        setLastOrder(results[results.length - 1]);
+      })
+      .then(() => setShowIsLoading(false));
   }
 
   function setHeader() {
     navigation.setOptions({
       headerTitleAlign: 'center',
       headerRight: () => (
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ paddingHorizontal: 10, marginHorizontal: 10, }}>
-          <AntDesign name="minuscircleo" size={24} color="red" style={{ fontWeight: "semibold" }} />
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ paddingHorizontal: 10, marginHorizontal: 10 }}
+        >
+          <AntDesign name="minuscircleo" size={24} color="red" style={{ fontWeight: 'semibold' }} />
         </TouchableOpacity>
       ),
       headerLeft: () => (
@@ -80,7 +83,6 @@ export default function OrderScreen({ navigation, route }) {
         />
       ),
     });
-
   }
   /**
    * Get Orders from DB
@@ -109,6 +111,12 @@ export default function OrderScreen({ navigation, route }) {
    * Add product or item from suggestion
    */
   async function saleFromSuggestion(item) {
+    /** Prevent having negative balance */
+    if (item.quantity <= 0) {
+      alert('Not enough quantity for ' + item.name + ' Remaining:' + item.quantity);
+      return;
+    }
+
     // 1. Record the order in the database
     OrderService.quickSale(item, orderType)
       .then((results) => {
@@ -244,7 +252,7 @@ export default function OrderScreen({ navigation, route }) {
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
       </View>
-    )
+    );
   }
 
   /**

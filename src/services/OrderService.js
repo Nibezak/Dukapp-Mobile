@@ -1,7 +1,13 @@
 import Item from '../models/Item';
 import Order from '../models/Order';
 import OrderItem from '../models/OrderItem';
-import { unixTimeStamp, unixHourStamp, unixMinuteStamp, unixSecondsStamp, unixYearStamp } from '../helpers/Dates';
+import {
+  unixTimeStamp,
+  unixHourStamp,
+  unixMinuteStamp,
+  unixSecondsStamp,
+  unixYearStamp,
+} from '../helpers/Dates';
 import Database from '../database/Database';
 import { getSetting } from '../models/AsyncStorage';
 /**

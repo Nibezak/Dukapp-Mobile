@@ -22,6 +22,8 @@ import InputSend from '../../components/InputSend';
 import { MaterialIcons } from '@expo/vector-icons';
 import RenderPayment from './RenderPayment';
 import Order from '../../models/Order';
+import Item from '../../models/Item';
+import { isFirstDayOfMonth } from 'date-fns';
 
 // Retrieve user windows height
 const windowHeight = Dimensions.get('window').height;
@@ -156,8 +158,35 @@ export default function OrderDetailsScreen({ navigation, route }) {
    * Handle Quantity Changes
    */
   async function handleQuantityChange(orderItem, action) {
-    // Update Item quantity
-    OrderService.updateOrderItem(orderItem, action).then(() => {
+    /** Preventing selling more than what is in the stock */
+
+    if (action == 'sale-more') {
+      /** 1. Get the this item stock */
+      return Item.find(orderItem.item_id).then((stockItem) => {
+        /** 2. If the stock is lesser than what we are adding, then don't allow it to proceed */
+        if (stockItem.quantity <= 0) {
+          return alert(
+            'Not enough quantity for ' + stockItem.name + ' Remaining:' + stockItem.quantity
+          );
+        }
+
+        /** We have enough stock, let's update */
+        return updateOrderLineItemQuantity(orderItem, action);
+      });
+    }
+
+    /** We reached here because the action does not demand to check if the stock is enough */
+    return updateOrderLineItemQuantity(orderItem, action);
+  }
+
+  /**
+   * Updates order line item quantity
+   *
+   * @returns promise
+   */
+  async function updateOrderLineItemQuantity(orderItem, action) {
+    /** We have enough stock, let's update it */
+    return OrderService.updateOrderItem(orderItem, action).then(() => {
       // Refresh the order details page
       refreshOrder();
     });
@@ -229,6 +258,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
     const suggestionTypes = ['add_customer', 'add_payment', 'change_order_type', 'product'];
 
     const type = suggestion.suggestionType;
+
     // Ensure we can process known types
     if (!suggestionTypes.includes(type)) {
       throw 'Suggestion Type unknown:' + type;
@@ -265,6 +295,12 @@ export default function OrderDetailsScreen({ navigation, route }) {
    * Add product or item from suggestion
    */
   async function addItemFromSuggestion(item) {
+    /** Prevent having negative balance by checking if the item has enough*/
+    if (item.quantity <= 0) {
+      alert('Not enough quantity for "' + item.name + '". Available Quantity:' + item.quantity);
+      return;
+    }
+
     // 1. If item exists, then increase it's quantity
     // Instead of adding it as a new product
     const existingItem = orderLineItems.find((itemLine) => itemLine.item_id == item.id);
@@ -300,9 +336,6 @@ export default function OrderDetailsScreen({ navigation, route }) {
   }
 
   /**
-   * 5. Reset suggestions
-   */
-  /**
    * Reset to Default Suggestion
    */
   function resetToDefaultSuggestion() {
@@ -314,7 +347,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
    *
    */
   async function handlePriceManualChange(customTotal, itemToUpdate) {
-    // To proceed if this is not a number
+    /** To proceed if this is not a number */
     const sanitizedTotal = parseFloat(customTotal.replace(',', ''));
 
     if (isNaN(sanitizedTotal)) {
@@ -333,7 +366,28 @@ export default function OrderDetailsScreen({ navigation, route }) {
    * Handle Quantity Manual Change
    */
   async function handleQuantityManualChange(customQuantity, itemToUpdate) {
-    // To proceed if this is not a number
+    /** Prevent having negative balance by
+     * checking if the item has enough
+     */
+    if (customQuantity > itemToUpdate.quantity) {
+      /** 1. Find the difference in quantity */
+      const difference = customQuantity - itemToUpdate.quantity;
+
+      /** 2. Get the current available stock */
+      Item.find(itemToUpdate.item_id).then((stockItem) => {
+        /** 2. If the stock is lesser than what we are adding, then don't allow it to proceed */
+        if (stockItem.quantity <= difference) {
+          const message =
+            'Not enough quantity for ' + stockItem.name + ' Remaining:' + stockItem.quantity;
+
+          alert(message);
+          /** Stop the program since an error occured */
+          throw message;
+        }
+      });
+    }
+
+    /** To proceed if this is not a number */
     const sanitizedTotal = parseFloat(parseFloat(customQuantity.replace(',', '')));
     if (isNaN(sanitizedTotal)) {
       throw customQuantity + ' is not a valid number!';
@@ -397,7 +451,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
           placeholder={t('order.type_to_sell')}
         />
       </KeyboardAvoidingView>
-    </View >
+    </View>
   );
 }
 
