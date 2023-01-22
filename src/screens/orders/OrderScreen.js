@@ -19,6 +19,7 @@ import OrderService from './../../services/OrderService';
 import RenderOrder from './RenderOrder';
 import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Alert } from 'react-native';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -118,7 +119,17 @@ export default function OrderScreen({ navigation, route }) {
   async function saleFromSuggestion(item) {
     /** Prevent having negative balance */
     if (item.quantity <= 0) {
-      alert('Not enough quantity for ' + item.name + ' Remaining:' + item.quantity);
+      Alert.alert(
+        'The Stock of : ' + item.name + ' is insuffient #',
+        'The remaining quantity is : ' + item.quantity + ' Please Add more stock to be able to sell',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'CANCEL',
+          },
+        ]
+      );
       return;
     }
 

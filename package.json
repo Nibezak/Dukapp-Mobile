@@ -42,6 +42,7 @@
     "expo-status-bar": "~1.4.2",
     "expo-task-manager": "~11.0.1",
     "expo-updates": "~0.15.6",
+    "firebase": "^9.16.0",
     "i18n-js": "^3.8.0",
     "i18next": "^21.6.5",
     "native-notify": "^3.0.4",
