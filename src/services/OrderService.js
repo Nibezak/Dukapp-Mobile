@@ -284,7 +284,6 @@ class OrderService {
       // 1. Reduce Stock for sale
       //    Increase stock for purchase
       this.adjustStock(item, newOrder.quantity, newOrder.order_type);
-
       return result;
     });
   }

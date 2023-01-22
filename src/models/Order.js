@@ -1,10 +1,10 @@
-import { unixTimeStamp } from "../helpers/Dates";
-import Model from "./Model";
+import { unixTimeStamp } from '../helpers/Dates';
+import Model from './Model';
 
 class Order extends Model {
   constructor() {
     super();
-    this.tableName = "orders";
+    this.tableName = 'orders';
   }
 
   /**
@@ -13,11 +13,11 @@ class Order extends Model {
    */
   defaults() {
     return {
-      order_type: "sale",
-      order_key: "S" + new Date(),
-      created_via: "android-mobile-app",
-      version: "1.0.0",
-      status: "completed",
+      order_type: 'sale',
+      order_key: 'S' + new Date(),
+      created_via: 'android-mobile-app',
+      version: '1.0.0',
+      status: 'completed',
       discount_total: 0,
       discount_tax: 0,
       total: 0,
@@ -27,11 +27,11 @@ class Order extends Model {
       customer_supplier_note: 0,
       payments: [
         {
-          method: "cash",
-          title: "Cash",
-          transaction_id: "P" + unixTimeStamp(),
+          method: 'cash',
+          title: 'Cash',
+          transaction_id: 'P' + unixTimeStamp(),
           amount: 0,
-          currency: "RWF",
+          currency: 'RWF',
           date_paid: new Date(),
         },
       ],
@@ -40,16 +40,15 @@ class Order extends Model {
 
   /**
    * Create order table
-   *  @params 
+   *  @params
    *  1. payments = {method, title, transaction_id, amount, currency, date_paid}
    *  2. status = processing, completed, cancelled, suspended
    */
-
   async createTable() {
     return this.db.statement(
       `CREATE TABLE IF NOT EXISTS ` +
-      this.getTableName() +
-      `(
+        this.getTableName() +
+        `(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               order_type TEXT, 
               order_key TEXT,
@@ -83,8 +82,8 @@ class Order extends Model {
   async createTableOld() {
     return this.db.statement(
       `CREATE TABLE IF NOT EXISTS ` +
-      this.getTableName() +
-      `(
+        this.getTableName() +
+        `(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               order_type TEXT,
               item_id TEXT NULL,
