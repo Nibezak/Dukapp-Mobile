@@ -124,7 +124,7 @@ export default function WelcomeScreen({ navigation }) {
         <>
           <Title style={styles.title}>{t('welcome.today_insights')}</Title>
           <HomeSummary />
-
+          <Title style={styles.sales}>{'Last 7 Days Sales'}</Title>
           <RevenueBarChart />
           {/* <Title style={styles.title}>{orders.length > 0 ? t('welcome.last_4_orders') : ''}</Title> */}
           {/* <ScrollView> */}
@@ -154,5 +154,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 5,
+  },
+  sales: {
+    marginTop: 5,
+    fontSize: 14,
+    alignSelf: 'center',
+    fontWeight: 'bold',
+    justifyContent: 'center',
+    textAlign: 'center',
+    color: '#718096',
   },
 });

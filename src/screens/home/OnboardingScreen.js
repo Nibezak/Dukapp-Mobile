@@ -8,7 +8,6 @@ import {
   ToastAndroid,
   StyleSheet,
   ActivityIndicator,
-  KeyboardAvoidingView,
   View,
   Image,
   Text,
@@ -31,8 +30,8 @@ export function OnboardingScreen() {
   /** Set states for the settings input */
   const [businessName, setBusinessName] = useState('Dukapp-Store');
   const [address, setAddress] = useState('KK 509 ST GIK');
-  const [shopOwnerName, setShopOwnerName] = useState('Dukapp');
-  const [email, setEmail] = useState('dukappcommunity@gmail.com.com');
+  const [shopOwnerName, setShopOwnerName] = useState('Nibeza Kevin');
+  const [email, setEmail] = useState('email@example.com');
   const [currency, setCurrency] = useState('RWF');
   const [defaultPaymentMethod, setDefaultPaymentMethod] = useState('CASH');
   const [selectedValue, setSelectedValue] = useState('');
@@ -136,97 +135,95 @@ export function OnboardingScreen() {
    *  by displaying the form for settings
    */
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "padding"}>
-      <SafeAreaView style={styles.wrapper}>
-        <ScrollView>
-          {/* Business Name */}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Image
-              source={require('./../../../assets/snack-icon.png')}
-              style={{ width: 120, height: 100 }}
-            />
+    <SafeAreaView style={styles.wrapper}>
+      <ScrollView>
+        {/* Business Name */}
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Image
+            source={require('./../../../assets/snack-icon.png')}
+            style={{ width: 120, height: 100 }}
+          />
+        </View>
+        <FieldText
+          title={t('setting.shop_name')}
+          value={businessName}
+          onChangeText={setBusinessName}
+          underlineColorAndroid="transparent"
+          placeholder={"Shop Name"}
+        />
+
+        {/* Business Address */}
+        <FieldText
+          title={t('setting.address')}
+          value={address}
+          onChangeText={setAddress}
+          underlineColorAndroid="transparent"
+          placeholder={"KK 509 ST"}
+        />
+
+        {/* Business Owner Name */}
+
+        <FieldText
+          title={t('setting.shop_owner_name')}
+          value={shopOwnerName}
+          onChangeText={setShopOwnerName}
+          underlineColorAndroid="transparent"
+          placeholder={'Nibeza Kevin'}
+        />
+
+        {/* Business Email */}
+
+        <FieldText
+          title={t('setting.email')}
+          value={email}
+          onChangeText={setEmail}
+          underlineColorAndroid="transparent"
+          keyboardType="email-address"
+          placeholder={"email@example.com"}
+        />
+
+        <View style={{ width: "50%" }}>
+          <View style={{ flexDirection: "row", justifyContent: "flex-start", paddingVertical: 10, marginHorizontal: 10 }}>
+            <Text style={{ fontWeight: "semibold", fontSize: 15, color: "#62656b" }}>
+              Default Currency
+            </Text>
           </View>
-          <FieldText
-            title={t('setting.shop_name')}
-            value={businessName}
-            onChangeText={setBusinessName}
-            underlineColorAndroid="transparent"
-            placeholder={"Shop Name"}
+          <InputSelect
+            mode={"dropdown"}
+            selectedValue={currency}
+            style={{ height: 50, width: 150 }}
+            onValueChange={(itemValue, itemIndex) =>
+              setCurrency(itemValue)
+            }
+            options={currencyOptions}
           />
+        </View>
 
-          {/* Business Address */}
-          <FieldText
-            title={t('setting.address')}
-            value={address}
-            onChangeText={setAddress}
-            underlineColorAndroid="transparent"
-            placeholder={"KK 509 ST"}
+        <View style={{ width: "70%" }}>
+          <View style={{ flexDirection: "row", justifyContent: "flex-start", paddingVertical: 10, marginHorizontal: 10 }}>
+            <Text style={{ fontWeight: "semibold", fontSize: 15, color: "#62656b" }}>
+              Default Payment Method
+            </Text>
+          </View>
+          <InputSelect
+            mode={"dropdown"}
+            selectedValue={defaultPaymentMethod}
+            style={{ height: 50, width: 150 }}
+            onValueChange={(itemValue, itemIndex) =>
+              setDefaultPaymentMethod(itemValue, itemIndex)
+            }
+            options={paymentOptions}
           />
-
-          {/* Business Owner Name */}
-
-          <FieldText
-            title={t('setting.shop_owner_name')}
-            value={shopOwnerName}
-            onChangeText={setShopOwnerName}
-            underlineColorAndroid="transparent"
-            placeholder={'Nibeza Kevin'}
-          />
-
-          {/* Business Email */}
-
-          <FieldText
-            title={t('setting.email')}
-            value={email}
-            onChangeText={setEmail}
-            underlineColorAndroid="transparent"
-            keyboardType="email-address"
-            placeholder={"email@example.com"}
-          />
-
+        </View>
+        <View style={{ width: "70%", paddingVertical: 10, marginVertical: 10, flexDirection: "row", justifyContent: "center" }}>
           <View style={{ width: "50%" }}>
-            <View style={{ flexDirection: "row", justifyContent: "flex-start", paddingVertical: 10, marginHorizontal: 10 }}>
-              <Text style={{ fontWeight: "semibold", fontSize: 15, color: "#62656b" }}>
-                Default Currency
-              </Text>
-            </View>
-            <InputSelect
-              mode={"dropdown"}
-              selectedValue={currency}
-              style={{ height: 50, width: 150 }}
-              onValueChange={(itemValue, itemIndex) =>
-                setCurrency(itemValue)
-              }
-              options={currencyOptions}
-            />
+            <Button onPress={handleSavingSettings} color={"#f1f1f1"} backgroundColor={"#47a67f"}>
+              {t("common.save")}
+            </Button>
           </View>
-
-          <View style={{ width: "70%" }}>
-            <View style={{ flexDirection: "row", justifyContent: "flex-start", paddingVertical: 10, marginHorizontal: 10 }}>
-              <Text style={{ fontWeight: "semibold", fontSize: 15, color: "#62656b" }}>
-                Default Payment Method
-              </Text>
-            </View>
-            <InputSelect
-              mode={"dropdown"}
-              selectedValue={defaultPaymentMethod}
-              style={{ height: 50, width: 150 }}
-              onValueChange={(itemValue, itemIndex) =>
-                setDefaultPaymentMethod(itemValue, itemIndex)
-              }
-              options={paymentOptions}
-            />
-          </View>
-          <View style={{ width: "70%", paddingVertical: 10, marginVertical: 10, flexDirection: "row", justifyContent: "center" }}>
-            <View style={{ width: "50%" }}>
-              <Button onPress={handleSavingSettings} color={"#f1f1f1"} backgroundColor={"#47a67f"}>
-                {t("common.save")}
-              </Button>
-            </View>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

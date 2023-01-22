@@ -328,7 +328,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
               Customer:   ${customer.names}
               
               <td>
-                Invoice #: ${payment.transaction_idf}<br> Created: ${dayjs(date).format(
+                Invoice #: ${payment.transaction_id}<br> Created: ${dayjs(date).format(
     'DD MMM YYYY'
   )}<br> Time: ${dayjs(date).format('h:mm A')}
               </td>

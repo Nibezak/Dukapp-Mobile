@@ -1,4 +1,4 @@
-import { InteractionManager, ActivityIndicator, View, TouchableOpacity, Text } from 'react-native';
+import { InteractionManager, ActivityIndicator, View, TouchableOpacity, Text, ScrollView, ToastAndroid, Alert } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
 import ReportService from './../../services/ReportService';
@@ -84,12 +84,12 @@ export default function SummaryReportScreen() {
       headerTitleAlign: 'center',
       headerRight: () => (
         <>
-          <View style={{ flexDirection: 'row' }}>
+          <View>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={{ paddingHorizontal: 10, marginHorizontal: 10 }}
             >
-              <AntDesign name="home" size={24} color="#718096" style={{ fontWeight: 'semibold' }} />
+              <AntDesign name="minuscircleo" size={24} color="#718096" style={{ fontWeight: 'semibold' }} />
             </TouchableOpacity>
           </View>
         </>
@@ -168,17 +168,6 @@ export default function SummaryReportScreen() {
     );
   }
 
-  const handleDatePickerChange = (date) => {
-    // Format date to YYYY-MM-DD
-    const formatedDate = date.toISOString().slice(0, 10);
-    setStartDate(date);
-    setEndDate(date);
-  };
-
-  function onDateSelected(event, value) {
-    setDate(value);
-    setDatePicker(false);
-  }
   const dayjs = require('dayjs');
   /**
    * Show the activity indicator as long as the items are being fetched.
@@ -192,19 +181,25 @@ export default function SummaryReportScreen() {
     );
   }
 
+
   return (
     <View>
       {/* DISPLAY CHART */}
-      <Title style={styles.title}>{'Last 7 Days Sales'}</Title>
-      <RevenueBarChart />
+      {/* <RevenueBarChart /> */}
 
-      <View style={[styles.title, { flexDirection: 'row' }]}>
+      <View style={[styles.datePicker, { flexDirection: 'row' }]}>
         {/* SECTION FOR DATE PICKER */}
         <TouchableOpacity onPress={() => setShowStartDatePicker(true)} style={styles.dateSelector}>
+          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <Text style={{ color: '#718096', fontSize: 12 }}>Start Date</Text>
+          </View>
           <Text style={styles.title}>{startDate.toString()}</Text>
         </TouchableOpacity>
         <Text style={[styles.title, { fontWeight: 'bold' }]}> {'-'} </Text>
         <TouchableOpacity onPress={() => setShowEndDatePicker(true)} style={styles.dateSelector}>
+          <View style={{ flexDirection: "row", justifyContent: "center", }}>
+            <Text style={{ color: '#718096', fontSize: 12 }}>End Date</Text>
+          </View>
           <Text style={styles.title}>{endDate.toString()}</Text>
         </TouchableOpacity>
       </View>
@@ -215,23 +210,24 @@ export default function SummaryReportScreen() {
           display={'default'}
           accentColor={'#718096'}
           onChange={(event, date) => {
-            /** Hide the end date */
-            setShowStartDatePicker(!showStartDatePicker);
-
+            /** Hide the start date */
+            setShowStartDatePicker(!showStartDatePicker)
             /** Update the start date */
-            setStartDate(date.toISOString().slice(0, 10));
+            ToastAndroid.show('Choose end date to continue', ToastAndroid.SHORT);
+            setStartDate(date.toISOString().slice(0, 10))
           }}
         />
       )}
 
       {showEndDatePicker && (
         <DateTimePicker
-          value={new Date(startDate)}
-          mode={'date'}
+          value={new Date(endDate)}
+          mode={'d  ate'}
           display={'default'}
           accentColor={'#718096'}
           // Ensure This is always greator than start date
           minimumDate={new Date(startDate)}
+          maximumDate={new Date()}
           onChange={(event, date) => {
             /** Hide the end date */
             setShowEndDatePicker(!showEndDatePicker);
@@ -248,84 +244,81 @@ export default function SummaryReportScreen() {
           paddingHorizontal: 10,
           marginHorizontal: 10,
           borderRadius: 10,
-          paddingVertical: '5%',
+          width: '100%',
+          height: 500,
         }}
       >
-        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-          <Text style={{ color: '#818096' }}>Summary</Text>
-        </View>
-        <View style={styles.row}>
-          {revenueSummaries.map((item, index) => (
-            <RenderReportItem
-              title={item.title}
-              value={money(item.value)}
-              titleColor={item.color}
-              key={keyExtractor(index)}
-              route={item.route}
-            />
-          ))}
-        </View>
-        <View
-          style={{
-            paddingVertical: 2,
-            paddingHorizontal: 2,
-            flexDirection: 'row',
-            justifyContent: 'center',
-          }}
-        >
-          <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>
-            {t('report.payment_summary')}
-          </Title>
-        </View>
-        <View style={styles.row}>
-          {paymentMethod.map((item, index) => (
-            <RenderReportItem
-              title={item.title}
-              value={money(item.value)}
-              titleColor={item.color}
-              key={keyExtractor(index)}
-              route={item.route}
-            />
-          ))}
-        </View>
-        <View
-          style={{
-            paddingVertical: 2,
-            paddingHorizontal: 2,
-            flexDirection: 'row',
-            justifyContent: 'center',
-          }}
-        >
-          <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>
-            {t('report.items_summary')}
-          </Title>
-        </View>
-        <View style={styles.row}>
-          {stockSummaries.map((item, index) => (
-            <RenderReportItem
-              title={item.title}
-              value={number(item.value)}
-              titleColor={item.color}
-              route={item.route}
-              key={keyExtractor(index)}
-            />
-          ))}
-        </View>
+        <ScrollView>
+          <View style={{ backgroundColor: "white", marginRight: "1%", elevation: 30 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', paddingVertical: 10 }}>
+              <Text style={{ color: '#818096' }}>Summary</Text>
+            </View>
+            <View style={styles.row}>
+              {revenueSummaries.map((item, index) => (
+                <RenderReportItem
+                  title={item.title}
+                  value={money(item.value)}
+                  titleColor={item.color}
+                  key={keyExtractor(index)}
+                  route={item.route}
+                />
+              ))}
+            </View>
+            <View
+              style={{
+                paddingVertical: 2,
+                paddingHorizontal: 2,
+                flexDirection: 'row',
+                justifyContent: 'center',
+              }}
+            >
+              <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>
+                {t('report.payment_summary')}
+              </Title>
+            </View>
+            <View style={styles.row}>
+              {paymentMethod.map((item, index) => (
+                <RenderReportItem
+                  title={item.title}
+                  value={money(item.value)}
+                  titleColor={item.color}
+                  key={keyExtractor(index)}
+                  route={item.route}
+                />
+              ))}
+            </View>
+            <View
+              style={{
+                paddingVertical: 2,
+                paddingHorizontal: 2,
+                flexDirection: 'row',
+                justifyContent: 'center',
+              }}
+            >
+              <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>
+                {t('report.items_summary')}
+              </Title>
+            </View>
+            <View style={styles.row2}>
+              {stockSummaries.map((item, index) => (
+                <RenderReportItem
+                  title={item.title}
+                  value={number(item.value)}
+                  titleColor={item.color}
+                  route={item.route}
+                  key={keyExtractor(index)}
+                />
+              ))}
+            </View>
+          </View>
+        </ScrollView>
       </View>
     </View>
   );
 }
 
 const styles = {
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    paddingHorizontal: 1,
-    marginHorizontal: 7,
-    borderBottomWidth: 1,
-    borderBottomColor: '#cbd5e0',
-    borderRadius: 100,
-  },
+
   subHeader: {
     paddingHorizontal: 7,
     color: '#718096',
@@ -345,7 +338,7 @@ const styles = {
   },
   title: {
     marginTop: 5,
-    fontSize: 16,
+    fontSize: 14,
     alignSelf: 'center',
     fontWeight: 'bold',
     justifyContent: 'center',
@@ -353,11 +346,15 @@ const styles = {
     color: '#718096',
   },
   dateSelector: {
-    borderBottomColor: '#718096',
-    borderBottomWidth: 1,
-    paddingHorizontal: 5,
+    paddingHorizontal: 50,
     marginHorizontal: 5,
-    flexDirection: 'row',
+    paddingVertical: 20,
+    borderRadius: 10,
+    backgroundColor: "#f9f9f9",
+
+    marginVertical: 30,
+    elevation: 5
+
   },
   value: {
     textAlign: 'center',
@@ -366,4 +363,8 @@ const styles = {
     alignSelf: 'center',
     color: '#4a5568',
   },
+  datePicker: {
+
+    justifyContent: "center"
+  }
 };

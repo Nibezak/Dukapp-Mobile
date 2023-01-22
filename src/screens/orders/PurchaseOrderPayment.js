@@ -8,7 +8,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 /**
  * Render payment section
  */
-export default function PurchasePayment({ order, supplier }) {
+export default function PurchaseOrderPayment({ order, customer }) {
     const navigation = useNavigation();
 
     const handleOnPressCustomer = () =>
@@ -26,16 +26,6 @@ export default function PurchasePayment({ order, supplier }) {
 
     return (
         <View style={{ flexDirection: 'row' }}>
-            {/* CUSTOMER SECTION */}
-            <View style={{ flex: 1 }}>
-                <ButtonFilled onPress={handleOnPressCustomer} color={'#a3a3a3'} labelColor={'#fafafa'}>
-                    <MaterialCommunityIcons name={'account'} size={16} />{' '}
-                    {t('order.customer_paid_by', {
-                        supplier: supplier.company_name,
-                    })}
-                </ButtonFilled>
-            </View>
-
             {/* PAYMENT METHOD SECTION */}
             <View style={{ flex: 1 }}>
                 <ButtonFilled
