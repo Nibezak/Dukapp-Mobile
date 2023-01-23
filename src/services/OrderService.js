@@ -10,6 +10,7 @@ import {
 } from '../helpers/Dates';
 import Database from '../database/Database';
 import { getSetting } from '../models/AsyncStorage';
+import ItemInventory from '../models/ItemInventory';
 /**
  * Class to handle order management
  *
@@ -343,15 +344,24 @@ class OrderService {
     }
 
     // Update inventory items
-    return this.adjustStock(orderLineItem.item_id, quantity, actionType);
-  }
+    return this.adjustStock(orderLineItem.item_id, quantity, actionType).then((results) => {
+      /** Track the item inventory
+       * @TODO ensure inventory are being recorded
+       */
+      ItemInventory.trackInventory(
+        orderItem.item_id,
+        quantity,
+        orderItem.total,
+        'Order sales | ' + actionType
+      ).then((inv) => {
+        console.log('==== INVENTORY=======');
 
-  /**
-   * Destroy an existing Order
-   */
-  // async destroy(order) {
-  //   return Order.destroy(order.id);
-  // }
+        console.log(inv);
+      });
+
+      return results;
+    });
+  }
 }
 
 export default new OrderService();
