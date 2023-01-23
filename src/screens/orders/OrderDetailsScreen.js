@@ -165,8 +165,16 @@ export default function OrderDetailsScreen({ navigation, route }) {
       return Item.find(orderItem.item_id).then((stockItem) => {
         /** 2. If the stock is lesser than what we are adding, then don't allow it to proceed */
         if (stockItem.quantity <= 0) {
-          return alert(
-            'Not enough quantity for ' + stockItem.name + ' Remaining:' + stockItem.quantity
+          return Alert.alert(
+            'The Stock of : ' + stockItem.name + ' is insuffient #',
+            'The remaining quantity is : ' + stockItem.quantity + ' Please Add more stock to be able to sell',
+            [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'CANCEL',
+              },
+            ]
           );
         }
 
@@ -297,7 +305,17 @@ export default function OrderDetailsScreen({ navigation, route }) {
   async function addItemFromSuggestion(item) {
     /** Prevent having negative balance by checking if the item has enough*/
     if (item.quantity <= 0) {
-      alert('Not enough quantity for "' + item.name + '". Available Quantity:' + item.quantity);
+      Alert.alert(
+        'The Stock of ' + item.name + ' is insuffient #',
+        'The remaining quantity is : ' + item.quantity + ' Please Add more stock to be able to sell',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'CANCEL',
+          },
+        ]
+      );
       return;
     }
 

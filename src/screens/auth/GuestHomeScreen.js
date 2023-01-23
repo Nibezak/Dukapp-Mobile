@@ -10,6 +10,11 @@ import { t } from "i18n-js";
 import ButtonFilled from "../../components/ButtonFilled";
 import KeyboardAvoidingView from "react-native/Libraries/Components/Keyboard/KeyboardAvoidingView";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import Customer from "../../models/Customer";
+import Item from "../../models/Item";
+import Order from "../../models/Order";
+import OrderItem from "../../models/OrderItem";
+import Supplier from "../../models/Supplier";
 
 export default function GuestHomeScreen({ navigation }) {
   // Ensure database tables are created

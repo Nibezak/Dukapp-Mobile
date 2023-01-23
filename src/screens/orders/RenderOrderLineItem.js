@@ -36,6 +36,7 @@ export default function RenderOrderLineItem({
         </TouchableOpacity>
 
         <TextInput
+          editable={false}
           style={styles.quantityInput}
           defaultValue={number(item.quantity)}
           onChangeText={onChangingQuantity}

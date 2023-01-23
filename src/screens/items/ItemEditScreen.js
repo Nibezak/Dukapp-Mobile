@@ -56,13 +56,29 @@ export default function EditItemScreen({ navigation, route }) {
    *
    */
   async function handleSaleItem() {
+
+    if (item.quantity <= 0) {
+      Alert.alert(
+        'The Stock of : ' + item.name + ' is insuffient #',
+        'The remaining quantity is : ' + item.quantity + ' Please Add more stock to be able to sell',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'CANCEL',
+          },
+        ]
+      );
+      return;
+    }
+
     OrderService.quickSale(item, 'sale').then((result) => {
       ToastAndroid.show(t('item.item_is_sold', { item_name: item.name }), ToastAndroid.SHORT);
     });
   }
   function handleDeleteButton() {
     Alert.alert(
-      'Deleting Order #' + item.id,
+      'Deleting Item : ' + item.name,
       'Are you sure you want to Delete Item # ' + item.name + '?',
       [
         {
