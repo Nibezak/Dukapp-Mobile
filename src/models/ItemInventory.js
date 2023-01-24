@@ -14,15 +14,13 @@ class ItemInventory extends BaseModel {
    * @param {string} comment
    * @returns
    */
-  async trackInventory(item_id, quantity, comment) {
-    const attributes = [
-      {
-        item_id: item_id,
-        trans_inventory: quantity,
-        transaction_comment: comment,
-      },
-    ];
-
+  async trackInventory(item_id, quantity, amount, comment) {
+    const attributes = {
+      item_id: item_id,
+      quantity: quantity,
+      amount: amount,
+      comment: comment,
+    };
     return this.refresh().create(attributes);
   }
 
@@ -36,8 +34,9 @@ class ItemInventory extends BaseModel {
         `(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             item_id int(11) NOT NULL AUTO_INCREMENT,
-            transaction_comment text NOT NULL,
-            item_inventory decimal(15,3) NOT NULL DEFAULT '0.000'
+            comment text NOT NULL,
+            quantity decimal(15,3) NOT NULL DEFAULT '0.000'
+            amount decimal(15,3) NOT NULL DEFAULT '0.000'
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             deleted_at TIMESTAMP DEFAULT NULL

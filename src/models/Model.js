@@ -399,7 +399,6 @@ export default class Model {
     // Add conditions if we have conditions
     this.queryString =
       `INSERT INTO ` + this.getTableName() + `(` + attributes + `) VALUES(` + placeholders + `);`;
-
     return this;
   }
 
