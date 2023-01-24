@@ -79,20 +79,20 @@ export function OnboardingScreen() {
     AsyncStorage.setItem('@contact_person', shopOwnerName);
     AsyncStorage.setItem('@contact_email', email);
     AsyncStorage.setItem('@app_default_currency', currency);
-    AsyncStorage.setItem('@app_default_payment_method', defaultPaymentMethod).then(() => handleCreateDatabase()).then((result) => {
+    AsyncStorage.setItem('@app_default_payment_method', defaultPaymentMethod).then(() => handleCreateMigrations()).then((result) => {
       ToastAndroid.show(t('setting.setting_updated'), ToastAndroid.SHORT);
       return navigation.navigate('home');
     });
   }
-  async function handleCreateDatabase() {
-    // 1. Ensure that all the data tables are created
-
-    // 1. Migrate database
+  async function handleCreateMigrations() {
+    // 1. Drop all tables
     Customer.createTable();
     Item.createTable();
     Order.createTable();
     OrderItem.createTable();
     Supplier.createTable();
+
+    // ToastAndroid.show(t("setting.database_has_been_reset"), ToastAndroid.SHORT);
   }
   var paymentOptions = [
     { value: "cash", label: "Cash" },
