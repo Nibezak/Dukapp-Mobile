@@ -5,7 +5,7 @@ export default {
   incorrect_code: "Incorrect Code",
   login_to_continue: " Continue",
   edit_phone_number: "Edit Phone",
-  verify_your_phone: "Verify Your Phone Number",
+  verify_your_phone: "Register with us",
   carrier_charge_may_apply: "Carrier Charge May Apply.",
   welcome_to_dukapp_app: "A Firm. Dependable. Working Shop Manager.",
   accept_tc_and_continue: "Accept & Continue",

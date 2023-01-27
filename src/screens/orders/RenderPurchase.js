@@ -56,7 +56,7 @@ export default function RenderPurchase({ item, parentRefresher }) {
                 </Text>
                 <Text style={styles.itemNameColumn} numberOfLines={2}>
                     {order.line_items.length === 1
-                        ? order.line_items[0].name.slice(0, 20)
+                        ? order.line_items[0].name
                         : t('order.items', { count: order.line_items.length })}
                 </Text>
                 <Text style={[styles.amount]}>{money(order.total, currency)}</Text>

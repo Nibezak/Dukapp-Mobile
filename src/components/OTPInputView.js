@@ -49,8 +49,8 @@ export default function OTPInputView({ phoneNumber }) {
             pinFourValue.toString() +
             pinFiveValue.toString() +
             sixthPin.toString();
-        
-        
+
+
         verifyOTP(phoneNumber, OTPcode);
     }
 

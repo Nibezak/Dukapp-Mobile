@@ -1,17 +1,16 @@
 import React, { createContext, useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import axiosConfig from '../helpers/axiosConfig';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { generalSettings } from '../screens/settings/settings';
 import { verifyOTP } from '../api/VerifyPhone';
 import { getSetting } from '../models/AsyncStorage';
 import { migrateDatabase } from '../helpers/Database';
-
+import { auth } from '../../firebase';
+import { signInWithEmailAndPassword, signOut } from '@firebase/auth';
+import { ToastAndroid } from 'react-native';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [settings, setSettings] = useState(null);
+  // const [settings, setSettings] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currency, setCurrency] = useState('');
@@ -36,7 +35,7 @@ export const AuthProvider = ({ children }) => {
         currency,
         isLoading,
         setIsLoading,
-        login: (phone, code) => {
+        register: (phone, code) => {
           setIsLoading(true);
           verifyOTP(phone, code)
             .then((response) => {
@@ -47,7 +46,6 @@ export const AuthProvider = ({ children }) => {
                 name: shop.name,
                 username: shop.username,
                 email: shop.email,
-                phone: phone,
                 // avatar: response.data.results[0].picture.thumbnail,
               };
 
@@ -68,16 +66,49 @@ export const AuthProvider = ({ children }) => {
               setIsLoading(false);
             });
         },
+
+        loginFirebase: async (email, password) => {
+          setIsLoading(true);
+          try {
+            const user = await signInWithEmailAndPassword(auth, email, password);
+            const userResponse = {
+              token: 'TO BE REPLACED TOKEN',
+              id: user.uid,
+              name: user.displayName,
+              username: user.email,
+              email: user.email
+            };
+            setUser(userResponse);
+            setError(null);
+            /** Securely store user information. */
+            await SecureStore.setItemAsync('user', JSON.stringify(userResponse));
+            /** Run the migration immediately after successful login */
+            migrateDatabase();
+            /** Stop loading */
+            setIsLoading(false);
+          } catch (error) {
+            setError(error.message);
+            setIsLoading(false);
+          }
+        },
         logout: () => {
           setIsLoading(true);
-          setUser(null);
-          SecureStore.deleteItemAsync('user');
+          signOut(auth).then(() => {
+            setUser(null);
+            SecureStore.deleteItemAsync('user').then(() => {
+              ToastAndroid.show('You have logged out', ToastAndroid.SHORT);
+            })
+          }).catch((error) => {
+            ToastAndroid.show(error.message, ToastAndroid.SHORT);
+          });
           setError(null);
           setIsLoading(false);
         },
       }}
     >
       {children}
-    </AuthContext.Provider>
+    </AuthContext.Provider >
   );
 };
+
+

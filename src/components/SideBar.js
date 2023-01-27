@@ -38,9 +38,10 @@ export default function SideBar() {
 
     const bottomListItems = [
         { icon: ShareIcon, title: 'Tell a Friend' },
-        { icon: FeedBackIcon, title: 'Help and FeedBack' },
     ];
-
+    const feedbackBottom = [
+        { icon: FeedBackIcon, title: ' FeedBack' },
+    ]
     const navigation = useNavigation();
 
     const Item = ({ title, icon, onPress, backgroundColor, color }) => (
@@ -98,6 +99,21 @@ export default function SideBar() {
         );
     };
 
+    const renderFeedbacks = ({ item }) => {
+        const backgroundColor = item.title === selectedId ? 'white' : 'white';
+        const color = item.title === selectedId ? 'black' : 'black';
+        return (
+            <Item
+                onPress={onShare}
+                title={item.title}
+                backgroundColor={backgroundColor}
+                color={color}
+                icon={item.icon}
+            />
+        );
+    };
+
+
     function retrieveSetting() {
         getSetting('business_name').then(setBusinessName);
         getSetting('app_default_currency').then(setCurrency);
@@ -145,9 +161,10 @@ export default function SideBar() {
             <View style={{ flex: 0.55 }}>
                 <FlatList data={listArrayItem} renderItem={renderItem} />
             </View>
-            <View style={{ flex: 0.25 }}></View>
-            <View style={{ flex: 0.25 }}>
+            <View style={{ flex: 0.10 }}></View>
+            <View style={{ flex: 0.20 }}>
                 <FlatList data={bottomListItems} renderItem={renderLinks} />
+                <FlatList data={feedbackBottom} renderItem={renderFeedbacks} />
             </View>
         </View>
     );

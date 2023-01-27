@@ -5,6 +5,7 @@ import { AuthProvider } from './src/context/AuthProvider';
 import RootNavigation from './src/navigation/RootNavigation';
 import { getSetting } from './src/models/AsyncStorage';
 import i18n from 'i18n-js';
+import { initializeApp } from "firebase/app";
 import * as Sentry from 'sentry-expo';
 import en from './src/translations/en';
 import fr from './src/translations/fr';

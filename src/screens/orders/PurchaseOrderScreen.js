@@ -8,6 +8,7 @@ import {
     Keyboard,
     Dimensions,
     ActivityIndicator,
+    ToastAndroid,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import InputSend from '../../components/InputSend';
@@ -108,7 +109,7 @@ export default function PurchaseOrderScreen({ navigation, route }) {
      */
     async function saleFromSuggestion(item) {
         // 1. Record the order in the database
-        OrderService.quickSale(item, orderType)
+        OrderService.quickSalePurchase(item, orderType)
             .then((results) => {
                 // 2. Refresh order list
                 refreshOrders();
@@ -121,6 +122,9 @@ export default function PurchaseOrderScreen({ navigation, route }) {
 
                 // 5. Reset suggestions
                 resetToDefaultSuggestion();
+
+                ToastAndroid.show("Purchase Made", ToastAndroid.SHORT);
+
             })
             .catch((error) => {
                 throw error;

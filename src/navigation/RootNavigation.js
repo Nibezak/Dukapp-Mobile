@@ -61,6 +61,7 @@ import { ByMobileScreen } from '../screens/reports/ByMobileScreen';
 import { InStockScreen } from '../screens/reports/InStockScreen';
 import PurchaseOrderScreen from '../screens/orders/PurchaseOrderScreen';
 import PurchaseDetailsScreen from '../screens/orders/PurchaseDetailsScreen';
+import PhoneNumberLoginScreen from '../screens/auth/PhoneNumberLoginScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -69,11 +70,12 @@ function AuthStackNavigator() {
   enableScreens();
   return (
     <Stack.Navigator
-      initialRouteName="PhoneNumber"
+      initialRouteName="Login"
       screenOptions={{ headerShown: false, headerBackTitleVisible: false }}
     >
       <Stack.Screen name="Guest Home" component={GuestHomeScreen} />
       <Stack.Screen name="PhoneNumber" component={PhoneNumberScreen} />
+      <Stack.Screen name="Login" component={PhoneNumberLoginScreen} />
       <Stack.Screen name="Otp" component={OtpScreen} />
     </Stack.Navigator>
   );

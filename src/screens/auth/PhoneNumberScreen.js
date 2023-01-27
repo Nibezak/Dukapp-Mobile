@@ -13,12 +13,32 @@ import ButtonFilled from "../../components/ButtonFilled";
 import PhoneInput from "react-native-phone-number-input";
 import { AuthContext } from "../../context/AuthProvider";
 import { sendOTP } from "../../api/VerifyPhone";
-import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView, TextInput } from "react-native-gesture-handler";
+import { auth } from "../../../firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import InputSwitch from "../../components/InputSwitch";
+
 
 export default function PhoneNumberScreen({ navigation }) {
   const [value, setValue] = useState("");
   const [formattedValue, setFormattedValue] = useState("");
   const phoneInput = useRef(null);
+  const email = `${value}@dukapp.com`
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [validationMessage, setValidationMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const toggleSwitch = () => setShowPassword((previousState) => !previousState);
+
+  const validateAndSet = (value, valueToCompare, setValue) => {
+    if (value !== valueToCompare) {
+      setValidationMessage("Passwords do not match");
+    }
+    else {
+      setValidationMessage("");
+    }
+    setValue(value)
+  }
   const { error, isLoading, setIsLoading } = useContext(AuthContext);
 
   /**
@@ -26,18 +46,28 @@ export default function PhoneNumberScreen({ navigation }) {
    * sendSmsVerification
    */
   async function handleSendSmsVerification() {
-    setIsLoading(true);
-    //   Send SMS to verify this phone
-    sendOTP(formattedValue.substring(1, 13))
-      .then((sent) => {
-        setIsLoading(false);
-        navigation.navigate("Otp", {
-          phoneNumber: formattedValue,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+
+    if (password === confirmPassword) {
+      setIsLoading(true);
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          sendOTP(formattedValue.substring(1, 13))
+            .then((sent) => {
+              setIsLoading(false);
+              navigation.navigate("Otp", {
+                phoneNumber: formattedValue,
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch((error) => {
+          setValidationMessage(error.message)
+          setIsLoading(false)
+        })
+      //   Send SMS to verify this phone
+    }
   }
 
   return (
@@ -47,9 +77,20 @@ export default function PhoneNumberScreen({ navigation }) {
           <View style={styles.welcome}>
             <Image source={require('./../../../assets/snack-icon.png')} style={styles.appName} />
             <Text style={styles.pitch}>{t("auth.welcome_to_dukapp_app")}</Text>
-            <Text style={styles.verifyPhone}>
-              {t("auth.verify_your_phone")}
-            </Text>
+            <View style={{ flexDirection: "row", justifyContent: "center" }}>
+              <Text style={styles.verifyPhone}>
+                sign up to your shop
+
+              </Text>
+              <Text style={{ color: "#3498db", marginLeft: 20, fontSize: 17, marginTop: 20 }}>
+                or
+              </Text>
+              <TouchableOpacity style={{ marginHorizontal: 30, marginTop: 20, }} onPress={() => navigation.navigate('Login')}>
+                <Text style={{ color: "#47a67f", fontSize: 15, fontWeight: 'bold' }}>
+                  {"Sign in "}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
           <PhoneInput
             ref={phoneInput}
@@ -69,10 +110,33 @@ export default function PhoneNumberScreen({ navigation }) {
             initialCountry="rw"
           />
 
-          <Text style={styles.carrierCharges}>
-            {t("auth.carrier_charge_may_apply")}
-          </Text>
+          <TextInput
+            style={styles.passwordInput}
+            placeholder="Enter your password"
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={(value) => validateAndSet(value, confirmPassword, setPassword)}
+          />
 
+          <TextInput
+            style={styles.confirmPasswordInput}
+            placeholder="Confirm your password"
+            secureTextEntry={!showPassword}
+            value={confirmPassword}
+            onChangeText={(value) => validateAndSet(value, password, setConfirmPassword)}
+          />
+
+          <InputSwitch
+            onValueChange={toggleSwitch}
+            value={showPassword}
+            title={"show password"}
+          />
+          {validationMessage && <Text style={{ color: "red" }}>{validationMessage}</Text>}
+          <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+            <Text style={styles.carrierCharges}>
+              {t("auth.carrier_charge_may_apply")}
+            </Text>
+          </View>
           {error && <Text style={{ color: "red" }}>{error}</Text>}
           {isLoading && (
             <ActivityIndicator
@@ -135,7 +199,7 @@ const styles = StyleSheet.create({
     color: "#718096",
     fontWeight: "600",
     fontSize: 12,
-    paddingTop: 20,
+    paddingTop: 3,
     fontStyle: "italic",
   },
   message: {
@@ -168,7 +232,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   welcome: {
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10
   },
   status: {
     padding: 20,
@@ -179,7 +244,26 @@ const styles = StyleSheet.create({
   },
   termsLink: {
     fontSize: 14,
-    marginTop: 30,
+    marginTop: 10,
     textDecorationLine: "underline",
   },
+  passwordInput: {
+    backgroundColor: "#f1f1f1",
+    borderRadius: 10,
+    width: 300,
+    padding: 10,
+    marginTop: 20,
+    marginBottom: 8,
+    marginHorizontal: 10,
+    elevation: 5,
+  },
+  confirmPasswordInput: {
+    backgroundColor: "#f1f1f1",
+    borderRadius: 10,
+    width: 300,
+    padding: 10,
+    marginVertical: 5,
+    marginHorizontal: 10,
+    elevation: 5,
+  }
 });

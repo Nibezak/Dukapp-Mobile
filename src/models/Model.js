@@ -8,13 +8,13 @@ export default class Model {
     this.conditions = 1;
     this.ordering = 'ORDER BY id';
     this.orderingMode = 'ASC';
-    this.recordsLimit = 10000;
+    this.recordsLimit = 1000000;
     this.tableName = this.getTableName();
     this.queryString = '';
     this.columnsToSelect = '*';
     this.queryParameters = [];
     this.createTable();
-    this.resultContainer = (rows) => {};
+    this.resultContainer = (rows) => { };
   }
 
   /**

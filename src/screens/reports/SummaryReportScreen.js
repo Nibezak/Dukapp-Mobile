@@ -207,6 +207,7 @@ export default function SummaryReportScreen() {
         <DateTimePicker
           value={new Date(startDate)}
           mode={'date'}
+          maximumDate={new Date()}
           display={'default'}
           accentColor={'#718096'}
           onChange={(event, date) => {

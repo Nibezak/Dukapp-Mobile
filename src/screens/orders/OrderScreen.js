@@ -20,6 +20,7 @@ import RenderOrder from './RenderOrder';
 import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Alert } from 'react-native';
+import { ToastAndroid } from 'react-native';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -147,6 +148,9 @@ export default function OrderScreen({ navigation, route }) {
 
         // 5. Reset suggestions
         resetToDefaultSuggestion();
+
+        ToastAndroid.show("Order Made", ToastAndroid.SHORT);
+
       })
       .catch((error) => {
         throw error;

@@ -9,7 +9,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 export default function OtpScreen({ route, navigation }) {
   const { phoneNumber } = route.params;
   const [invalidCode, setInvalidCode] = useState(false);
-  const { login, isLoading } = useContext(AuthContext);
+  const { register, isLoading } = useContext(AuthContext);
 
   /**
    * handle Verification
@@ -18,7 +18,8 @@ export default function OtpScreen({ route, navigation }) {
    * @returns
    */
   async function handleOtpVerification(code) {
-    login(phoneNumber, code);
+    register(phoneNumber, code);
+    console.log(phoneNumber, code)
   }
 
   return (
@@ -44,7 +45,6 @@ export default function OtpScreen({ route, navigation }) {
           codeInputFieldStyle={styles.underlineStyleBase}
           codeInputHighlightStyle={styles.underlineStyleHighLighted}
           onCodeFilled={handleOtpVerification}
-          onCodeChanged={handleOtpVerification}
           placeholderCharacter="_"
         />
         {invalidCode && <Text style={styles.error}>{t('auth.incorrect_code')}</Text>}

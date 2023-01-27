@@ -89,8 +89,8 @@ export default function PurchaseDetailsScreen({ navigation, route }) {
      */
     function handleDeleteButton() {
         Alert.alert(
-            'Deleting Order #' + order.id,
-            'Are you sure you want to delete order #' + order.id + '?',
+            'Deleting Purchase #' + order.id,
+            'Are you sure you want to delete purchased order  #' + order.id + '?',
             [
                 {
                     text: 'Cancel',
@@ -274,7 +274,7 @@ export default function PurchaseDetailsScreen({ navigation, route }) {
             quantity: 1,
             unit_cost_price: item.cost_price,
             unit_sales_price: item.sale_price,
-            total: 1 * item.sale_price,
+            total: 1 * item.cost_price,
         };
 
         OrderService.addItemToOrder(itemAttributes, orderType).then((result) => {
@@ -286,6 +286,7 @@ export default function PurchaseDetailsScreen({ navigation, route }) {
 
         // 5. Reset suggestions
         resetToDefaultSuggestion();
+
     }
 
     /**
