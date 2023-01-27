@@ -146,7 +146,7 @@ export default function PurchaseDetailsScreen({ navigation, route }) {
      */
     async function handleQuantityChange(orderItem, action) {
         // Update Item quantity
-        OrderService.updateOrderItem(orderItem, action).then(() => {
+        OrderService.updateOrderPurchaseItem(orderItem, action).then(() => {
             // Refresh the order details page
             refreshOrder();
         });

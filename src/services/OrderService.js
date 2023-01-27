@@ -414,6 +414,52 @@ class OrderService {
       return results;
     });
   }
+
+  async updateOrderPurchaseItem(orderItem, actionType, quantity = 1) {
+    // Calculate changes
+    let orderLineItem = orderItem;
+
+    // Update quantity based on the order change
+    switch (actionType.toLowerCase()) {
+      case 'sale-more':
+      case 'purchase-more':
+        orderLineItem.quantity = orderLineItem.quantity + 1;
+        break;
+      case 'sale-less':
+      case 'purchase-less':
+        orderLineItem.quantity = orderLineItem.quantity - 1;
+        break;
+    }
+
+    // You cannot sell negative quantity, Remove order
+    if (actionType.endsWith('less') && orderItem.quantity < 1) {
+      OrderItem.refresh().where('id', orderLineItem.id).delete();
+    } else {
+      // Persist changes in DB
+      orderLineItem.total = orderLineItem.unit_cost_price * orderLineItem.quantity;
+      OrderItem.refresh().where('id', orderLineItem.id).update(orderLineItem);
+    }
+
+    // Update inventory items
+    return this.adjustStock(orderLineItem.item_id, quantity, actionType).then((results) => {
+      /** Track the item inventory
+       * @TODO ensure inventory are being recorded
+       */
+      ItemInventory.trackInventory(
+        orderItem.item_id,
+        quantity,
+        orderItem.total,
+        'Order sales | ' + actionType
+      ).then((inv) => {
+        console.log('==== INVENTORY=======');
+
+        console.log(inv);
+      });
+
+      return results;
+    });
+  }
 }
+
 
 export default new OrderService();
