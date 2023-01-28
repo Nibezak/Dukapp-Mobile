@@ -10,11 +10,10 @@ import {
 import { t } from "i18n-js";
 import ButtonFilled from "../../components/ButtonFilled";
 import PhoneInput from "react-native-phone-number-input";
-import { auth } from "../../../firebase";
 import { AuthContext } from "../../context/AuthProvider";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
-import InputSwitch from "../../components/InputSwitch";
-import { signInWithEmailAndPassword } from "@firebase/auth";
+import ShowPassword from "../../components/ShowPassword";
+
 
 export default function PhoneNumberScreen({ navigation }) {
     const [value, setValue] = useState("");
@@ -51,7 +50,7 @@ export default function PhoneNumberScreen({ navigation }) {
                         <Text style={styles.pitch}>{t("auth.welcome_to_dukapp_app")}</Text>
                         <View style={{ flexDirection: "row", justifyContent: "center" }}>
                             <Text style={styles.verifyPhone}>
-                                Sign in to your shop
+                                {"Sign in to your shop"}
 
                             </Text>
                             <Text style={{ color: "#3498db", marginLeft: 20, fontSize: 17, marginTop: 20 }}>
@@ -59,7 +58,7 @@ export default function PhoneNumberScreen({ navigation }) {
                             </Text>
                             <TouchableOpacity style={{ marginHorizontal: 30, marginTop: 20, }} onPress={() => navigation.navigate('PhoneNumber')}>
                                 <Text style={{ color: "#47a67f", fontSize: 15, fontWeight: 'bold' }}>
-                                    {"Sign up "}
+                                    {"Register"}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -90,7 +89,7 @@ export default function PhoneNumberScreen({ navigation }) {
                         onChangeText={setPassword}
                     />
 
-                    <InputSwitch
+                    <ShowPassword
                         onValueChange={toggleSwitch}
                         value={showPassword}
                         title={"show password"}

@@ -5,7 +5,7 @@ import { getSetting } from '../models/AsyncStorage';
 import { migrateDatabase } from '../helpers/Database';
 import { auth } from '../../firebase';
 import { signInWithEmailAndPassword, signOut } from '@firebase/auth';
-import { ToastAndroid } from 'react-native';
+import { Alert, ToastAndroid } from 'react-native';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -93,14 +93,30 @@ export const AuthProvider = ({ children }) => {
         },
         logout: () => {
           setIsLoading(true);
-          signOut(auth).then(() => {
-            setUser(null);
-            SecureStore.deleteItemAsync('user').then(() => {
-              ToastAndroid.show('You have logged out', ToastAndroid.SHORT);
-            })
-          }).catch((error) => {
-            ToastAndroid.show(error.message, ToastAndroid.SHORT);
-          });
+
+          async function handleLogout() {
+            signOut(auth).then(() => {
+              setUser(null);
+              SecureStore.deleteItemAsync('user').then(() => {
+                ToastAndroid.show('You have logged out', ToastAndroid.SHORT);
+              })
+            }).catch((error) => {
+              ToastAndroid.show(error.message, ToastAndroid.SHORT);
+            });
+          }
+
+          Alert.alert(
+            'Want to Logout ?',
+            'Are you sure you want to Logout',
+            [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'CANCEL',
+              },
+              { text: 'Log out', onPress: () => handleLogout() },
+            ]
+          );
           setError(null);
           setIsLoading(false);
         },

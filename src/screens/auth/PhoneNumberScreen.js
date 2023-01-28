@@ -14,9 +14,10 @@ import PhoneInput from "react-native-phone-number-input";
 import { AuthContext } from "../../context/AuthProvider";
 import { sendOTP } from "../../api/VerifyPhone";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
-import { auth } from "../../../firebase";
+import { auth, db } from "../../../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import InputSwitch from "../../components/InputSwitch";
+import ShowPassword from "../../components/ShowPassword";
+import { collection, addDoc } from "firebase/firestore";
 
 
 export default function PhoneNumberScreen({ navigation }) {
@@ -45,30 +46,42 @@ export default function PhoneNumberScreen({ navigation }) {
    * @todo, implement the verification backend in the context
    * sendSmsVerification
    */
-  async function handleSendSmsVerification() {
-
+  async function handleSignUp() {
+    const dbRef = collection(db, "database");
+    const data = {
+      database: ["Authenticated user application database"]
+    };
     if (password === confirmPassword) {
       setIsLoading(true);
       createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          sendOTP(formattedValue.substring(1, 13))
-            .then((sent) => {
-              setIsLoading(false);
-              navigation.navigate("Otp", {
-                phoneNumber: formattedValue,
-              });
+        .then(({ user }) => {
+          console.log(user.uid)
+          data.userId = user.uid
+          addDoc(dbRef, data)
+            .then(() => {
+              sendOTP(formattedValue.substring(1, 13))
+                .then((sent) => {
+                  setIsLoading(false);
+                  navigation.navigate("Otp", {
+                    phoneNumber: formattedValue,
+                  });
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
             })
             .catch((error) => {
-              console.log(error);
+              setValidationMessage(error.message)
+              setIsLoading(false)
             });
         })
         .catch((error) => {
           setValidationMessage(error.message)
           setIsLoading(false)
-        })
-      //   Send SMS to verify this phone
+        });
     }
   }
+
 
   return (
     <>
@@ -126,7 +139,7 @@ export default function PhoneNumberScreen({ navigation }) {
             onChangeText={(value) => validateAndSet(value, password, setConfirmPassword)}
           />
 
-          <InputSwitch
+          <ShowPassword
             onValueChange={toggleSwitch}
             value={showPassword}
             title={"show password"}
@@ -156,7 +169,7 @@ export default function PhoneNumberScreen({ navigation }) {
               {t("common.terms_and_condition")}
             </Text>
           </TouchableOpacity>
-          <ButtonFilled onPress={handleSendSmsVerification}>
+          <ButtonFilled onPress={handleSignUp}>
             {t("auth.accept_tc_and_continue")}
           </ButtonFilled>
         </View>

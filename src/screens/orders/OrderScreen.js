@@ -32,6 +32,8 @@ export default function OrderScreen({ navigation, route }) {
   const [suggestions, setSuggestions] = useState([]);
   const [items, setItems] = useState([]);
   const [showIsLoading, setShowIsLoading] = useState(true);
+  const [orderLoading, setOrderLoading] = useState(false);
+
 
   /** Fix the undefined order_type error */
   const orderType = route.order_type == undefined ? 'sale' : routeParams.order_type;
@@ -137,9 +139,11 @@ export default function OrderScreen({ navigation, route }) {
     // 1. Record the order in the database
     OrderService.quickSale(item, orderType)
       .then((results) => {
+        // load the order because sometimes the query is long
+        setOrderLoading(true);
         // 2. Refresh order list
         refreshOrders();
-
+        setOrderLoading(false);
         // 3. Hide Keyboard
         Keyboard.dismiss();
 
@@ -288,7 +292,13 @@ export default function OrderScreen({ navigation, route }) {
         renderItem={renderOrder}
         keyExtractor={keyExtractor}
       />
-
+      {orderLoading ? (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 15 }}>
+          <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+        </View>
+      ) : (
+        <></>
+      )}
       {/**Suggestion to simplify order entry */}
       {/* Only show suggestion when user has entered something to search */}
       {(suggestions.length > 0 && typing.length > 0) > 0 ? (
