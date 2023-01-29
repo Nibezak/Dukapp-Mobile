@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import firebase from "firebase/compat/app"
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "@firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -23,9 +24,13 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore(app);
 const analytics = getAnalytics(app);
+if (firebase.apps.length === 0) {
+    firebase.initializeApp(firebaseConfig)
+}
+export { auth, db, analytics }
+
 // let currentUser = null;
 // onAuthStateChanged(auth, (user) => {
 //     currentUser = user;
 //     console.log(currentUser)
 // })
-export { auth, db, analytics }

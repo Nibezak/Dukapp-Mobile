@@ -1,6 +1,7 @@
 import AxiosConfig from '../helpers/axiosConfig';
-import firebase from 'firebase/app';
 import 'firebase/firestore';
+import { auth, db } from '../../firebase';
+import { arrayUnion, doc, updateDoc } from 'firebase/firestore';
 /**
  Upload local store to the server
  *
@@ -40,25 +41,23 @@ export async function uploadData(dataType, payload) {
 // }
 
 
+
 export async function realTimeBackup(queryString, parameters) {
-  // Initialize Firestore
-  const firestore = firebase.firestore();
-
-  // Get the currently authenticated user
-  const user = firebase.auth().currentUser;
-  if (!user) {
-    console.warn("No authenticated user found");
-    return;
-  }
-
-  // Add the data to the authenticated user's collection
   try {
-    await firestore.collection("users").doc(user.uid).collection("backup").add({
-      query: queryString,
-      parameters: parameters
+
+    // Get the current user's ID
+    const userId = auth.currentUser.uid
+    const database = doc(db, "users", userId);
+    await updateDoc(database, {
+      database: arrayUnion({
+        queryString,
+        parameters
+      })
     });
-    console.log("Data added to Firestore collection successfully");
+    console.log(`${userId}'s database has been backedup`);
+    console.log(queryString, parameters)
+
   } catch (error) {
-    console.warn("Error adding data to Firestore collection: ", error);
+    console.error(error);
   }
 }

@@ -62,6 +62,8 @@ import { InStockScreen } from '../screens/reports/InStockScreen';
 import PurchaseOrderScreen from '../screens/orders/PurchaseOrderScreen';
 import PurchaseDetailsScreen from '../screens/orders/PurchaseDetailsScreen';
 import PhoneNumberLoginScreen from '../screens/auth/PhoneNumberLoginScreen';
+import { doc, getDoc } from '@firebase/firestore';
+import { db, auth } from '../../firebase';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();

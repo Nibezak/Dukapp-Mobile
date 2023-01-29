@@ -1,6 +1,5 @@
 import React, { useState, useRef, useContext } from "react";
 import {
-  SafeAreaView,
   StyleSheet,
   View,
   Text,
@@ -17,7 +16,7 @@ import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { auth, db } from "../../../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import ShowPassword from "../../components/ShowPassword";
-import { collection, addDoc } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 
 
 export default function PhoneNumberScreen({ navigation }) {
@@ -47,17 +46,16 @@ export default function PhoneNumberScreen({ navigation }) {
    * sendSmsVerification
    */
   async function handleSignUp() {
-    const dbRef = collection(db, "database");
-    const data = {
-      database: ["Authenticated user application database"]
-    };
     if (password === confirmPassword) {
       setIsLoading(true);
       createUserWithEmailAndPassword(auth, email, password)
         .then(({ user }) => {
-          console.log(user.uid)
+          const dbRef = doc(db, "users", auth.currentUser.uid);
+          const data = {
+            database: []
+          };
           data.userId = user.uid
-          addDoc(dbRef, data)
+          setDoc(dbRef, data)
             .then(() => {
               sendOTP(formattedValue.substring(1, 13))
                 .then((sent) => {
@@ -71,6 +69,7 @@ export default function PhoneNumberScreen({ navigation }) {
                 });
             })
             .catch((error) => {
+              console.log(error);
               setValidationMessage(error.message)
               setIsLoading(false)
             });
@@ -81,7 +80,6 @@ export default function PhoneNumberScreen({ navigation }) {
         });
     }
   }
-
 
   return (
     <>

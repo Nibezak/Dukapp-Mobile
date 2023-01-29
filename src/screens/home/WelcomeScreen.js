@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState, useContext } from 'react';
 import {
   View,
   FlatList,
@@ -11,11 +11,14 @@ import { t } from 'i18n-js';
 import RenderOrder from '../orders/RenderOrder';
 import OrderService from '../../services/OrderService';
 import { useFocusEffect } from '@react-navigation/native';
-import { Title, ActivityIndicator } from 'react-native-paper';
+import { Title, ActivityIndicator, Button } from 'react-native-paper';
 import RevenueBarChart from '../reports/RevenueBarChart';
 import { AntDesign } from '@expo/vector-icons';
 import { WelcomeAnimation } from '../../components/WelcomeAnimation';
 import { getSetting } from '../../models/AsyncStorage';
+import { AuthContext } from '../../context/AuthProvider';
+import { doc, getDoc } from '@firebase/firestore';
+import { auth, db } from '../../../firebase';
 /**
  * Screen component
  */
@@ -24,6 +27,9 @@ export default function WelcomeScreen({ navigation }) {
   const [orderType, setOrderType] = useState('sale');
   const [showLoading, setShowLoading] = useState(true);
   const [currency, setCurrency] = useState('RWF');
+  const { user } = useContext(AuthContext);
+  const { database, setDatabase } = useState('');
+
   useFocusEffect(
     useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
@@ -74,7 +80,21 @@ export default function WelcomeScreen({ navigation }) {
   }
 
 
+  // async function userDatabase() {
+  //   if (!user) return;
+  //   const docRef = doc(db, "users", auth.currentUser.uid);
 
+  //   // Get a document, forcing the SDK to fetch from the offline cache.
+  //   try {
+  //     const doc = await getDoc(docRef);
+  //     const data = doc.data()
+  //     // Document was found in the cache. If no cached document exists,
+  //     // an error will be returned to the 'catch' block below.
+  //     console.log("Cached document data:", data);
+  //   } catch (e) {
+  //     console.log("Error getting cached document:", e);
+  //   }
+  // }
   // Fetch Orders
   async function refreshOrders() {
     return OrderService.ordersWithItems(setOrders, orderType, null, 8).then(() => setShowLoading(false))
@@ -126,9 +146,7 @@ export default function WelcomeScreen({ navigation }) {
           <HomeSummary />
           <Title style={styles.sales}>{'Last 7 Days Sales'}</Title>
           <RevenueBarChart />
-          {/* <Title style={styles.title}>{orders.length > 0 ? t('welcome.last_4_orders') : ''}</Title> */}
-          {/* <ScrollView> */}
-
+          <Title style={styles.sales}>{'Recent Sales'}</Title>
           <FlatList
             data={orders.slice(0, 5)}
             renderItem={renderOrder}
@@ -136,7 +154,6 @@ export default function WelcomeScreen({ navigation }) {
             nestedScrollEnabled
           />
 
-          {/* </ScrollView> */}
         </>
       )}
     </View>
