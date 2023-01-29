@@ -34,13 +34,15 @@ export default function EditItemScreen({ navigation, route }) {
     updateNavRight();
   }, []);
 
-
   function updateNavRight() {
     navigation.setOptions({
       headerRight: () => (
         <>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity onPress={handleSaleItem} style={{ paddingRight: 20, marginHorizontal: 20, marginVertical: 3 }}>
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableOpacity
+              onPress={handleSaleItem}
+              style={{ paddingRight: 20, marginHorizontal: 20, marginVertical: 3 }}
+            >
               <Text style={{ color: '#10b981', fontWeight: 'bold' }}>{t('item.sale')}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleDeleteButton} style={{ paddingRight: 20 }}>
@@ -56,11 +58,12 @@ export default function EditItemScreen({ navigation, route }) {
    *
    */
   async function handleSaleItem() {
-
     if (item.quantity <= 0) {
       Alert.alert(
         'The Stock of : ' + item.name + ' is insuffient #',
-        'The remaining quantity is : ' + item.quantity + ' Please Add more stock to be able to sell',
+        'The remaining quantity is : ' +
+          item.quantity +
+          ' Please Add more stock to be able to sell',
         [
           {
             text: 'Cancel',
@@ -71,7 +74,6 @@ export default function EditItemScreen({ navigation, route }) {
       );
       return;
     }
-
     OrderService.quickSale(item, 'sale').then((result) => {
       ToastAndroid.show(t('item.item_is_sold', { item_name: item.name }), ToastAndroid.SHORT);
     });
@@ -245,8 +247,8 @@ export default function EditItemScreen({ navigation, route }) {
             {/* <Button onPress={handleDeleteItem} color={'#f1f1f1'} backgroundColor='#ef4444'>
             {t('common.delete')}
           </Button> */}
-            <View style={{ width: "50%" }}>
-              <Button onPress={handleSaveItem} color={'#f1f1f1'} backgroundColor='#47a67f'>
+            <View style={{ width: '50%' }}>
+              <Button onPress={handleSaveItem} color={'#f1f1f1'} backgroundColor="#47a67f">
                 {t('common.save')}
               </Button>
             </View>
@@ -266,7 +268,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    justifyContent: "center",
+    justifyContent: 'center',
     marginVertical: 5,
     marginHorizontal: 20,
   },
