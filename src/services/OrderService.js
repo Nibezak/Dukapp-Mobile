@@ -229,7 +229,19 @@ class OrderService {
 
     // 3. Now we have order and the item,
     //    let us record them
-    return this.complete(orderAttributes, itemAttributes);
+    return this.complete(orderAttributes, itemAttributes).then((result) => {
+      ItemInventory.trackInventory(
+        item.id,
+        item.quantity,
+        item.sale_price,
+        'Quick Sale | ' + orderType
+      ).then((inv) => {
+        console.log('==== INVENTORY=======');
+        ItemInventory.get().then((results) => {
+          console.log(results);
+        });
+      });
+    });
   }
   async quickSalePurchase(item, orderType) {
     // 1. Prepare the item
@@ -405,10 +417,11 @@ class OrderService {
         quantity,
         orderItem.total,
         'Order sales | ' + actionType
-      ).then((inv) => {
+      ).then((inventory) => {
         console.log('==== INVENTORY=======');
+        console.log(inventory);
 
-        console.log(inv);
+        console.log(ItemInventory.get());
       });
 
       return results;
@@ -454,12 +467,12 @@ class OrderService {
         console.log('==== INVENTORY=======');
 
         console.log(inv);
+        console.log(ItemInventory.get());
       });
 
       return results;
     });
   }
 }
-
 
 export default new OrderService();

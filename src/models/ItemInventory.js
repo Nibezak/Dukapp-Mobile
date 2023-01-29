@@ -1,6 +1,6 @@
-import BaseModel from './Model';
+import Model from './Model';
 
-class ItemInventory extends BaseModel {
+class ItemInventory extends Model {
   constructor() {
     super();
     this.tableName = 'item_inventories';
@@ -33,10 +33,10 @@ class ItemInventory extends BaseModel {
         this.getTableName() +
         `(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            item_id int(11) NOT NULL AUTO_INCREMENT,
+            item_id int(11) NOT NULL,
             comment text NOT NULL,
-            quantity decimal(15,3) NOT NULL DEFAULT '0.000'
-            amount decimal(15,3) NOT NULL DEFAULT '0.000'
+            quantity decimal(15,3) NOT NULL DEFAULT '0.000',
+            amount decimal(15,3) NOT NULL DEFAULT '0.000',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             deleted_at TIMESTAMP DEFAULT NULL

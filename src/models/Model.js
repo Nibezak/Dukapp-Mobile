@@ -14,7 +14,7 @@ export default class Model {
     this.columnsToSelect = '*';
     this.queryParameters = [];
     this.createTable();
-    this.resultContainer = (rows) => { };
+    this.resultContainer = (rows) => {};
   }
 
   /**
@@ -540,7 +540,10 @@ export default class Model {
    */
   async reset() {
     this.dropTable();
-    this.createTable();
+    this.createTable().then((result) => {
+      console.log(this.getTableName());
+      console.log(result);
+    });
   }
 
   /**

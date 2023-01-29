@@ -17,7 +17,7 @@ class Database {
       return {
         transaction: () => {
           return {
-            executeSql: () => { },
+            executeSql: () => {},
           };
         },
       };
@@ -81,6 +81,7 @@ class Database {
             resolve(success);
           },
           (t, error) => {
+            console.log(error);
             Sentry.Native.captureException(error);
             resolve(error);
           }
