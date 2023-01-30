@@ -19,6 +19,8 @@ import { getSetting } from '../../models/AsyncStorage';
 import { AuthContext } from '../../context/AuthProvider';
 import { doc, getDoc } from '@firebase/firestore';
 import { auth, db } from '../../../firebase';
+import PropTypes from 'prop-types';
+import Database from '../../database/Database';
 /**
  * Screen component
  */
@@ -41,6 +43,7 @@ export default function WelcomeScreen({ navigation }) {
 
   useEffect(() => {
     setHeader();
+    userDatabase();
     retrieveCurrency()
     refreshOrders();
   }, []);
@@ -88,13 +91,43 @@ export default function WelcomeScreen({ navigation }) {
   //   try {
   //     const doc = await getDoc(docRef);
   //     const data = doc.data()
-  //     // Document was found in the cache. If no cached document exists,
-  //     // an error will be returned to the 'catch' block below.
-  //     console.log("Cached document data:", data);
+  //     // Document was found in the firestore database;
+  //     console.log("retrieved document data:", data.queryString);
   //   } catch (e) {
   //     console.log("Error getting cached document:", e);
   //   }
   // }
+
+  const UserData = PropTypes.shape({
+    parameters: PropTypes.array,
+    queryString: PropTypes.array
+  });
+
+  async function userDatabase() {
+    if (!user) return;
+    const docRef = doc(db, "users", auth.currentUser.uid);
+
+    try {
+      const doc = await getDoc(docRef);
+      const data = doc.data();
+
+      PropTypes.checkPropTypes(UserData, data, 'data', 'UserData');
+
+      // Save everything back in the database
+      data.database.forEach((item) => {
+        Database.statement(item.queryString, item.parameters).then(results => {
+          console.info("====Restored===== ITEM:" + item.parameters[1])
+          console.info(item.queryString);
+          console.log(results);
+        });
+      });
+
+      console.log("retrieved document data:", data.database[0].queryString);
+    } catch (e) {
+      console.log("Error getting cached document:", e);
+    }
+  }
+
   // Fetch Orders
   async function refreshOrders() {
     return OrderService.ordersWithItems(setOrders, orderType, null, 8).then(() => setShowLoading(false))

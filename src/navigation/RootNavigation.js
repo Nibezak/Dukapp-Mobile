@@ -91,13 +91,6 @@ function NavDrawer() {
       initialRouteName="InitialSettings"
       screenOptions={{ headerShown: false, headerBackTitleVisible: false }}
     >
-      <Drawer.Screen
-        name="InitialSettings"
-        component={OnboardingScreen}
-        options={{
-          title: 'Initial Setting',
-        }}
-      />
 
       <Drawer.Screen
         name="home"

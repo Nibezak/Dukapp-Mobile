@@ -68,14 +68,25 @@ export default function PhoneNumberScreen({ navigation }) {
                   console.log(error);
                 });
             })
-            .catch((error) => {
-              console.log(error);
-              setValidationMessage(error.message)
-              setIsLoading(false)
-            });
         })
         .catch((error) => {
-          setValidationMessage(error.message)
+          switch (error.code) {
+            case 'auth/email-already-in-use':
+              setValidationMessage('This phone number is already registered')
+              break;
+            case 'auth/invalid-email':
+              setValidationMessage(`this can't be registered try another one`);
+              break;
+            case 'auth/operation-not-allowed':
+              setValidationMessage(`Error during sign up.`);
+              break;
+            case 'auth/weak-password':
+              setValidationMessage('Password is not strong enough. Add additional characters including special characters and numbers.');
+              break;
+            default:
+              setValidationMessage('Something went wrong')
+              break;
+          }
           setIsLoading(false)
         });
     }
