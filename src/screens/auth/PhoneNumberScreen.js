@@ -47,48 +47,7 @@ export default function PhoneNumberScreen({ navigation }) {
    */
   async function handleSignUp() {
     if (password === confirmPassword) {
-      setIsLoading(true);
-      createUserWithEmailAndPassword(auth, email, password)
-        .then(({ user }) => {
-          const dbRef = doc(db, "users", auth.currentUser.uid);
-          const data = {
-            database: []
-          };
-          data.userId = user.uid
-          setDoc(dbRef, data)
-            .then(() => {
-              sendOTP(formattedValue.substring(1, 13))
-                .then((sent) => {
-                  setIsLoading(false);
-                  navigation.navigate("Otp", {
-                    phoneNumber: formattedValue,
-                  });
-                })
-                .catch((error) => {
-                  console.log(error);
-                });
-            })
-        })
-        .catch((error) => {
-          switch (error.code) {
-            case 'auth/email-already-in-use':
-              setValidationMessage('This phone number is already registered')
-              break;
-            case 'auth/invalid-email':
-              setValidationMessage(`this can't be registered try another one`);
-              break;
-            case 'auth/operation-not-allowed':
-              setValidationMessage(`Error during sign up.`);
-              break;
-            case 'auth/weak-password':
-              setValidationMessage('Password is not strong enough. Add additional characters including special characters and numbers.');
-              break;
-            default:
-              setValidationMessage('Something went wrong')
-              break;
-          }
-          setIsLoading(false)
-        });
+
     }
   }
 
@@ -137,7 +96,10 @@ export default function PhoneNumberScreen({ navigation }) {
             placeholder="Enter your password"
             secureTextEntry={!showPassword}
             value={password}
-            onChangeText={(value) => validateAndSet(value, confirmPassword, setPassword)}
+            onChangeText={(value) => {
+              const strippedValue = value.replace(/\s/g, '');
+              validateAndSet(strippedValue, confirmPassword, setPassword)
+            }}
           />
 
           <TextInput
@@ -145,7 +107,10 @@ export default function PhoneNumberScreen({ navigation }) {
             placeholder="Confirm your password"
             secureTextEntry={!showPassword}
             value={confirmPassword}
-            onChangeText={(value) => validateAndSet(value, password, setConfirmPassword)}
+            onChangeText={(value) => {
+              const strippedValue = value.replace(/\s/g, '');
+              validateAndSet(strippedValue, password, setConfirmPassword)
+            }}
           />
 
           <ShowPassword

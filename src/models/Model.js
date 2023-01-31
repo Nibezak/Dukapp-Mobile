@@ -14,7 +14,7 @@ export default class Model {
     this.columnsToSelect = '*';
     this.queryParameters = [];
     this.createTable();
-    this.resultContainer = (rows) => {};
+    this.resultContainer = (rows) => { };
   }
 
   /**
@@ -423,7 +423,9 @@ export default class Model {
       'DELETE FROM ' + this.getTableName() + ' WHERE ' + this.getConditions() + `;`;
 
     // Run against db
-    return await this.db.statement(this.queryString, this.queryParameters);
+    // return await this.db.statement(this.queryString, this.queryParameters);
+    return this.save();
+
   }
 
   /**

@@ -87,7 +87,23 @@ export const AuthProvider = ({ children }) => {
             /** Stop loading */
             setIsLoading(false);
           } catch (error) {
-            setError(error.message);
+            switch (error.code) {
+              case 'auth/email-already-in-use':
+                setError('This phone number is already registered')
+                break;
+              case 'auth/invalid-email':
+                setError(`this can't be registered try another one`);
+                break;
+              case 'auth/operation-not-allowed':
+                setError(`Error during sign up.`);
+                break;
+              case 'auth/weak-password':
+                setError('Password is not strong enough. Add additional characters including special characters and numbers.');
+                break;
+              default:
+                setError('Something went wrong')
+                break;
+            }
             setIsLoading(false);
           }
         },
