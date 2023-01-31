@@ -43,7 +43,6 @@ export default function WelcomeScreen({ navigation }) {
 
   useEffect(() => {
     setHeader();
-    userDatabase();
     retrieveCurrency()
     refreshOrders();
   }, []);
@@ -98,35 +97,6 @@ export default function WelcomeScreen({ navigation }) {
   //   }
   // }
 
-  const UserData = PropTypes.shape({
-    parameters: PropTypes.array,
-    queryString: PropTypes.array
-  });
-
-  async function userDatabase() {
-    if (!user) return;
-    const docRef = doc(db, "users", auth.currentUser.uid);
-
-    try {
-      const doc = await getDoc(docRef);
-      const data = doc.data();
-
-      PropTypes.checkPropTypes(UserData, data, 'data', 'UserData');
-
-      // Save everything back in the database
-      data.database.forEach((item) => {
-        Database.statement(item.queryString, item.parameters).then(results => {
-          console.info("====Restored===== ITEM:" + item.parameters[1])
-          console.info(item.queryString);
-          console.log(results);
-        });
-      });
-
-      console.log("retrieved document data:", data.database[0].queryString);
-    } catch (e) {
-      console.log("Error getting cached document:", e);
-    }
-  }
 
   // Fetch Orders
   async function refreshOrders() {

@@ -1,11 +1,12 @@
 import React, { createContext, useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { verifyOTP } from '../api/VerifyPhone';
-import { getSetting } from '../models/AsyncStorage';
+import { getSetting, setSetting } from '../models/AsyncStorage';
 import { migrateDatabase } from '../helpers/Database';
-import { auth } from '../../firebase';
-import { signInWithEmailAndPassword, signOut } from '@firebase/auth';
+import { auth, db } from '../../firebase';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from '@firebase/auth';
 import { Alert, ToastAndroid } from 'react-native';
+import { doc, setDoc } from '@firebase/firestore';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -13,7 +14,8 @@ export const AuthProvider = ({ children }) => {
   // const [settings, setSettings] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [currency, setCurrency] = useState('');
+  const [currency, setCurrency] = useState();
+  const [defaultPaymentMethod, setDefaultPaymentMethod] = useState()
 
   useEffect(() => {
     // Get data from the storage
@@ -22,8 +24,34 @@ export const AuthProvider = ({ children }) => {
     });
 
     // Get currency
-    getSetting('app_default_currency').then(setCurrency);
+    setSetting('app_default_currency', 'RWF').then(setCurrency);
+    setSetting('app_default_payment_method', 'cash').then(setDefaultPaymentMethod);
   }, []);
+
+  async function userLog(response) {
+    const shop = response.data;
+    const userResponse = {
+      token: 'TO BE REPLACED TOKEN',
+      id: shop.id,
+      name: shop.name,
+      username: shop.username,
+      email: shop.email,
+      // avatar: response.data.results[0].picture.thumbnail,
+    };
+
+    setUser(userResponse);
+    setError(null);
+
+    /** Securely store user information. */
+    SecureStore.setItemAsync('user', JSON.stringify(userResponse));
+
+    /** Run the migration immediately after successful login */
+    migrateDatabase();
+
+    /** Stop loading */
+    setIsLoading(false);
+
+  }
 
   return (
     <AuthContext.Provider
@@ -35,38 +63,42 @@ export const AuthProvider = ({ children }) => {
         currency,
         isLoading,
         setIsLoading,
-        register: (phone, code) => {
+        register: (phone, code, email, password) => {
           setIsLoading(true);
-          verifyOTP(phone, code)
-            .then((response) => {
-              const shop = response.data;
-              const userResponse = {
-                token: 'TO BE REPLACED TOKEN',
-                id: shop.id,
-                name: shop.name,
-                username: shop.username,
-                email: shop.email,
-                // avatar: response.data.results[0].picture.thumbnail,
-              };
-
-              setUser(userResponse);
-              setError(null);
-
-              /** Securely store user information. */
-              SecureStore.setItemAsync('user', JSON.stringify(userResponse));
-
-              /** Run the migration immediately after successful login */
-              migrateDatabase();
-
-              /** Stop loading */
+          verifyOTP(phone, code).then((response) => userLog(response)).then(async () => {
+            try {
+              const user = await createUserWithEmailAndPassword(auth, email, password)
+                .then(({ user }) => {
+                  const dbRef = doc(db, "users", auth.currentUser.uid);
+                  const data = {
+                    database: []
+                  };
+                  data.userId = user.uid
+                  setDoc(dbRef, data)
+                })
+            }
+            catch (error) {
+              switch (error.code) {
+                case 'auth/email-already-in-use':
+                  setError('This account is already registered')
+                  break;
+                case 'auth/invalid-email':
+                  setError(`this account can't be registered try another one`);
+                  break;
+                case 'auth/operation-not-allowed':
+                  setError(`Error during sign up.`);
+                  break;
+                case 'auth/weak-password':
+                  setError(`Your password is weak`);
+                  break;
+                default:
+                  setError('Something went wrong')
+                  break;
+              }
               setIsLoading(false);
-            })
-            .catch((error) => {
-              setError(error.response.data.message);
-              setIsLoading(false);
-            });
+            }
+          })
         },
-
         loginFirebase: async (email, password) => {
           setIsLoading(true);
           try {
@@ -89,16 +121,20 @@ export const AuthProvider = ({ children }) => {
           } catch (error) {
             switch (error.code) {
               case 'auth/email-already-in-use':
-                setError('This phone number is already registered')
+                setError('This account number is already registered')
                 break;
               case 'auth/invalid-email':
-                setError(`this can't be registered try another one`);
+                setError(`this account is invalid, try another one`);
                 break;
+              case 'auth/user-not-found':
+                setError(`this account is not found, try another one`);
+                break;
+              case 'auth/too-many-requests':
+                setError(`Too many attempts , try again shortly`);
+                break;
+
               case 'auth/operation-not-allowed':
                 setError(`Error during sign up.`);
-                break;
-              case 'auth/weak-password':
-                setError('Password is not strong enough. Add additional characters including special characters and numbers.');
                 break;
               default:
                 setError('Something went wrong')

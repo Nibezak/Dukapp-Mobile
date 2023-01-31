@@ -7,7 +7,8 @@ import ButtonFilled from '../../components/ButtonFilled';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default function OtpScreen({ route, navigation }) {
-  const { phoneNumber } = route.params;
+  const { phoneNumber, email, password } = route.params;
+
   const [invalidCode, setInvalidCode] = useState(false);
   const { register, isLoading } = useContext(AuthContext);
 
@@ -18,8 +19,7 @@ export default function OtpScreen({ route, navigation }) {
    * @returns
    */
   async function handleOtpVerification(code) {
-    register(phoneNumber, code);
-    console.log(phoneNumber, code)
+    register(phoneNumber, code, email, password);
   }
 
   return (

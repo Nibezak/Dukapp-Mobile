@@ -64,6 +64,8 @@ import PurchaseDetailsScreen from '../screens/orders/PurchaseDetailsScreen';
 import PhoneNumberLoginScreen from '../screens/auth/PhoneNumberLoginScreen';
 import { doc, getDoc } from '@firebase/firestore';
 import { db, auth } from '../../firebase';
+import PropTypes from 'prop-types';
+import Database from '../database/Database';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -340,10 +342,41 @@ export default function RootNavigation() {
   useEffect(() => {
     // Check if the user is logged in or not
     // Check Secure store for the user object/token
+    userDatabase()
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
   }, [user]);
+
+  const UserData = PropTypes.shape({
+    parameters: PropTypes.array,
+    queryString: PropTypes.array
+  });
+
+  async function userDatabase() {
+    if (!user) return;
+    const docRef = doc(db, "users", auth.currentUser.uid);
+
+    try {
+      const doc = await getDoc(docRef);
+      const data = doc.data();
+
+      PropTypes.checkPropTypes(UserData, data, 'data', 'UserData');
+
+      // Save everything back in the database
+      data.database.forEach((item) => {
+        Database.statement(item.queryString, item.parameters).then(results => {
+          console.info("====Restored===== ITEM:" + item.parameters[1])
+          console.info(item.queryString);
+          console.log(results);
+        });
+      });
+
+      console.log("retrieved document data:", data.database[0].queryString);
+    } catch (e) {
+      console.log("Error getting cached document:", e);
+    }
+  }
 
   // Show loading indicator as we wait for the secure storage to
   // be read for use.

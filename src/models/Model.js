@@ -433,6 +433,7 @@ export default class Model {
    */
   async softDelete() {
     this.update({ deleted_at: new Date().getTime() });
+    return this.save();
   }
 
   /**
@@ -441,7 +442,9 @@ export default class Model {
    * @returns promise
    */
   async destroy(recordId) {
-    return await this.refresh().where('id', recordId).delete();
+    await this.refresh().where('id', recordId).delete();
+    return this.save();
+
   }
 
   /**

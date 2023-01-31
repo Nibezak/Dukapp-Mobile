@@ -11,9 +11,9 @@ import { unixHourStamp, unixMinuteStamp, unixTimeStamp } from "../../helpers/Dat
 
 var paymentOptions = [
   { value: "cash", label: "Cash" },
-  { value: "mobile_mtn_momo", label: "MTN MoMo" },
-  { value: "mobile_airtel_money", label: "Airtel Money" },
-  { value: "mobile_mpesa", label: "M-Pesa" },
+  { value: "Mtn-Momo", label: "MTN MoMo" },
+  { value: "Airtel-Money", label: "Airtel Money" },
+  // { value: "mobile_mpesa", label: "M-Pesa" },
   { value: "credit", label: "Credit" },
   { value: "others", label: "Others" },
 ];

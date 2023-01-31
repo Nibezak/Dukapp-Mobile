@@ -110,14 +110,14 @@ export function OnboardingScreen() {
     { value: "UGX", label: "UGX" },
   ];
 
-  // function handleSetPayment(value, index) {
-  //   const paymentOption = paymentOptions[index];
-  //   setDefaultPaymentMethod(paymentOption.value);
-  // }
-  // function handleSetCurrency(value, index) {
-  //   const currencyOption = currencyOptions[index];
-  //   setCurrency(currencyOptions.value);
-  // }
+  function handleSetPayment(value, index) {
+    const paymentOption = paymentOptions[index];
+    setDefaultPaymentMethod(paymentOption.value);
+  }
+  function handleSetCurrency(value, index) {
+    const currencyOption = currencyOptions[index];
+    setCurrency(currencyOptions.value);
+  }
 
   /**
    * If the state hasn't finished loading, display activity indicator.

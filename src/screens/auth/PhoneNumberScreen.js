@@ -14,7 +14,7 @@ import { AuthContext } from "../../context/AuthProvider";
 import { sendOTP } from "../../api/VerifyPhone";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { auth, db } from "../../../firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from "firebase/auth";
 import ShowPassword from "../../components/ShowPassword";
 import { setDoc, doc } from "firebase/firestore";
 
@@ -23,6 +23,7 @@ export default function PhoneNumberScreen({ navigation }) {
   const [value, setValue] = useState("");
   const [formattedValue, setFormattedValue] = useState("");
   const phoneInput = useRef(null);
+  let [userExist, setUserExist] = useState(false);
   const email = `${value}@dukapp.com`
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -48,49 +49,31 @@ export default function PhoneNumberScreen({ navigation }) {
   async function handleSignUp() {
     if (password === confirmPassword) {
       setIsLoading(true);
-      createUserWithEmailAndPassword(auth, email, password)
-        .then(({ user }) => {
-          const dbRef = doc(db, "users", auth.currentUser.uid);
-          const data = {
-            database: []
-          };
-          data.userId = user.uid
-          setDoc(dbRef, data)
-            .then(() => {
-              sendOTP(formattedValue.substring(1, 13))
-                .then((sent) => {
-                  setIsLoading(false);
-                  navigation.navigate("Otp", {
-                    phoneNumber: formattedValue,
-                  });
-                })
-                .catch((error) => {
-                  console.log(error);
-                });
-            })
-        })
-        .catch((error) => {
-          switch (error.code) {
-            case 'auth/email-already-in-use':
-              setValidationMessage('This phone number is already registered')
-              break;
-            case 'auth/invalid-email':
-              setValidationMessage(`this can't be registered try another one`);
-              break;
-            case 'auth/operation-not-allowed':
-              setValidationMessage(`Error during sign up.`);
-              break;
-            case 'auth/weak-password':
-              setValidationMessage('Password must be atleast 6 characters');
-              break;
-            default:
-              setValidationMessage('Something went wrong, Please try again later')
-              break;
-          }
+      // check if the user exist in our system
+      await fetchSignInMethodsForEmail(auth, email).then((signInMethods) => {
+        if (signInMethods.length > 0) {
           setIsLoading(false)
-        });
+          return setValidationMessage('This phone number is already registered');
+        } else {
+          //   Send SMS to verify this phone
+          sendOTP(formattedValue.substring(1, 13))
+            .then((sent) => {
+              setIsLoading(false);
+              navigation.navigate("Otp", {
+                phoneNumber: formattedValue,
+                email: email,
+                password: password,
+              });
+            })
+            .catch((error) => {
+              setIsLoading(false);
+              console.log(error);
+            });
+        }
+      })
     }
   }
+
 
   return (
     <>
@@ -160,12 +143,12 @@ export default function PhoneNumberScreen({ navigation }) {
             title={"show password"}
           />
           {validationMessage && <Text style={{ color: "red" }}>{validationMessage}</Text>}
+          {error && <Text style={{ color: "red" }}>{error}</Text>}
           <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
             <Text style={styles.carrierCharges}>
               {t("auth.carrier_charge_may_apply")}
             </Text>
           </View>
-          {error && <Text style={{ color: "red" }}>{error}</Text>}
           {isLoading && (
             <ActivityIndicator
               style={{ marginTop: 8 }}
