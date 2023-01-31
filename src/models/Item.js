@@ -13,10 +13,12 @@ class Item extends BaseModel {
    * @returns object
    */
   async find(itemId) {
-    return this.refresh()
+    this.refresh()
       .where('id', itemId)
       .get()
       .then((result) => result[0]);
+
+    return this.save();
   }
   /**
    * Increase stock for an order
@@ -93,8 +95,8 @@ class Item extends BaseModel {
   async createTable() {
     this.db.statement(
       `CREATE TABLE IF NOT EXISTS ` +
-        this.getTableName() +
-        `(
+      this.getTableName() +
+      `(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               name TEXT UNIQUE,
               description TEXT NULL,

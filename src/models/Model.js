@@ -441,8 +441,14 @@ export default class Model {
    * @param {INTEGER} id
    * @returns promise
    */
-  async destroy(recordId) {
-    await this.refresh().where('id', recordId).delete();
+  // async destroy(recordId) {
+  //   await this.refresh().where('id', recordId).delete();
+  //   return this.save();
+
+  // }
+
+  destroy(recordId) {
+    this.refresh().where('id', recordId).delete();
     return this.save();
 
   }

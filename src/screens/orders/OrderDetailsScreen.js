@@ -194,8 +194,10 @@ export default function OrderDetailsScreen({ navigation, route }) {
    */
   async function updateOrderLineItemQuantity(orderItem, action) {
     /** We have enough stock, let's update it */
-    return OrderService.updateOrderItem(orderItem, action).then(() => {
+    OrderService.updateOrderItem(orderItem, action).then(() => {
       // Refresh the order details page
+      return this.save();
+
       refreshOrder();
     });
   }

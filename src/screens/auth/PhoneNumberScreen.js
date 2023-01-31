@@ -53,7 +53,7 @@ export default function PhoneNumberScreen({ navigation }) {
       await fetchSignInMethodsForEmail(auth, email).then((signInMethods) => {
         if (signInMethods.length > 0) {
           setIsLoading(false)
-          return setValidationMessage('This phone number is already registered');
+          return setValidationMessage('This account is already registered');
         } else {
           //   Send SMS to verify this phone
           sendOTP(formattedValue.substring(1, 13))

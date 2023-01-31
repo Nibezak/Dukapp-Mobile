@@ -6,7 +6,8 @@ import { migrateDatabase } from '../helpers/Database';
 import { auth, db } from '../../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from '@firebase/auth';
 import { Alert, ToastAndroid } from 'react-native';
-import { doc, setDoc } from '@firebase/firestore';
+import PropTypes from 'prop-types';
+import { doc, getDoc, setDoc } from '@firebase/firestore';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -89,10 +90,10 @@ export const AuthProvider = ({ children }) => {
                   setError(`Error during sign up.`);
                   break;
                 case 'auth/weak-password':
-                  setError(`Your password is weak`);
+                  setError(`Your password is weak minimum : 6 characters`);
                   break;
                 default:
-                  setError('Something went wrong')
+                  setError('Something went wrong , try reopening the application')
                   break;
               }
               setIsLoading(false);
@@ -110,7 +111,7 @@ export const AuthProvider = ({ children }) => {
               username: user.email,
               email: user.email
             };
-            setUser(userResponse);
+            setUser(userResponse)
             setError(null);
             /** Securely store user information. */
             await SecureStore.setItemAsync('user', JSON.stringify(userResponse));
@@ -137,9 +138,10 @@ export const AuthProvider = ({ children }) => {
                 setError(`Error during sign up.`);
                 break;
               default:
-                setError('Something went wrong')
+                setError('Something went wrong , try reopening the application')
                 break;
             }
+
             setIsLoading(false);
           }
         },

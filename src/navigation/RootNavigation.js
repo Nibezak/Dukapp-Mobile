@@ -354,10 +354,9 @@ export default function RootNavigation() {
   });
 
   async function userDatabase() {
-    if (!user) return;
     const docRef = doc(db, "users", auth.currentUser.uid);
-
     try {
+      setIsLoading(true)
       const doc = await getDoc(docRef);
       const data = doc.data();
 
@@ -371,8 +370,8 @@ export default function RootNavigation() {
           console.log(results);
         });
       });
-
       console.log("retrieved document data:", data.database[0].queryString);
+      setIsLoading(false)
     } catch (e) {
       console.log("Error getting cached document:", e);
     }
