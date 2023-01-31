@@ -47,7 +47,48 @@ export default function PhoneNumberScreen({ navigation }) {
    */
   async function handleSignUp() {
     if (password === confirmPassword) {
-
+      setIsLoading(true);
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(({ user }) => {
+          const dbRef = doc(db, "users", auth.currentUser.uid);
+          const data = {
+            database: []
+          };
+          data.userId = user.uid
+          setDoc(dbRef, data)
+            .then(() => {
+              sendOTP(formattedValue.substring(1, 13))
+                .then((sent) => {
+                  setIsLoading(false);
+                  navigation.navigate("Otp", {
+                    phoneNumber: formattedValue,
+                  });
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            })
+        })
+        .catch((error) => {
+          switch (error.code) {
+            case 'auth/email-already-in-use':
+              setValidationMessage('This phone number is already registered')
+              break;
+            case 'auth/invalid-email':
+              setValidationMessage(`this can't be registered try another one`);
+              break;
+            case 'auth/operation-not-allowed':
+              setValidationMessage(`Error during sign up.`);
+              break;
+            case 'auth/weak-password':
+              setValidationMessage('Password must be atleast 6 characters');
+              break;
+            default:
+              setValidationMessage('Something went wrong, Please try again later')
+              break;
+          }
+          setIsLoading(false)
+        });
     }
   }
 
