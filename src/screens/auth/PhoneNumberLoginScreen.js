@@ -218,15 +218,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginBottom: 8,
         marginHorizontal: 10,
-        elevation: 5,
+        elevation: 2,
     },
-    confirmPasswordInput: {
-        backgroundColor: "#f1f1f1",
-        borderRadius: 10,
-        width: 300,
-        padding: 10,
-        marginVertical: 5,
-        marginHorizontal: 10,
-        elevation: 5,
-    }
+
 });

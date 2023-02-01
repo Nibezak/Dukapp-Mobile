@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 8,
     marginHorizontal: 10,
-    elevation: 5,
+    elevation: 2,
   },
   confirmPasswordInput: {
     backgroundColor: "#f1f1f1",
@@ -275,6 +275,6 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 5,
     marginHorizontal: 10,
-    elevation: 5,
+    elevation: 2,
   }
 });

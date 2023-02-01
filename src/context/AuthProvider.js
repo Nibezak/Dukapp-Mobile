@@ -93,7 +93,7 @@ export const AuthProvider = ({ children }) => {
                   setError(`Your password is weak minimum : 6 characters`);
                   break;
                 default:
-                  setError('Something went wrong , try reopening the application')
+                  setError('Something went wrong ,Please Check your wifi connection')
                   break;
               }
               setIsLoading(false);

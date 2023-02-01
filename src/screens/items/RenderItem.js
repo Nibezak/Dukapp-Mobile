@@ -56,6 +56,7 @@ export default function RenderItem({ item, index, onPress }) {
 
   const isService = parseInt(item.is_service) === 1;
   const isLowStock = item.quantity < item.reorder_level;
+  const noStock = item.quantity <= 0;
 
   return (
 
@@ -63,7 +64,21 @@ export default function RenderItem({ item, index, onPress }) {
       <View style={styles.row}>
         <View style={styles.rowText}>
           <Text style={styles.names}>{item.name}</Text>
-          <View>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", marginLeft: 10, paddingLeft: 10 }}>
+            <Text
+              style={[
+                styles.details,
+                {
+                  padding: 3,
+                  backgroundColor: "#f0fdf4",
+                  margin: 5,
+                  color: "#15803d",
+                },
+              ]}
+            >
+              Sold stock : 96 / 100
+
+            </Text>
             <Text
               style={[
                 styles.details,
@@ -79,7 +94,9 @@ export default function RenderItem({ item, index, onPress }) {
               {isService
                 ? t("item.service")
                 : t("item.in_stock") + item.quantity}
+
             </Text>
+
           </View>
         </View>
         <View style={styles.rowText}>
@@ -92,7 +109,7 @@ export default function RenderItem({ item, index, onPress }) {
           <MaterialIcons name="chevron-right" size={32} color="#47a67f" />
         </Text>
       </View>
-    </TouchableOpacity>
+    </TouchableOpacity >
   );
 }
 const styles = {
@@ -115,8 +132,11 @@ const styles = {
     flex: 1,
   },
   details: {
-    alignSelf: "flex-start",
+    alignSelf: "flex-end",
     fontSize: 14,
+    paddingVertical: 3,
+    marginHorizontal: 7,
+
   },
   names: {
     fontWeight: "bold",

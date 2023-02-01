@@ -65,6 +65,7 @@
     "react-native-intl": "^1.0.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-localize": "^2.1.7",
+    "react-native-network-info": "^5.2.1",
     "react-native-paper": "^4.11.2",
     "react-native-phone-number-input": "*",
     "react-native-reanimated": "~2.12.0",
