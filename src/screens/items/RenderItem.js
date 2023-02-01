@@ -25,7 +25,7 @@ export default function RenderItem({ item, index, onPress }) {
             styles.row,
             {
               padding: 10,
-              backgroundColor: "#f0fdf4",
+              backgroundColor: "#f1f1f1",
               alignContent: "center",
               alignItems: "center",
             },
@@ -60,11 +60,11 @@ export default function RenderItem({ item, index, onPress }) {
 
   return (
 
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} style={{ paddingVertical: 5, backgroundColor: "white" }}>
       <View style={styles.row}>
         <View style={styles.rowText}>
           <Text style={styles.names}>{item.name}</Text>
-          <View style={{ flexDirection: "row", justifyContent: "space-between", marginLeft: 10, paddingLeft: 10 }}>
+          <View style={{ flexDirection: "row", marginLeft: 3, padding: 1 }}>
             <Text
               style={[
                 styles.details,
@@ -119,8 +119,9 @@ const styles = {
     paddingVertical: 5,
     paddingHorizontal: 1,
     marginHorizontal: 7,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.5,
     borderBottomColor: "#cbd5e0",
+    padding: 10,
   },
   avatar: {
     borderRadius: 20,
@@ -140,6 +141,5 @@ const styles = {
   },
   names: {
     fontWeight: "bold",
-    paddingRight: 10,
   },
 };

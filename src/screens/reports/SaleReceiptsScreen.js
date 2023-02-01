@@ -80,9 +80,21 @@ export default function SaleReceiptsScreen({ navigation, route }) {
     });
   }
 
+  // const renderOrder = useCallback(({ item, index }) => {
+  //   return (
+  //     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+  //       {index % 2 === 0 && <RenderReceipt item={item} />}
+  //       {index % 2 === 1 && <RenderReceipt item={item} />}
+  //     </View>
+  //   );
+  // });
+
   const renderOrder = useCallback((item) => (
-    <RenderReceipt item={item} index={item.id} key={item.id} />
+    <View style={{ flex: 0.5, marginHorizontal: 2 }}>
+      <RenderReceipt item={item} index={item.id} key={item.id} />
+    </View>
   ));
+
 
   const keyExtractor = useCallback((item, index) => index.toString(), []);
 
@@ -102,14 +114,15 @@ export default function SaleReceiptsScreen({ navigation, route }) {
    * Render to the screen
    */
   return (
-    <View style={[styles.container]}>
+    <View>
       {orders.length > 0 ? (
         <FlatList
-          inverted
+
           style={{ bottom: 1 }}
           data={orders}
           renderItem={renderOrder}
           keyExtractor={keyExtractor}
+          numColumns={2}
         />
       ) : (
         <ReceiptAnimation />
@@ -123,18 +136,7 @@ export default function SaleReceiptsScreen({ navigation, route }) {
  * Styles for the
  */
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  suggestions: {
-    width: '95%',
-    borderRadius: 3,
-    alignSelf: 'center',
-    height: windowHeight / 2.5,
-    position: 'absolute',
-    bottom: 60,
-    backgroundColor: '#fff',
-  },
+
   row: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',

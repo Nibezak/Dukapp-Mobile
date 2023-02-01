@@ -49,31 +49,32 @@ export default function RenderOrder({ item, parentRefresher }) {
                     {dayjs(date).format('h:mm A')}
                 </Text>
             </View>
+            <Text style={styles.itemNameColumn} numberOfLines={2}>
+                {order.line_items.length === 1
+                    ? order.line_items[0].name
+                    : t('order.items', { count: order.line_items.length })}
+            </Text>
             <View style={styles.rows}>
                 <Text style={styles.orderNumberColumn}>
                     {order.order_type.substr(0, 1).toUpperCase()}
-                    {'#' + order.id}
+                    {'#' + payment.transaction_id}
                 </Text>
-                <Text style={styles.itemNameColumn} numberOfLines={2}>
-                    {order.line_items.length === 1
-                        ? order.line_items[0].name.slice(0, 20)
-                        : t('order.items', { count: order.line_items.length })}
+            </View>
+            <View style={styles.itemPriceColumn}>
+                <Text
+                    style={[
+                        styles.paymentMethod,
+                        {
+                            color: payment.method == 'credit' ? '#f1c40f' : '#10b981',
+                        },
+                    ]}
+                >
+                    {payment.title?.slice(0, 6).toUpperCase()}
                 </Text>
                 <Text style={[styles.amount]}>{money(order.total, currency)}</Text>
-                <View style={styles.itemPriceColumn}>
-                    <Text
-                        style={[
-                            styles.paymentMethod,
-                            {
-                                color: payment.method == 'credit' ? '#f1c40f' : '#10b981',
-                            },
-                        ]}
-                    >
-                        {payment.title?.slice(0, 6).toUpperCase()}
-                    </Text>
-                    <Feather name="check-circle" size={18} color="#10b981" style={{ marginLeft: 10 }} />
 
-                </View>
+                {/* <Feather name="check-circle" size={18} color="#10b981" style={{ marginLeft: 10 }} /> */}
+
             </View>
         </TouchableOpacity>
     );
@@ -82,10 +83,12 @@ export default function RenderOrder({ item, parentRefresher }) {
 const styles = {
     rows: {
         flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        marginVertical: 1.8,
+        justifyContent: 'center',
+        marginVertical: 2,
+        paddingVertical: 10,
         paddingHorizontal: 1,
         marginHorizontal: 3,
+        // backgroundColor: "red"
 
     },
 
@@ -98,14 +101,18 @@ const styles = {
         width: 25,
     },
     orderNumberColumn: {
-        flex: 1,
+        flexDirection: "row",
         color: '#000',
+        paddingHorizontal: 5,
         alignItems: 'center',
         justifyContent: 'center',
     },
     itemNameColumn: {
-        flex: 3,
-        marginHorizontal: 5,
+        paddingHorizontal: 3,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        fontWeight: "bold",
+        color: "#52525B"
     },
     itemPriceColumn: {
         flex: 4,

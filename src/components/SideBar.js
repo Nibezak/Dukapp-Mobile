@@ -10,11 +10,17 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, Share } from 'react-na
 import { FlatList } from 'react-native-gesture-handler';
 import { getSetting } from '../models/AsyncStorage';
 import { useNavigation } from '@react-navigation/native';
-
+import {
+    BottomSheetModal,
+    BottomSheetModalProvider
+} from '@gorhom/bottom-sheet';
+import { useRef } from 'react';
 export default function SideBar() {
     useEffect(() => {
         retrieveSetting();
     });
+    const bottomSheetModalRef = useRef(null);
+    const snapPoints = ["48"];
     const HomeIcon = <AntDesign name="home" size={24} color="#10b981" />;
     const SupplierIcon = (
         <MaterialCommunityIcons name="truck-delivery-outline" size={24} color="#10b981" />
@@ -103,16 +109,33 @@ export default function SideBar() {
         const backgroundColor = item.title === selectedId ? 'white' : 'white';
         const color = item.title === selectedId ? 'black' : 'black';
         return (
-            <Item
-                onPress={onShare}
-                title={item.title}
-                backgroundColor={backgroundColor}
-                color={color}
-                icon={item.icon}
-            />
+            <BottomSheetModalProvider>
+                <Item
+                    onPress={handleFeedback}
+                    title={item.title}
+                    backgroundColor={backgroundColor}
+                    color={color}
+                    icon={item.icon}
+                />
+                <BottomSheetModal
+                    ref={bottomSheetModalRef}
+                    index={0}
+                    snapPoints={snapPoints}
+                >
+                    <View>
+                        <Text>
+                            Hello world
+                        </Text>
+                    </View>
+                </BottomSheetModal>
+            </BottomSheetModalProvider>
+
         );
     };
 
+    function handleFeedback() {
+        bottomSheetModalRef.current?.present()
+    }
 
     function retrieveSetting() {
         getSetting('business_name').then(setBusinessName);

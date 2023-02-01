@@ -5,9 +5,12 @@ import { getSetting, setSetting } from '../models/AsyncStorage';
 import { migrateDatabase } from '../helpers/Database';
 import { auth, db } from '../../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from '@firebase/auth';
-import { Alert, ToastAndroid } from 'react-native';
+import { Alert, Text, ToastAndroid } from 'react-native';
 import PropTypes from 'prop-types';
 import { doc, getDoc, setDoc } from '@firebase/firestore';
+import { useNetInfo } from '@react-native-community/netinfo';
+import { View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -53,7 +56,26 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(false);
 
   }
+  function checkInternetConnection() {
+    const netInfo = useNetInfo();
 
+    if (!netInfo.isConnected) {
+      return (
+        <>
+          <View style={{ flexDirection: "row", justifyContent: "center", padding: 5 }}>
+            <View style={{ paddingHorizontal: 10, }}>
+              <Ionicons name="cloud-offline-sharp" size={16} color="white" />
+            </View>
+            <Text style={{ color: "#f1f1f1", flexDirection: "row", justifyContent: "center", fontSize: 12, fontWeight: "bold" }}>
+              Offline mode, Connect to internet to backup your data
+            </Text>
+          </View>
+        </>
+      );
+    } else {
+      return ('')
+    }
+  }
   return (
     <AuthContext.Provider
       value={{
@@ -177,6 +199,9 @@ export const AuthProvider = ({ children }) => {
       }}
     >
       {children}
+      <View style={{ backgroundColor: "black", flexDirection: "row", justifyContent: "center" }}>
+        {checkInternetConnection()}
+      </View>
     </AuthContext.Provider >
   );
 };
