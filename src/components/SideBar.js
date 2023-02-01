@@ -1,7 +1,6 @@
 import {
     AntDesign,
     FontAwesome5,
-    Ionicons,
     MaterialCommunityIcons,
     MaterialIcons,
 } from '@expo/vector-icons';
@@ -10,17 +9,11 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, Share } from 'react-na
 import { FlatList } from 'react-native-gesture-handler';
 import { getSetting } from '../models/AsyncStorage';
 import { useNavigation } from '@react-navigation/native';
-import {
-    BottomSheetModal,
-    BottomSheetModalProvider
-} from '@gorhom/bottom-sheet';
-import { useRef } from 'react';
 export default function SideBar() {
     useEffect(() => {
         retrieveSetting();
     });
-    const bottomSheetModalRef = useRef(null);
-    const snapPoints = ["48"];
+
     const HomeIcon = <AntDesign name="home" size={24} color="#10b981" />;
     const SupplierIcon = (
         <MaterialCommunityIcons name="truck-delivery-outline" size={24} color="#10b981" />
@@ -45,9 +38,7 @@ export default function SideBar() {
     const bottomListItems = [
         { icon: ShareIcon, title: 'Tell a Friend' },
     ];
-    const feedbackBottom = [
-        { icon: FeedBackIcon, title: ' FeedBack' },
-    ]
+
     const navigation = useNavigation();
 
     const Item = ({ title, icon, onPress, backgroundColor, color }) => (
@@ -105,37 +96,9 @@ export default function SideBar() {
         );
     };
 
-    const renderFeedbacks = ({ item }) => {
-        const backgroundColor = item.title === selectedId ? 'white' : 'white';
-        const color = item.title === selectedId ? 'black' : 'black';
-        return (
-            <BottomSheetModalProvider>
-                <Item
-                    onPress={handleFeedback}
-                    title={item.title}
-                    backgroundColor={backgroundColor}
-                    color={color}
-                    icon={item.icon}
-                />
-                <BottomSheetModal
-                    ref={bottomSheetModalRef}
-                    index={0}
-                    snapPoints={snapPoints}
-                >
-                    <View>
-                        <Text>
-                            Hello world
-                        </Text>
-                    </View>
-                </BottomSheetModal>
-            </BottomSheetModalProvider>
 
-        );
-    };
 
-    function handleFeedback() {
-        bottomSheetModalRef.current?.present()
-    }
+
 
     function retrieveSetting() {
         getSetting('business_name').then(setBusinessName);
@@ -184,10 +147,9 @@ export default function SideBar() {
             <View style={{ flex: 0.55 }}>
                 <FlatList data={listArrayItem} renderItem={renderItem} />
             </View>
-            <View style={{ flex: 0.10 }}></View>
-            <View style={{ flex: 0.20 }}>
+            <View style={{ flex: 0.25 }}></View>
+            <View style={{ flex: 0.10 }}>
                 <FlatList data={bottomListItems} renderItem={renderLinks} />
-                <FlatList data={feedbackBottom} renderItem={renderFeedbacks} />
             </View>
         </View>
     );

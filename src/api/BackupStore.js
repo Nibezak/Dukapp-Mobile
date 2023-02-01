@@ -42,22 +42,22 @@ export async function uploadData(dataType, payload) {
 
 
 
-export async function realTimeBackup(queryString, parameters) {
-  try {
+// export async function realTimeBackup(queryString, parameters) {
+//   try {
 
-    // Get the current user's ID
-    const userId = auth.currentUser.uid
-    const database = doc(db, "users", userId);
-    await updateDoc(database, {
-      database: arrayUnion({
-        queryString,
-        parameters
-      })
-    });
-    console.log(`${userId}'s database has been backedup`);
-    console.log(queryString, parameters)
+//     // Get the current user's ID
+//     const userId = auth.currentUser.uid
+//     const database = doc(db, "users", userId);
+//     await updateDoc(database, {
+//       database: arrayUnion({
+//         queryString,
+//         parameters
+//       })
+//     });
+//     console.log(`${userId}'s database has been backedup`);
+//     console.log(queryString, parameters)
 
-  } catch (error) {
-    console.error(error);
-  }
-}
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }

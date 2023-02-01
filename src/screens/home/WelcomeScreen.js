@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState, useContext } from 'react';
+import React, { useEffect, useCallback, useState, useContext, useRef } from 'react';
 import {
   View,
   FlatList,
@@ -13,7 +13,7 @@ import OrderService from '../../services/OrderService';
 import { useFocusEffect } from '@react-navigation/native';
 import { Title, ActivityIndicator, Button } from 'react-native-paper';
 import RevenueBarChart from '../reports/RevenueBarChart';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { WelcomeAnimation } from '../../components/WelcomeAnimation';
 import { getSetting } from '../../models/AsyncStorage';
 import { AuthContext } from '../../context/AuthProvider';
@@ -21,6 +21,13 @@ import { doc, getDoc } from '@firebase/firestore';
 import { auth, db } from '../../../firebase';
 import PropTypes from 'prop-types';
 import Database from '../../database/Database';
+import {
+  BottomSheetModal,
+  BottomSheetModalProvider
+} from '@gorhom/bottom-sheet';
+import { Text } from 'react-native';
+import { TextInput } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native';
 /**
  * Screen component
  */
@@ -31,6 +38,9 @@ export default function WelcomeScreen({ navigation }) {
   const [currency, setCurrency] = useState('RWF');
   const { user } = useContext(AuthContext);
   const { database, setDatabase } = useState('');
+  const [text, setText] = useState('');
+  const bottomSheetModalRef = useRef(null);
+  const snapPoints = ["38%", "48%"];
 
   useFocusEffect(
     useCallback(() => {
@@ -67,20 +77,33 @@ export default function WelcomeScreen({ navigation }) {
       ),
 
       headerRight: () => (
-        <AntDesign name="shoppingcart"
-          size={24}
-          color="#47a67f"
-          onPress={() =>
-            navigation.navigate("Purchase Orders", {
-              order_type: "purchase",
-            })
-          }
-          style={{ paddingRight: 10 }}
-        />
+        <>
+          <View style={{ flexDirection: "row" }}>
+            <AntDesign name="shoppingcart"
+              size={24}
+              color="#47a67f"
+              onPress={() =>
+                navigation.navigate("Purchase Orders", {
+                  order_type: "purchase",
+                })
+              }
+              style={{ paddingRight: 10, marginTop: 5 }}
+            />
+            <MaterialIcons
+              name="feedback"
+              size={24}
+              color="#47a67f"
+              onPress={handleFeedback}
+              style={{ paddingRight: 10, paddingTop: 1, marginHorizontal: 10, marginTop: 5 }} />
+          </View>
+        </>
       ),
     });
   }
 
+  function handleFeedback() {
+    bottomSheetModalRef.current?.present()
+  }
 
   // async function userDatabase() {
   //   if (!user) return;
@@ -156,7 +179,32 @@ export default function WelcomeScreen({ navigation }) {
             keyExtractor={keyExtractor}
             nestedScrollEnabled
           />
+          <BottomSheetModalProvider>
+            <BottomSheetModal
+              ref={bottomSheetModalRef}
+              index={0}
+              snapPoints={snapPoints}
+              backgroundStyle={{ backgroundColor: "#F4F4F5", padding: 10, elevation: 5, borderTopColor: "#D4D4D8", borderTopWidth: 1 }}
+            >
+              <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+                <Text style={{ color: "gray", fontSize: 14 }}>
+                  Give us A feedback on how to improve
+                </Text>
+                <TouchableOpacity style={styles.button}>
+                  <Ionicons name="send" size={20} color="#47a67f" />
+                </TouchableOpacity>
+              </View>
+              <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="What's on your mind?"
+                  onChangeText={text => setText(text)}
+                  value={text}
+                />
+              </View>
 
+            </BottomSheetModal>
+          </BottomSheetModalProvider>
         </>
       )}
     </View>
@@ -184,4 +232,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#718096',
   },
+  input: {
+    height: "40%",
+    width: '80%',
+    borderRadius: 10,
+    backgroundColor: "white",
+    paddingHorizontal: 10,
+    marginVertical: 10,
+  },
+  button: {
+    paddingHorizontal: 10,
+    marginHorizontal: 5
+  }
 });
