@@ -196,9 +196,8 @@ export default function OrderDetailsScreen({ navigation, route }) {
     /** We have enough stock, let's update it */
     OrderService.updateOrderItem(orderItem, action).then(() => {
       // Refresh the order details page
-      return this.save();
-
       refreshOrder();
+      return this.save();
     });
   }
 
