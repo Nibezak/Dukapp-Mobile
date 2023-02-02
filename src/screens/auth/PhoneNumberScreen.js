@@ -31,6 +31,7 @@ export default function PhoneNumberScreen({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
   const toggleSwitch = () => setShowPassword((previousState) => !previousState);
 
+
   const validateAndSet = (value, valueToCompare, setValue) => {
     if (value !== valueToCompare) {
       setValidationMessage("Passwords do not match");

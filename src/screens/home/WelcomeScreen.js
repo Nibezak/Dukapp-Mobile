@@ -4,6 +4,7 @@ import {
   FlatList,
   StyleSheet,
   Image,
+  Button,
   InteractionManager,
 } from 'react-native';
 import HomeSummary from './HomeSummary';
@@ -11,16 +12,13 @@ import { t } from 'i18n-js';
 import RenderOrder from '../orders/RenderOrder';
 import OrderService from '../../services/OrderService';
 import { useFocusEffect } from '@react-navigation/native';
-import { Title, ActivityIndicator, Button } from 'react-native-paper';
+import { Title, ActivityIndicator } from 'react-native-paper';
 import RevenueBarChart from '../reports/RevenueBarChart';
-import { AntDesign, FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { AntDesign, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { WelcomeAnimation } from '../../components/WelcomeAnimation';
 import { getSetting } from '../../models/AsyncStorage';
 import { AuthContext } from '../../context/AuthProvider';
-import { doc, getDoc } from '@firebase/firestore';
-import { auth, db } from '../../../firebase';
-import PropTypes from 'prop-types';
-import Database from '../../database/Database';
+import analytics from '@react-native-firebase/analytics';
 import {
   BottomSheetModal,
   BottomSheetModalProvider
@@ -190,7 +188,12 @@ export default function WelcomeScreen({ navigation }) {
                 <Text style={{ color: "gray", fontSize: 14 }}>
                   Give us A feedback on how to improve
                 </Text>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button}
+                  onPress={async () =>
+                    await analytics().logEvent('generalEvent', {
+                      item: 'it worked!',
+                    })
+                  }>
                   <Ionicons name="send" size={20} color="#47a67f" />
                 </TouchableOpacity>
               </View>

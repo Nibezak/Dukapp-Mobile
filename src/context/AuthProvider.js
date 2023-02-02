@@ -6,7 +6,6 @@ import { migrateDatabase } from '../helpers/Database';
 import { auth, db } from '../../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from '@firebase/auth';
 import { Alert, Text, ToastAndroid } from 'react-native';
-import PropTypes from 'prop-types';
 import { doc, getDoc, setDoc } from '@firebase/firestore';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { View } from 'react-native';
@@ -26,6 +25,7 @@ export const AuthProvider = ({ children }) => {
     SecureStore.getItemAsync('user').then((storedUser) => {
       setUser(JSON.parse(storedUser));
     });
+
 
     // Get currency
     setSetting('app_default_currency', 'RWF').then(setCurrency);
@@ -56,6 +56,9 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(false);
 
   }
+  function checkInternetSpeed() {
+
+  }
   function checkInternetConnection() {
     const netInfo = useNetInfo();
 
@@ -72,10 +75,24 @@ export const AuthProvider = ({ children }) => {
           </View>
         </>
       );
+    } else if (netInfo.details.effectiveType === 'slow-2g') {
+      return (
+        <>
+          <View style={{ flexDirection: "row", justifyContent: "center", padding: 5 }}>
+            <View style={{ paddingHorizontal: 10, }}>
+              <Ionicons name="cloud-download-sharp" size={16} color="white" />
+            </View>
+            <Text style={{ color: "#f1f1f1", flexDirection: "row", justifyContent: "center", fontSize: 12, fontWeight: "bold" }}>
+              Slow internet connection
+            </Text>
+          </View>
+        </>
+      );
     } else {
       return ('')
     }
   }
+
   return (
     <AuthContext.Provider
       value={{
@@ -151,6 +168,9 @@ export const AuthProvider = ({ children }) => {
                 break;
               case 'auth/user-not-found':
                 setError(`this account is not found, try another one`);
+                break;
+              case 'auth/wrong-password':
+                setError('Wrong Password');
                 break;
               case 'auth/too-many-requests':
                 setError(`Too many attempts , try again shortly`);
