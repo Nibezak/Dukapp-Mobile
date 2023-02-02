@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
               <Ionicons name="cloud-offline-sharp" size={16} color="white" />
             </View>
             <Text style={{ color: "#f1f1f1", flexDirection: "row", justifyContent: "center", fontSize: 12, fontWeight: "bold" }}>
-              Offline mode, Connect to internet to backup your data
+              Offline mode, Please Connect to internet
             </Text>
           </View>
         </>

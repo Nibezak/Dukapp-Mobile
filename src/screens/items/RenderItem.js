@@ -76,7 +76,7 @@ export default function RenderItem({ item, index, onPress }) {
                 },
               ]}
             >
-              Sold stock : 96 / 100
+              sold stock : 96 / 100
 
             </Text>
             <Text

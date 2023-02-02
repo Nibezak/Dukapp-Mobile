@@ -347,34 +347,7 @@ export default function RootNavigation() {
     }, 1000);
   }, [user]);
 
-  // const UserData = PropTypes.shape({
-  //   parameters: PropTypes.array,
-  //   queryString: PropTypes.array
-  // });
 
-  // function userDatabase() {
-  //   const docRef = doc(db, "users", auth.currentUser.uid);
-  //   try {
-  //     setIsLoading(true)
-  //     const doc = getDoc(docRef);
-  //     const data = doc.data();
-
-  //     PropTypes.checkPropTypes(UserData, data, 'data', 'UserData');
-
-  //     // Save everything back in the database
-  //     data.database.forEach((item) => {
-  //       Database.statement(item.queryString, item.parameters).then(results => {
-  //         console.info("====Restored===== ITEM:" + item.parameters[1])
-  //         console.info(item.queryString);
-  //         console.log(results);
-  //       });
-  //     });
-  //     console.log("retrieved document data:", data.database[0].queryString);
-  //     setIsLoading(false)
-  //   } catch (e) {
-  //     console.log("Error getting cached document:", e);
-  //   }
-  // }
 
   // Show loading indicator as we wait for the secure storage to
   // be read for use.
