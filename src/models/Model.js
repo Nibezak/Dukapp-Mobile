@@ -1,4 +1,4 @@
-import { realTimeBackup } from '../api/BackupStore';
+// import { realTimeBackup } from '../api/BackupStore';
 import { camelToSnakeCase } from '../helpers/Strings';
 import Database from './../database/Database';
 
@@ -8,7 +8,7 @@ export default class Model {
     this.conditions = 1;
     this.ordering = 'ORDER BY id';
     this.orderingMode = 'ASC';
-    this.recordsLimit = 1000000;
+    this.recordsLimit = 10000;
     this.tableName = this.getTableName();
     this.queryString = '';
     this.columnsToSelect = '*';
@@ -399,6 +399,7 @@ export default class Model {
     // Add conditions if we have conditions
     this.queryString =
       `INSERT INTO ` + this.getTableName() + `(` + attributes + `) VALUES(` + placeholders + `);`;
+
     return this;
   }
 
@@ -423,9 +424,7 @@ export default class Model {
       'DELETE FROM ' + this.getTableName() + ' WHERE ' + this.getConditions() + `;`;
 
     // Run against db
-    // return await this.db.statement(this.queryString, this.queryParameters);
-    return this.save();
-
+    return await this.db.statement(this.queryString, this.queryParameters);
   }
 
   /**
@@ -433,7 +432,6 @@ export default class Model {
    */
   async softDelete() {
     this.update({ deleted_at: new Date().getTime() });
-    return this.save();
   }
 
   /**
@@ -441,16 +439,8 @@ export default class Model {
    * @param {INTEGER} id
    * @returns promise
    */
-  // async destroy(recordId) {
-  //   await this.refresh().where('id', recordId).delete();
-  //   return this.save();
-
-  // }
-
-  destroy(recordId) {
-    this.refresh().where('id', recordId).delete();
-    return this.save();
-
+  async destroy(recordId) {
+    return await this.refresh().where('id', recordId).delete();
   }
 
   /**
@@ -551,10 +541,7 @@ export default class Model {
    */
   async reset() {
     this.dropTable();
-    this.createTable().then((result) => {
-      console.log(this.getTableName());
-      console.log(result);
-    });
+    this.createTable();
   }
 
   /**

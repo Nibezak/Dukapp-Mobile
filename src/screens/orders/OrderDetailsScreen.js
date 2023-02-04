@@ -176,15 +176,14 @@ export default function OrderDetailsScreen({ navigation, route }) {
               },
             ]
           );
-        }
+        } else {
 
-        /** We have enough stock, let's update */
-        return updateOrderLineItemQuantity(orderItem, action);
+          return updateOrderLineItemQuantity(orderItem, action);
+        }
       });
     }
 
     /** We reached here because the action does not demand to check if the stock is enough */
-    return updateOrderLineItemQuantity(orderItem, action);
   }
 
   /**
@@ -194,10 +193,9 @@ export default function OrderDetailsScreen({ navigation, route }) {
    */
   async function updateOrderLineItemQuantity(orderItem, action) {
     /** We have enough stock, let's update it */
-    OrderService.updateOrderItem(orderItem, action).then(() => {
+    return OrderService.updateOrderItem(orderItem, action).then(() => {
       // Refresh the order details page
       refreshOrder();
-      return this.save();
     });
   }
 
