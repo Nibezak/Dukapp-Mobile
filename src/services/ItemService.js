@@ -1,6 +1,5 @@
-import Item from '../models/Item';
-import ItemSeeds from '../database/seeds/ItemSeeds';
-import ItemInventory from '../models/ItemInventory';
+import Item from "../models/Item";
+import ItemSeeds from "../database/seeds/ItemSeeds";
 
 class ItemService {
   /**
@@ -14,7 +13,7 @@ class ItemService {
    * Find Item
    */
   async find(itemId) {
-    return Item.refresh().where('id', itemId).get();
+    return Item.refresh().where("id", itemId).get();
   }
 
   /**
@@ -24,7 +23,7 @@ class ItemService {
   async save(item) {
     // Update or Create the item in the DB
     if (item.id > 0) {
-      return Item.refresh().where('id', item.id).update(item);
+      return Item.refresh().where("id", item.id).update(item);
     }
 
     return Item.refresh().create(item);
@@ -36,7 +35,7 @@ class ItemService {
    * @param {shop Type} shopType
    * @returns
    */
-  async seedItems(shopType = 'boutique') {
+  async seedItems(shopType = "boutique") {
     // Seed items in the DB based on the shop Type
     const items = ItemSeeds[shopType];
 
@@ -44,20 +43,7 @@ class ItemService {
       Item.refresh()
         .create(item)
         .then((result) => {
-          console.log(item.name + ' seeded with id: ' + result.insertId);
-
-          console.log('======RECORDING ITEM INVENTORY============');
-          ItemInventory.trackInventory(
-            result.insertId,
-            item.quantity,
-            item.sale_price,
-            'Initial database seed for ' + shopType
-          ).then((inv) => {
-            console.log('==== INVENTORY=======');
-
-            console.log(inv);
-            console.log(ItemInventory.get());
-          });
+          console.log(item.name + " seeded with id: " + result.insertId);
         })
         .catch((error) => {
           console.log(error);

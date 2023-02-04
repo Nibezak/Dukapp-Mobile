@@ -5,12 +5,12 @@ import { AuthProvider } from './src/context/AuthProvider';
 import RootNavigation from './src/navigation/RootNavigation';
 import { getSetting } from './src/models/AsyncStorage';
 import i18n from 'i18n-js';
-import { initializeApp } from "firebase/app";
-import * as Sentry from 'sentry-expo';
+import * as firebase from 'expo-firebase-analytics';
 import en from './src/translations/en';
 import fr from './src/translations/fr';
 import rw from './src/translations/rw';
 import registerNNPushToken from 'native-notify';
+
 // Set the key-value pairs for the different languages you want to support.
 i18n.translations = {
   en,
@@ -25,20 +25,10 @@ getSetting('app_language').then((lang) => (i18n.locale = lang));
 
 // When a value is missing from a language it'll fallback to another language with the key present.
 i18n.fallbacks = true;
-/*
- * COLORS
- * 
-gray-100	color: #f7fafc;	Aa
-gray-200	color: #edf2f7;	Aa
-gray-300	color: #e2e8f0;	Aa
-gray-400	color: #cbd5e0;	Aa
-gray-500	color: #a0aec0;	Aa
-gray-600	color: #718096;	Aa
-gray-700	color: #4a5568;	Aa
-gray-800	color: #2d3748;	Aa
-gray-900	color: #1a202c;	Aa
-Yego - #f1c40f
- **/
+
+// log an event when the app is launched
+firebase.logEvent('app_launch');
+
 function App() {
   return (
     <AuthProvider>
@@ -57,6 +47,7 @@ const theme = {
     textInput: '#fff',
   },
 };
+
 export default function Main() {
   registerNNPushToken(5821, 'VZzLGzSIMPpBmmQN0CMG2I');
   return (

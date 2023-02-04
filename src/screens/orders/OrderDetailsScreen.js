@@ -159,10 +159,9 @@ export default function OrderDetailsScreen({ navigation, route }) {
    */
   async function handleQuantityChange(orderItem, action) {
     /** Preventing selling more than what is in the stock */
-
     if (action == 'sale-more') {
       /** 1. Get the this item stock */
-      return Item.find(orderItem.item_id).then((stockItem) => {
+      return Item.find(orderItem.itemId).then((stockItem) => {
         /** 2. If the stock is lesser than what we are adding, then don't allow it to proceed */
         if (stockItem.quantity <= 0) {
           return Alert.alert(
@@ -176,14 +175,15 @@ export default function OrderDetailsScreen({ navigation, route }) {
               },
             ]
           );
-        } else {
-
-          return updateOrderLineItemQuantity(orderItem, action);
         }
+
+        /** We have enough stock, let's update */
+        return updateOrderLineItemQuantity(orderItem, action);
       });
     }
 
     /** We reached here because the action does not demand to check if the stock is enough */
+    return updateOrderLineItemQuantity(orderItem, action);
   }
 
   /**
@@ -193,9 +193,10 @@ export default function OrderDetailsScreen({ navigation, route }) {
    */
   async function updateOrderLineItemQuantity(orderItem, action) {
     /** We have enough stock, let's update it */
-    return OrderService.updateOrderItem(orderItem, action).then(() => {
+    OrderService.updateOrderItem(orderItem, action).then(() => {
       // Refresh the order details page
       refreshOrder();
+
     });
   }
 
