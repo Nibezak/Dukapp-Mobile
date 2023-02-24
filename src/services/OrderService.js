@@ -164,6 +164,11 @@ class OrderService {
     });
   }
 
+  async addComplete(orderId) {
+    return Order.refresh().where('id', orderId).update({
+      status: 'completed'
+    })
+  }
   /**
    * Add Payment to an order
    */
@@ -206,7 +211,7 @@ class OrderService {
       order_key: 'S' + unixTimeStamp(),
       created_via: 'android-mobile-app',
       version: '1.0.0',
-      status: 'completed',
+      status: 'pending',
       discount_total: 0,
       discount_tax: 0,
       total: orderTotal,

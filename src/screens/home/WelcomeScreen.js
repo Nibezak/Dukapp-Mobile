@@ -18,7 +18,7 @@ import { AntDesign, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { WelcomeAnimation } from '../../components/WelcomeAnimation';
 import { getSetting } from '../../models/AsyncStorage';
 import { AuthContext } from '../../context/AuthProvider';
-import analytics from '@react-native-firebase/analytics';
+
 import {
   BottomSheetModal,
   BottomSheetModalProvider

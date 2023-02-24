@@ -50,7 +50,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
     // Update the order detail nav
     navigation.setOptions({
       headerTitle:
-        orderType.substr(0, 4).charAt(0).toUpperCase() + ' #' + route.params.order.id.toString(),
+        orderType.substr(0, 4).charAt(0).toUpperCase() + ' #' + route.params.order.id.toString() + ' ' + route.params.order.status,
     });
     updateNavRight();
 
@@ -58,6 +58,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
     getItems();
 
     //  Get order Customer
+
     getOrderCustomer();
 
     //  Remove payment option if customer paid
@@ -159,7 +160,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
    */
   async function handleQuantityChange(orderItem, action) {
     /** Preventing selling more than what is in the stock */
-    if (action == 'sale-more') {
+    if (action === 'sale-more') {
       /** 1. Get the this item stock */
       return Item.find(orderItem.itemId).then((stockItem) => {
         /** 2. If the stock is lesser than what we are adding, then don't allow it to proceed */

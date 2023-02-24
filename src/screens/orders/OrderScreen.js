@@ -153,7 +153,7 @@ export default function OrderScreen({ navigation, route }) {
         // 5. Reset suggestions
         resetToDefaultSuggestion();
 
-        ToastAndroid.show("Order Made", ToastAndroid.SHORT);
+        ToastAndroid.show("Order Successfully Made", ToastAndroid.SHORT);
 
       })
       .catch((error) => {
