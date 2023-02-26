@@ -352,7 +352,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
   
       <tr class="details">
         <td colspan="3">Invoice #: S0D-${order.id}</td>
-        <td style="color: #47a67f; font-weight: semibold; font-size: large">COMPLETED</td>
+        <td style="color: #47a67f; font-weight: semibold; font-size: large">${order.status}</td>
 
       <tr class="heading">
         <td colspan="2">Item</td>

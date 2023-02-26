@@ -70,20 +70,6 @@ export default function RenderItem({ item, index, onPress }) {
                 styles.details,
                 {
                   padding: 3,
-                  backgroundColor: "#f0fdf4",
-                  margin: 5,
-                  color: "#15803d",
-                },
-              ]}
-            >
-              sold stock : 96 / 100
-
-            </Text>
-            <Text
-              style={[
-                styles.details,
-                {
-                  padding: 3,
                   backgroundColor:
                     isLowStock && !isService ? "#fef9c3" : "#f0fdf4",
                   margin: 5,

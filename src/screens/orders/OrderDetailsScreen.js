@@ -9,6 +9,7 @@ import {
   Dimensions,
   Alert,
   ToastAndroid,
+  Text,
 } from 'react-native';
 import { t } from 'i18n-js';
 import SuggestionButton from '../../components/SuggestionButton';
@@ -24,6 +25,7 @@ import RenderPayment from './RenderPayment';
 import Order from '../../models/Order';
 import Item from '../../models/Item';
 import { isFirstDayOfMonth } from 'date-fns';
+import NextButton from '../../components/NextButton';
 
 // Retrieve user windows height
 const windowHeight = Dimensions.get('window').height;
@@ -48,9 +50,15 @@ export default function OrderDetailsScreen({ navigation, route }) {
   );
   useEffect(() => {
     // Update the order detail nav
+    if (order.status === 'complete') {
+      navigation.navigate('Order Receipt', {
+        order: order,
+        customer: customer,
+      })
+    }
     navigation.setOptions({
       headerTitle:
-        orderType.substr(0, 4).charAt(0).toUpperCase() + ' #' + route.params.order.id.toString() + ' ' + route.params.order.status,
+        orderType.substr(0, 4).charAt(0).toUpperCase() + ' #' + route.params.order.id.toString(),
     });
     updateNavRight();
 
@@ -76,17 +84,11 @@ export default function OrderDetailsScreen({ navigation, route }) {
     navigation.setOptions({
       headerRight: () => (
         <View style={{ flexDirection: 'row' }}>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('Order Receipt', {
-                order: order,
-                customer: customer,
-              })
-            }
-            style={{ paddingRight: 24 }}
+          <Text
+            style={{ paddingRight: 14, backgroundColor: "#F1F5F9", marginRight: 14, paddingLeft: 14, borderRadius: 10, textTransform: 'uppercase', fontWeight: 'bold', color: '#94A3B8', paddingTop: 2, elevation: 3 }}
           >
-            <MaterialIcons name="receipt" size={24} color="#4a5568" />
-          </TouchableOpacity>
+            {route.params.order.status}
+          </Text>
 
           {/* Show delete button */}
           <TouchableOpacity onPress={handleDeleteButton} style={{ paddingRight: 20 }}>
@@ -418,6 +420,15 @@ export default function OrderDetailsScreen({ navigation, route }) {
     refreshOrder();
   }
 
+  function handleCheckout() {
+    OrderService.addComplete(order.id).then(() => {
+      navigation.navigate('Order Receipt', {
+        order: order,
+        customer: customer,
+      })
+    })
+  }
+
   const renderOrderLineItem = useCallback(({ item }) => {
     return (
       <RenderOrderLineItem
@@ -445,6 +456,9 @@ export default function OrderDetailsScreen({ navigation, route }) {
         renderItem={renderOrderLineItem}
         keyExtractor={keyExtractor}
       />
+      <View style={{ marginBottom: 10, paddingBottom: 5 }}>
+        <NextButton onPress={handleCheckout} />
+      </View>
 
       {/**Suggestion to simplify order entry */}
       {/* Only show suggestion when user has entered something to search */}

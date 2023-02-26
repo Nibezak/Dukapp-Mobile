@@ -4,11 +4,12 @@ import { t } from 'i18n-js';
 import { money } from '../../helpers/Numbers';
 import { useNavigation } from '@react-navigation/native';
 import { getSetting } from '../../models/AsyncStorage';
-import { Feather } from '@expo/vector-icons';
+import { Feather, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function RenderOrder({ item, parentRefresher }) {
   const navigation = useNavigation();
   const order = item.item;
+  const [customer, setCustomer] = useState({ name: 'Guest' })
   const payment = order.payments[0];
   const [currency, setCurrency] = useState(null);
 
@@ -23,17 +24,25 @@ export default function RenderOrder({ item, parentRefresher }) {
   const dayjs = require('dayjs');
   const date = order.created_at
   const orderDate = payment.date_paid
-
+  function handleNavigation() {
+    if (order.status !== 'completed') {
+      navigation.navigate('Order Details', {
+        order: order,
+      })
+    }
+    else {
+      navigation.navigate('Order Receipt', {
+        order: order,
+        customer: customer,
+      })
+    }
+  }
   return (
     <TouchableOpacity
       style={{ backgroundColor: "white", padding: 5, borderRadius: 10, marginBottom: 7, elevation: 2.5, marginTop: 3.5 }}
       key={order.id}
       activeOpacity={0.8}
-      onPress={() =>
-        navigation.navigate('Order Details', {
-          order: order,
-        })
-      }
+      onPress={handleNavigation}
     >
 
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 2 }}>
@@ -71,8 +80,14 @@ export default function RenderOrder({ item, parentRefresher }) {
           >
             {payment.title?.slice(0, 6).toUpperCase()}
           </Text>
-          <Feather name="check-circle" size={18} color="#10b981" style={{ marginLeft: 10 }} />
+          {order.status === 'completed' ? (
+            <FontAwesome name="check-circle" size={20} color="#10b981" style={{ marginRight: 5 }} />
 
+          ) : (
+            <>
+              <MaterialCommunityIcons name="dots-circle" size={20} color="#64748B" />
+            </>
+          )}
         </View>
       </View>
     </TouchableOpacity>
