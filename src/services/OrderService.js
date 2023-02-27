@@ -235,6 +235,59 @@ class OrderService {
     //    let us record them
     return this.complete(orderAttributes, itemAttributes);
   }
+  async quickSalePurchase(item, orderType) {
+    // 1. Prepare the item
+    const itemAttributes = [
+      {
+        item_id: item.id,
+        name: item.name,
+        description: item.description,
+        quantity: 1,
+        unit_cost_price: item.cost_price,
+        unit_sales_price: item.sale_price,
+        total: item.cost_price,
+      },
+    ];
+
+    // Get order total
+    let orderTotal = 0;
+    itemAttributes.forEach((item) => {
+      orderTotal = item.total;
+    });
+
+    const currency = await getSetting('app_default_currency');
+    const defaultPaymentMethod = await getSetting('app_default_payment_method');
+
+    // 2. Prepare the order
+    const orderAttributes = {
+      order_type: orderType.toLowerCase(),
+      order_key: 'S' + unixTimeStamp(),
+      created_via: 'android-mobile-app',
+      version: '1.0.0',
+      status: 'completed',
+      discount_total: 0,
+      discount_tax: 0,
+      total: orderTotal,
+      total_tax: 0,
+      prices_include_tax: 0,
+      customer_supplier_id: 0,
+      customer_supplier_note: 0,
+      payments: JSON.stringify([
+        {
+          method: defaultPaymentMethod,
+          title: defaultPaymentMethod,
+          transaction_id: 'P' + unixTimeStamp(),
+          amount: orderTotal,
+          currency: currency,
+          date_paid: ` ${unixHourStamp()}:${unixMinuteStamp()}`,
+        },
+      ]),
+    };
+
+    // 3. Now we have order and the item,
+    //    let us record them
+    return this.complete(orderAttributes, itemAttributes);
+  }
 
   /**
    * Update order Item Total Manually
