@@ -12,8 +12,6 @@
     "@expo/vector-icons": "^12.0.5",
     "@reach/router": "*",
     "@react-native-async-storage/async-storage": "~1.15.0",
-    "@react-native-clipboard/clipboard": "^1.8.5",
-    "@react-native-community/clipboard": "^1.5.1",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-picker/picker": "2.1.0",
     "@react-navigation/bottom-tabs": "^6.2.0",
@@ -55,7 +53,6 @@
     "react-native-screens": "~3.8.0",
     "react-native-svg": "12.1.1",
     "react-native-vector-icons": "^9.0.0",
-    "react-native-web": "0.17.1",
     "react-native-zigzag-view": "*",
     "sentry-expo": "^4.0.3"
   },
