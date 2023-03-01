@@ -14,7 +14,6 @@ export default function NextButton({ onPress, children, color }) {
             style={[floatingButton, { borderColor: buttonColor }]}
         >
             <Text style={[floatingButtonIcon, { color: buttonColor }]}>
-                {/* <MaterialIcons name="add" size={32} color="#dcfce7" /> */}
                 <AntDesign name="arrowright" size={24} color="#dcfce7" />
 
             </Text>

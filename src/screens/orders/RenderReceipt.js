@@ -4,7 +4,7 @@ import { t } from 'i18n-js';
 import { money } from '../../helpers/Numbers';
 import { useNavigation } from '@react-navigation/native';
 import { getSetting } from '../../models/AsyncStorage';
-import { Feather } from '@expo/vector-icons';
+import { Feather, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function RenderOrder({ item, parentRefresher }) {
     const navigation = useNavigation();
@@ -72,6 +72,16 @@ export default function RenderOrder({ item, parentRefresher }) {
                     {payment.title?.slice(0, 6).toUpperCase()}
                 </Text>
                 <Text style={[styles.amount]}>{money(order.total, currency)}</Text>
+                <View style={{ marginHorizontal: 5 }}>
+                    {order.status === 'completed' ? (
+                        <FontAwesome name="check-circle" size={20} color="#10b981" style={{ marginRight: 5 }} />
+
+                    ) : (
+                        <>
+                            <MaterialCommunityIcons name="dots-circle" size={20} color="#64748B" />
+                        </>
+                    )}
+                </View>
 
                 {/* <Feather name="check-circle" size={18} color="#10b981" style={{ marginLeft: 10 }} /> */}
 

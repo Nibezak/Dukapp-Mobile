@@ -25,6 +25,7 @@ import { getSetting } from '../../models/AsyncStorage';
 import ViewShot from 'react-native-view-shot';
 import * as Sharing from "expo-sharing"
 import * as Print from 'expo-print';
+import CheckButton from '../../components/CheckButton';
 
 // Retrieve user windows height
 const windowHeight = Dimensions.get('window').height;
@@ -379,11 +380,17 @@ export default function OrderDetailsScreen({ navigation, route }) {
     );
   }, []);
 
+  async function handleCheckout() {
+    OrderService.addComplete(order.id).then(() => {
+      navigation.navigate('Order Sale')
+    })
+  }
   const keyExtractor = useCallback((item, index) => index.toString(), []);
 
   return (
     <View style={styles.container}>
       <ScrollView>
+
         <View>
           <ViewShot
             options={{
@@ -406,6 +413,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
                 <Text style={styles.shopAddress}>
                   {phone}
                 </Text>
+
                 <Text style={styles.shopAddress}>
                   {email}
                 </Text>
@@ -455,12 +463,15 @@ export default function OrderDetailsScreen({ navigation, route }) {
                   <Text style={styles.totalLabel}> {t('receipt.total')}</Text>
                   <Text style={styles.totalAmount}>{number(order.total)}</Text>
                 </View>
-                <View></View>
               </View>
             </ZigzagView>
           </ViewShot>
+
         </View>
       </ScrollView>
+      <View>
+        <CheckButton onPress={handleCheckout} />
+      </View>
     </View>
   );
 

@@ -420,12 +420,10 @@ export default function OrderDetailsScreen({ navigation, route }) {
     refreshOrder();
   }
 
-  function handleCheckout() {
-    OrderService.addComplete(order.id).then(() => {
-      navigation.navigate('Order Receipt', {
-        order: order,
-        customer: customer,
-      })
+  function handleReceipt() {
+    navigation.navigate('Order Receipt', {
+      order: order,
+      customer: customer,
     })
   }
 
@@ -457,7 +455,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
         keyExtractor={keyExtractor}
       />
       <View style={{ marginBottom: 10, paddingBottom: 5 }}>
-        <NextButton onPress={handleCheckout} />
+        <NextButton onPress={handleReceipt} />
       </View>
 
       {/**Suggestion to simplify order entry */}

@@ -10,6 +10,7 @@ import {
 } from '../helpers/Dates';
 import Database from '../database/Database';
 import { getSetting } from '../models/AsyncStorage';
+import { getSeconds } from 'date-fns/esm';
 /**
  * Class to handle order management
  *
@@ -223,7 +224,7 @@ class OrderService {
         {
           method: defaultPaymentMethod,
           title: defaultPaymentMethod,
-          transaction_id: 'P' + unixSecondsStamp() / 1000,
+          transaction_id: 'P' + unixTimeStamp(),
           amount: orderTotal,
           currency: currency,
           date_paid: ` ${unixHourStamp()}:${unixMinuteStamp()}`,

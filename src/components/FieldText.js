@@ -6,7 +6,7 @@ import { useTheme } from 'react-native-paper';
  * Styles for the Components
  */
 
-export default function InputText(props) {
+export default function FieldText(props) {
   const { colors } = useTheme();
   return (
     <TextInput
@@ -16,6 +16,7 @@ export default function InputText(props) {
       style={{
         flex: 1,
         maxHeight: "100%",
+        width: 250,
         borderRadius: 3,
         alignSelf: 'stretch',
         marginHorizontal: 5,

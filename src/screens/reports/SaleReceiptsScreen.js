@@ -114,7 +114,7 @@ export default function SaleReceiptsScreen({ navigation, route }) {
    * Render to the screen
    */
   return (
-    <View>
+    <View style={{ marginVertical: 10, }}>
       {orders.length > 0 ? (
         <FlatList
 

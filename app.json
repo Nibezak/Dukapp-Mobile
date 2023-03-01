@@ -2,7 +2,7 @@
   "expo": {
     "name": "Dukapp",
     "slug": "DukAppSimplified",
-    "owner": "dukapp_community",
+    "owner": "dukappteam",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -29,12 +29,9 @@
         "backgroundColor": "#FFFFFF"
       }
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
     "extra": {
       "eas": {
-        "projectId": "71571926-5f93-4280-bccb-082de8174cce"
+        "projectId": "0a2ddc43-de66-4f00-bad1-1e775ec73e96"
       }
     }
   }
