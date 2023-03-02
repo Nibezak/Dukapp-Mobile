@@ -10,7 +10,7 @@ import {
 } from '../helpers/Dates';
 import Database from '../database/Database';
 import { getSetting } from '../models/AsyncStorage';
-import { getSeconds } from 'date-fns/esm';
+import ItemInventory from '../models/ItemInventory';
 /**
  * Class to handle order management
  *
@@ -165,11 +165,6 @@ class OrderService {
     });
   }
 
-  async addComplete(orderId) {
-    return Order.refresh().where('id', orderId).update({
-      status: 'completed'
-    })
-  }
   /**
    * Add Payment to an order
    */
@@ -212,7 +207,7 @@ class OrderService {
       order_key: 'S' + unixTimeStamp(),
       created_via: 'android-mobile-app',
       version: '1.0.0',
-      status: 'pending',
+      status: 'completed',
       discount_total: 0,
       discount_tax: 0,
       total: orderTotal,
@@ -234,7 +229,19 @@ class OrderService {
 
     // 3. Now we have order and the item,
     //    let us record them
-    return this.complete(orderAttributes, itemAttributes);
+    return this.complete(orderAttributes, itemAttributes).then((result) => {
+      ItemInventory.trackInventory(
+        item.id,
+        item.quantity,
+        item.sale_price,
+        'Quick Sale | ' + orderType
+      ).then((inv) => {
+        console.log('==== INVENTORY=======');
+        ItemInventory.get().then((results) => {
+          console.log(results);
+        });
+      });
+    });
   }
   async quickSalePurchase(item, orderType) {
     // 1. Prepare the item
@@ -289,7 +296,6 @@ class OrderService {
     //    let us record them
     return this.complete(orderAttributes, itemAttributes);
   }
-
   /**
    * Update order Item Total Manually
    */
@@ -343,7 +349,6 @@ class OrderService {
       // 1. Reduce Stock for sale
       //    Increase stock for purchase
       this.adjustStock(item, newOrder.quantity, newOrder.order_type);
-
       return result;
     });
   }
@@ -403,15 +408,71 @@ class OrderService {
     }
 
     // Update inventory items
-    return this.adjustStock(orderLineItem.item_id, quantity, actionType);
+    return this.adjustStock(orderLineItem.item_id, quantity, actionType).then((results) => {
+      /** Track the item inventory
+       * @TODO ensure inventory are being recorded
+       */
+      ItemInventory.trackInventory(
+        orderItem.item_id,
+        quantity,
+        orderItem.total,
+        'Order sales | ' + actionType
+      ).then((inventory) => {
+        console.log('==== INVENTORY=======');
+        console.log(inventory);
+
+        console.log(ItemInventory.get());
+      });
+
+      return results;
+    });
   }
 
-  /**
-   * Destroy an existing Order
-   */
-  // async destroy(order) {
-  //   return Order.destroy(order.id);
-  // }
+  async updateOrderPurchaseItem(orderItem, actionType, quantity = 1) {
+    // Calculate changes
+    let orderLineItem = orderItem;
+
+    // Update quantity based on the order change
+    switch (actionType.toLowerCase()) {
+      case 'sale-more':
+      case 'purchase-more':
+        orderLineItem.quantity = orderLineItem.quantity + 1;
+        break;
+      case 'sale-less':
+      case 'purchase-less':
+        orderLineItem.quantity = orderLineItem.quantity - 1;
+        break;
+    }
+
+    // You cannot sell negative quantity, Remove order
+    if (actionType.endsWith('less') && orderItem.quantity < 1) {
+      OrderItem.refresh().where('id', orderLineItem.id).delete();
+    } else {
+      // Persist changes in DB
+      orderLineItem.total = orderLineItem.unit_cost_price * orderLineItem.quantity;
+      OrderItem.refresh().where('id', orderLineItem.id).update(orderLineItem);
+    }
+
+    // Update inventory items
+    return this.adjustStock(orderLineItem.item_id, quantity, actionType).then((results) => {
+      /** Track the item inventory
+       * @TODO ensure inventory are being recorded
+       */
+      ItemInventory.trackInventory(
+        orderItem.item_id,
+        quantity,
+        orderItem.total,
+        'Order sales | ' + actionType
+      ).then((inv) => {
+        console.log('==== INVENTORY=======');
+
+        console.log(inv);
+        console.log(ItemInventory.get());
+      });
+
+      return results;
+    });
+  }
 }
 
 export default new OrderService();

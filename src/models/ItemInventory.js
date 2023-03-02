@@ -30,8 +30,8 @@ class ItemInventory extends Model {
   async createTable() {
     this.db.statement(
       `CREATE TABLE IF NOT EXISTS ` +
-        this.getTableName() +
-        `(
+      this.getTableName() +
+      `(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             item_id int(11) NOT NULL,
             comment text NOT NULL,
