@@ -22,6 +22,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Alert } from 'react-native';
 import { ToastAndroid } from 'react-native';
 
+
 const windowHeight = Dimensions.get('window').height;
 
 // Constants
@@ -33,7 +34,6 @@ export default function OrderScreen({ navigation, route }) {
   const [items, setItems] = useState([]);
   const [showIsLoading, setShowIsLoading] = useState(true);
   const [orderLoading, setOrderLoading] = useState(false);
-
 
   /** Fix the undefined order_type error */
   const orderType = route.order_type == undefined ? 'sale' : routeParams.order_type;

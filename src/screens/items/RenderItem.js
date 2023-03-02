@@ -65,6 +65,7 @@ export default function RenderItem({ item, index, onPress }) {
         <View style={styles.rowText}>
           <Text style={styles.names}>{item.name}</Text>
           <View style={{ flexDirection: "row", marginLeft: 3, padding: 1 }}>
+
             <Text
               style={[
                 styles.details,

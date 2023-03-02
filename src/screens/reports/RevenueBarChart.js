@@ -88,7 +88,7 @@ export default function RevenueBarChart({ startDate, endDate }) {
           height={280}
           chartConfig={chartConfig}
           formatYLabel={(value) => formatNumber(value)}
-        // bezier
+          bezier
         />
       </View>
     </>

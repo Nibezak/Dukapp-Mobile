@@ -2,7 +2,7 @@
   "expo": {
     "name": "Dukapp",
     "slug": "DukAppSimplified",
-    "owner": "dukappteam",
+    "owner": "nibezak",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,7 +21,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.dukapp.com",
+      "package": "com.dukapp.app",
       "googleServicesFile": "./google-services.json",
       "versionCode": 1,
       "adaptiveIcon": {
@@ -31,7 +31,15 @@
     },
     "extra": {
       "eas": {
-        "projectId": "0a2ddc43-de66-4f00-bad1-1e775ec73e96"
+        "projectId": "137d0996-8045-4d73-b185-5dd7871106e0"
+      }
+    },
+    "web": {
+      "config": {
+        "firebase": {
+          "apiKey": "AIzaSyCGNvybWqIYK3ZE3vdQ1czy9daiNnO3qCw",
+          "measurementId": "G-P3T1PSEVH4"
+        }
       }
     }
   }

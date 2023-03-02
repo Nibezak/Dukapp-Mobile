@@ -5,7 +5,7 @@ import { AuthProvider } from './src/context/AuthProvider';
 import RootNavigation from './src/navigation/RootNavigation';
 import { getSetting } from './src/models/AsyncStorage';
 import i18n from 'i18n-js';
-import * as firebase from 'expo-firebase-analytics';
+import * as Analytics from 'expo-firebase-analytics';
 import en from './src/translations/en';
 import fr from './src/translations/fr';
 import rw from './src/translations/rw';
@@ -27,7 +27,7 @@ getSetting('app_language').then((lang) => (i18n.locale = lang));
 i18n.fallbacks = true;
 
 // log an event when the app is launched
-firebase.logEvent('app_launch');
+
 
 function App() {
   return (

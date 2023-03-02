@@ -12,8 +12,8 @@ import {
   Image,
   Text,
 } from 'react-native';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { Picker } from '@react-native-picker/picker';
+import { ScrollView } from 'react-native-gesture-handler';
+import { OnboardFlow } from 'react-native-onboard';
 import Button from '../../components/Button';
 import FieldText from '../../components/FieldText';
 import InputSelect from '../../components/InputSelect';
@@ -223,6 +223,27 @@ export function OnboardingScreen() {
           </View>
         </View>
       </ScrollView>
+      <View style={styles.container}>
+        <OnboardFlow pages={[
+          {
+            title: 'Welcome',
+            subtitle: 'Thank you for choosing to work with Dukapp, Just a few more steps to go',
+            imageUri: 'https://i.ibb.co/PQngGym/undraw-Joyride-re-968t.png'
+          },
+          {
+            title: 'Safe and Secure',
+            subtitle: 'Your account is Safe and Secure from any outsiders, ... however , you can not logout unless you uninstall the application',
+            imageUri: 'https://i.ibb.co/wgj21sn/undraw-Security-re-a2rk.png'
+          },
+          {
+            title: 'One Finale Step to Complete',
+            subtitle: 'Set up your shop details on the next page, and you are good to go.',
+            imageUri: 'https://i.ibb.co/2cYgngT/undraw-Onboarding-re-6osc.png'
+          }
+        ]}
+          type='fullscreen' // Change to either 'fullscreen', 'bottom-sheet', or 'inline'
+        />
+      </View>
     </SafeAreaView>
   );
 }

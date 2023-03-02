@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "982167414537",
-    "project_id": "dukapp-18ba7",
-    "storage_bucket": "dukapp-18ba7.appspot.com"
+    "project_number": "712227498789",
+    "project_id": "dukapp-simplified",
+    "storage_bucket": "dukapp-simplified.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:982167414537:android:fa12bf825e64d1a49015d8",
+        "mobilesdk_app_id": "1:712227498789:android:f3cc4dc7ef508f6fe408cc",
         "android_client_info": {
-          "package_name": "com.dukapp.com"
+          "package_name": "com.dukapp.app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "982167414537-3q4fv0hmm2l8ef2e6vpj3uc99gjem3q0.apps.googleusercontent.com",
+          "client_id": "712227498789-cdusaqppn95gm67el0t04isu54maig0u.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDYswSjLx-mgpJ_YNDHQrxxZVjjoH8BALY"
+          "current_key": "AIzaSyCOw6C1hwtUjqQiSEY8mY3NkTEo3k7nlUo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "982167414537-3q4fv0hmm2l8ef2e6vpj3uc99gjem3q0.apps.googleusercontent.com",
+              "client_id": "712227498789-cdusaqppn95gm67el0t04isu54maig0u.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

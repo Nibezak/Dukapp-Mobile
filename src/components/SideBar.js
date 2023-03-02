@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Share } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { getSetting } from '../models/AsyncStorage';
+import * as Analytics from 'expo-firebase-analytics';
 import { useNavigation } from '@react-navigation/native';
 export default function SideBar() {
     useEffect(() => {
@@ -60,6 +61,10 @@ export default function SideBar() {
 
     const onShare = async () => {
         try {
+            Analytics.logEvent('share', {
+                shop: businessName,
+                method: 'share'
+            });
             await Share.share({
                 message: 'http://143.198.135.41:8001',
             });

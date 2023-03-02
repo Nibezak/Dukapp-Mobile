@@ -4,7 +4,6 @@ import {
   FlatList,
   StyleSheet,
   Image,
-  Button,
   InteractionManager,
 } from 'react-native';
 import HomeSummary from './HomeSummary';
@@ -100,24 +99,9 @@ export default function WelcomeScreen({ navigation }) {
   }
 
   function handleFeedback() {
+
     bottomSheetModalRef.current?.present()
   }
-
-  // async function userDatabase() {
-  //   if (!user) return;
-  //   const docRef = doc(db, "users", auth.currentUser.uid);
-
-  //   // Get a document, forcing the SDK to fetch from the offline cache.
-  //   try {
-  //     const doc = await getDoc(docRef);
-  //     const data = doc.data()
-  //     // Document was found in the firestore database;
-  //     console.log("retrieved document data:", data.queryString);
-  //   } catch (e) {
-  //     console.log("Error getting cached document:", e);
-  //   }
-  // }
-
 
   // Fetch Orders
   async function refreshOrders() {

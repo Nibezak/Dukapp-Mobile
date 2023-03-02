@@ -10,6 +10,7 @@ import {
   ScrollView,
   Image,
   Text,
+  Alert,
 } from 'react-native';
 import { t } from 'i18n-js';
 import CustomerService from '../../services/CustomerService';
@@ -18,7 +19,6 @@ import { money, number } from '../../helpers/Numbers';
 import OrderService from '../../services/OrderService';
 import ItemService from '../../services/ItemService';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import Order from '../../models/Order';
 import ReceiptOrderItems from './ReceiptOrderItems';
 import ZigzagView from 'react-native-zigzag-view';
 import { getSetting } from '../../models/AsyncStorage';
@@ -26,6 +26,8 @@ import ViewShot from 'react-native-view-shot';
 import * as Sharing from "expo-sharing"
 import * as Print from 'expo-print';
 import CheckButton from '../../components/CheckButton';
+import * as Analytics from 'expo-firebase-analytics';
+
 
 // Retrieve user windows height
 const windowHeight = Dimensions.get('window').height;
@@ -329,9 +331,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
               Customer:   ${customer.names}
               
               <td>
-                Invoice #: ${payment.transaction_id}<br> Created: ${dayjs(date).format(
-    'DD MMM YYYY'
-  )}<br> Time: ${dayjs(date).format('h:mm A')}
+                Invoice #: ${payment.transaction_id}<br> Created: ${order.created_at}<br> Time: ${order.created_at}
               </td>
             </tr>
           </table>
@@ -352,7 +352,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
       </tr>
   
       <tr class="details">
-        <td colspan="3">Invoice #: S0D-${order.id}</td>
+        <td colspan="3">#${order.transaction_id}</td>
         <td style="color: #47a67f; font-weight: semibold; font-size: large">${order.status}</td>
 
       <tr class="heading">
@@ -381,8 +381,34 @@ export default function OrderDetailsScreen({ navigation, route }) {
   }, []);
 
   async function handleCheckout() {
-    OrderService.addComplete(order.id).then(() => {
+    if (order.status === 'pending') {
+      Alert.alert(
+        'Are you sure you want to checkout ? ',
+        'This action is irreversible. Once you check out , you may not check back in!',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'CANCEL',
+          },
+          { text: 'Checkout', onPress: () => checkout() },
+        ]
+      );
+    }
+    else {
       navigation.navigate('Order Sale')
+    }
+
+  }
+  async function checkout() {
+    Analytics.logEvent('checkout', {
+      shop: businessName,
+      method: 'checkout'
+    });
+    OrderService.addComplete(order.id).then(() => {
+      navigation.navigate('Order Sale').then(() => {
+        ToastAndroid.show('Checkout complete', ToastAndroid.SHORT);
+      })
     })
   }
   const keyExtractor = useCallback((item, index) => index.toString(), []);
