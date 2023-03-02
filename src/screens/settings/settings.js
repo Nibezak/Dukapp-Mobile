@@ -249,4 +249,22 @@ export const generalSettings = [
   //   action: "logout",
   //   options: [],
   // },
+  {
+    title: "Help Improve Dukapp",
+    description: "Please tell us what you think we might improve ",
+    icon: "feedback",
+    key: "feedback",
+    value: "feedback",
+    color: "#47a67f",
+    action: "feedback",
+    options: [
+      {
+        title: "Business Name",
+        description: "Configure official company name",
+        key: "business_name",
+        value: "Chez Lyz",
+      },
+    ],
+  },
+
 ];

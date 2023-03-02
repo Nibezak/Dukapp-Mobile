@@ -86,12 +86,6 @@ export default function WelcomeScreen({ navigation }) {
               }
               style={{ paddingRight: 10, marginTop: 5 }}
             />
-            <MaterialIcons
-              name="feedback"
-              size={24}
-              color="#47a67f"
-              onPress={handleFeedback}
-              style={{ paddingRight: 10, paddingTop: 1, marginHorizontal: 10, marginTop: 5 }} />
           </View>
         </>
       ),

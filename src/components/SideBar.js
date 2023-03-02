@@ -7,8 +7,8 @@ import {
 import { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Share } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { getSetting } from '../models/AsyncStorage';
 import * as Analytics from 'expo-firebase-analytics';
+import { getSetting } from '../models/AsyncStorage';
 import { useNavigation } from '@react-navigation/native';
 export default function SideBar() {
     useEffect(() => {
@@ -66,7 +66,7 @@ export default function SideBar() {
                 method: 'share'
             });
             await Share.share({
-                message: 'http://143.198.135.41:8001',
+                message: 'https://t.co/aGEv789qZB',
             });
         } catch (error) {
             console.log(error.message);
