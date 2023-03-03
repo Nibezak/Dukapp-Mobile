@@ -173,6 +173,11 @@ class OrderService {
       .where('id', orderId)
       .update({ payments: JSON.stringify(payments) });
   }
+  async addComplete(orderId) {
+    return Order.refresh().where('id', orderId).update({
+      status: 'completed'
+    })
+  }
 
   /**
    * Sale/ purchase an item based on what the

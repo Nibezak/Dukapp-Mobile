@@ -120,7 +120,7 @@ export default function SideBar() {
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                     <Text style={{ fontWeight: 'bold', fontSize: 20, color: '#47a67f' }}>
-                        {businessName}...
+                        {businessName}
                     </Text>
                 </View>
 

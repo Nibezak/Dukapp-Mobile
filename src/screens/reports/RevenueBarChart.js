@@ -1,10 +1,7 @@
 import { useFocusEffect } from '@react-navigation/native';
-import { t } from 'i18n-js';
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Dimensions, Text, InteractionManager } from 'react-native';
-import { BarChart, LineChart, ProgressChart } from 'react-native-chart-kit';
-import { Title } from 'react-native-paper';
-import Metric from '../../components/Metric';
+import { View, Dimensions, InteractionManager } from 'react-native';
+import { BarChart, LineChart } from 'react-native-chart-kit';
 import ReportService from '../../services/ReportService';
 
 const screenWidth = Dimensions.get('window').width;
@@ -20,10 +17,10 @@ const chartConfig = {
     borderRadius: 1,
   },
   propsForDots: {
-    r: '3',
+    r: '4',
     stroke: '#10b981',
   },
-  useShadowColorFromDataset: true, // optional
+  useShadowColorFromDataset: false, // optional
 };
 
 const graphStyles = {
@@ -90,6 +87,26 @@ export default function RevenueBarChart({ startDate, endDate }) {
           formatYLabel={(value) => formatNumber(value)}
           bezier
         />
+        {/* <BarChart
+          data={barData}
+          width={Dimensions.get('window').width - 16}
+          height={280}
+          fromZero={false}
+          chartConfig={{
+            backgroundColor: '#FFFFF',
+            backgroundGradientFrom: '#f7fafc',
+            backgroundGradientTo: '#f7fafc',
+            decimalPlaces: 0,
+            color: (opacity = 1) => `rgba(16, 180, 128, ${opacity})`,
+            style: {
+              borderRadius: 16,
+            },
+          }}
+          style={{
+            marginVertical: 2,
+            borderRadius: 10,
+          }}
+        /> */}
       </View>
     </>
   );

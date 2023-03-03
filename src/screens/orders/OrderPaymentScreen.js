@@ -10,7 +10,7 @@ import InputText from "../../components/FieldText";
 import { unixHourStamp, unixMinuteStamp, unixTimeStamp } from "../../helpers/Dates";
 
 var paymentOptions = [
-  { value: "cash", label: "Cash" },
+  { value: "Cash", label: "Cash" },
   { value: "mobile_mtn_momo", label: "MTN MoMo" },
   { value: "mobile_airtel_money", label: "Airtel Money" },
   { value: "mobile_mpesa", label: "M-Pesa" },

@@ -17,6 +17,7 @@ export function OnboardingScreen() {
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [businessName, setBusinessName] = useState('');
   const [tin, setTin] = useState('');
   const [currencyValue, setCurrencyValue] = useState('RWF');
@@ -40,7 +41,7 @@ export function OnboardingScreen() {
     { label: "UGX", value: "UGX" },
   ]
   var paymentOptions = [
-    { label: "Cash", value: "cash" },
+    { label: "Cash", value: "Cash" },
     { label: "Momo", value: "mobile_mtn_momo" },
     { label: "Airtel", value: "mobile_airtel_money" },
     { label: "Credit", value: "credit" },
@@ -96,83 +97,8 @@ export function OnboardingScreen() {
     );
   }
   return (
-    <View style={styles.container}>
-      <ScrollView>
-        <Text style={styles.title}>Set up your profile</Text>
-        <Text style={styles.subtitle}>Create a profile to manage your shop even faster</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Your name"
-          value={name}
-          onChangeText={(text) => setName(text)}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Business name"
-          value={businessName}
-          onChangeText={(text) => setBusinessName(text)}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Address (optional)"
-          value={address}
-          onChangeText={(text) => setAddress(text)}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="TIN (optional)"
-          value={tin}
-          onChangeText={(text) => setTin(text)}
-        />
-        <View style={styles.subview}>
-          <Text style={styles.subheading2}>Default currency</Text>
-        </View>
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <RadioForm
-            radio_props={currencyOptions}
-            initial={"RWF"}
-            onPress={(value) => setCurrencyValue(value)}
-            buttonColor="black"
-            labelColor='black'
-            selectedButtonColor="#11E05B"
-            selectedLabelColor="#11E05B"
-            labelHorizontal={false}
-            formHorizontal
-          />
-        </View>
-
-        <View style={styles.subview}>
-          <Text style={styles.subheading2}>Default payment method</Text>
-        </View>
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <RadioForm
-            radio_props={paymentOptions}
-            initial={"cash"}
-            onPress={(value) => setPaymentValue(value)}
-            buttonColor="black"
-            labelColor='black'
-            selectedButtonColor="#11E05B"
-            selectedLabelColor="#11E05B"
-            labelHorizontal={false}
-            formHorizontal
-          />
-        </View>
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <TouchableOpacity style={styles.done} onPress={handleSavingSettings}>
-            <Text style={{ color: "white", fontWeight: "bold", fontSize: 20 }}>
-              Start
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-
-      <View style={styles.container}>
+    <>
+      <View>
         <OnboardFlow pages={[
           {
             title: 'Welcome',
@@ -193,7 +119,96 @@ export function OnboardingScreen() {
           type='fullscreen' // Change to either 'fullscreen', 'bottom-sheet', or 'inline'
         />
       </View>
-    </View>
+
+      <View style={styles.container}>
+        <ScrollView>
+          <Text style={styles.title}>Set up your profile</Text>
+          <Text style={styles.subtitle}>Create a profile to manage your shop even faster</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Your name"
+            value={name}
+            onChangeText={(text) => setName(text)}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={(text) => {
+              setEmail(text);
+              if (text.trim() === '') {
+                setEmailError('Email is required.');
+              } else if (!text.includes('@') || !text.includes('.')) {
+                setEmailError('Please enter a valid email address.');
+              } else {
+                setEmailError('');
+              }
+            }}
+          />
+          <Text style={styles.error}>{emailError}</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Business name"
+            value={businessName}
+            onChangeText={(text) => setBusinessName(text)}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Address (optional)"
+            value={address}
+            onChangeText={(text) => setAddress(text)}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="TIN (optional)"
+            value={tin}
+            onChangeText={(text) => setTin(text)}
+          />
+          <View style={styles.subview}>
+            <Text style={styles.subheading2}>Default currency</Text>
+          </View>
+          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <RadioForm
+              radio_props={currencyOptions}
+              initial={"RWF"}
+              onPress={(value) => setCurrencyValue(value)}
+              buttonColor="black"
+              labelColor='black'
+              selectedButtonColor="#11E05B"
+              selectedLabelColor="#11E05B"
+              labelHorizontal={false}
+              formHorizontal
+            />
+          </View>
+
+          <View style={styles.subview}>
+            <Text style={styles.subheading2}>Default payment method</Text>
+          </View>
+          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <RadioForm
+              radio_props={paymentOptions}
+              initial={"Cash"}
+              onPress={(value) => setPaymentValue(value)}
+              buttonColor="black"
+              labelColor='black'
+              selectedButtonColor="#11E05B"
+              selectedLabelColor="#11E05B"
+              labelHorizontal={false}
+              formHorizontal
+            />
+          </View>
+          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <TouchableOpacity style={styles.done} onPress={handleSavingSettings}>
+              <Text style={{ color: "white", fontWeight: "bold", fontSize: 20 }}>
+                Start
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+
+      </View>
+    </>
+
   );
 };
 
@@ -253,5 +268,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
 
+  },
+  error: {
+    color: "#ef4444"
   }
 })
