@@ -277,7 +277,7 @@ class OrderService {
       order_key: 'S' + unixTimeStamp(),
       created_via: 'android-mobile-app',
       version: '1.0.0',
-      status: 'pedning',
+      status: 'pending',
       discount_total: 0,
       discount_tax: 0,
       total: orderTotal,
