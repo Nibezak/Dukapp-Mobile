@@ -74,7 +74,7 @@ export default function RevenueBarChart({ startDate, endDate }) {
   return (
     <>
       <View>
-        <LineChart
+        {/* <LineChart
           style={{
             margin: 8,
             borderRadius: 10,
@@ -86,11 +86,11 @@ export default function RevenueBarChart({ startDate, endDate }) {
           chartConfig={chartConfig}
           formatYLabel={(value) => formatNumber(value)}
           bezier
-        />
-        {/* <BarChart
+        /> */}
+        <BarChart
           data={barData}
           width={Dimensions.get('window').width - 16}
-          height={280}
+          height={300}
           fromZero={false}
           chartConfig={{
             backgroundColor: '#FFFFF',
@@ -106,7 +106,7 @@ export default function RevenueBarChart({ startDate, endDate }) {
             marginVertical: 2,
             borderRadius: 10,
           }}
-        /> */}
+        />
       </View>
     </>
   );

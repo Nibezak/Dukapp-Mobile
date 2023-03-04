@@ -5,7 +5,6 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 // Before rendering any navigation stack
 import { enableScreens } from 'react-native-screens';
-import * as Analytics from 'expo-firebase-analytics';
 // Providers
 import { AuthContext } from '../context/AuthProvider';
 import SearchButton from '../components/SearchButton';
@@ -86,7 +85,6 @@ function AuthStackNavigator() {
 }
 function NavDrawer() {
   enableScreens();
-
   return (
     <Drawer.Navigator
       drawerContent={(props) => <SideBar {...props} />}
@@ -355,10 +353,6 @@ export default function RootNavigation() {
     }, 1000);
   }, [user]);
 
-  Analytics.setUserId('saitama');
-  Analytics.setUserProperties({
-    hero_class: 'B',
-  });
 
   // Show loading indicator as we wait for the secure storage to
   // be read for use.

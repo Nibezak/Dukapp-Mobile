@@ -7,11 +7,9 @@ import {
   FlatList,
   Keyboard,
   Dimensions,
-  Text,
   ActivityIndicator,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { t } from 'i18n-js';
 import InputSend from '../../components/InputSend';
 import SuggestionButton from '../../components/SuggestionButton';
 import ItemService from '../../services/ItemService';
@@ -21,6 +19,9 @@ import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Alert } from 'react-native';
 import { ToastAndroid } from 'react-native';
+import * as Analytics from 'expo-firebase-analytics';
+import { onAuthStateChanged } from '@firebase/auth';
+import { auth } from '../../../firebase';
 
 
 const windowHeight = Dimensions.get('window').height;
@@ -34,6 +35,7 @@ export default function OrderScreen({ navigation, route }) {
   const [items, setItems] = useState([]);
   const [showIsLoading, setShowIsLoading] = useState(true);
   const [orderLoading, setOrderLoading] = useState(false);
+  const [user, setUser] = useState(null);
 
   /** Fix the undefined order_type error */
   const orderType = route.order_type == undefined ? 'sale' : routeParams.order_type;
@@ -49,12 +51,24 @@ export default function OrderScreen({ navigation, route }) {
   );
 
   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
     getItems();
     refreshOrders();
     resetToDefaultSuggestion();
     setHeader();
   }, [orderType]);
 
+  // track screen on google analytics
+  async function tracker() {
+
+    Analytics.setUserId(user.email);
+    Analytics.logEvent('screens', {
+      user: user.email,
+      screen: 'Order screen',
+    });
+  }
   /**
    * Fetch Orders
    */

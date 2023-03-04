@@ -8,10 +8,14 @@ import RenderCustomer from './RenderCustomer';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import SearchButton from '../../components/SearchButton';
 import { CustomersAnimation } from '../../components/CustomersAnimation';
+import * as Analytics from 'expo-firebase-analytics';
+import { onAuthStateChanged } from '@firebase/auth';
+import { auth } from '../../../firebase';
 
 export default function CustomerListScreen({ navigation }) {
   const [customers, setCustomers] = useState([]);
   const [showLoading, setShowLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -23,12 +27,25 @@ export default function CustomerListScreen({ navigation }) {
   );
 
   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
     refreshCustomers();
   }, []);
 
   /**
    * Get DB customers
    */
+
+  // track screen on google analytics
+  async function tracker() {
+
+    Analytics.setUserId(user.email);
+    Analytics.logEvent('screens', {
+      user: user.email,
+      screen: 'Customer screen',
+    });
+  }
   async function refreshCustomers() {
     CustomerService.getCustomers()
       .then(setCustomers)

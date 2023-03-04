@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, ToastAndroid, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { AntDesign, MaterialIcons } from '@expo/vector-icons';
+import { AntDesign, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { t } from 'i18n-js';
 import { AuthContext } from '../../context/AuthProvider';
 import Item from '../../models/Item';
@@ -13,10 +13,24 @@ import { generalSettings } from './settings';
 import BackupService from '../../services/BackupService';
 import { useNavigation } from '@react-navigation/native';
 import ItemInventory from '../../models/ItemInventory';
+import {
+  BottomSheetModal,
+  BottomSheetModalProvider
+} from '@gorhom/bottom-sheet';
+import { useRef } from 'react';
+import { TextInput } from 'react-native';
+import * as Analytics from 'expo-firebase-analytics';
+import { onAuthStateChanged } from '@firebase/auth';
+import { auth } from '../../../firebase';
+
 
 export default function GeneralSettingsScreen() {
   const { logout } = useContext(AuthContext);
   const [settings, setSettings] = useState(generalSettings);
+  const [text, setText] = useState('');
+  const bottomSheetModalRef = useRef(null);
+  const snapPoints = ["38%", "48%"];
+  const [user, setUser] = useState(null);
 
   const navigation = useNavigation();
 
@@ -34,6 +48,21 @@ export default function GeneralSettingsScreen() {
           />
         </TouchableOpacity>
       ),
+
+      headerRight: () => (
+        <>
+          <View style={{ flexDirection: "row" }}>
+            <MaterialCommunityIcons name="message-processing-outline" size={24}
+              color="#47a67f"
+              onPress={handleFeedback}
+              style={{ paddingRight: 10, marginTop: 5 }} />
+          </View>
+        </>
+      ),
+    });
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
     });
   });
 
@@ -46,6 +75,21 @@ export default function GeneralSettingsScreen() {
       .catch((error) => {
         throw error;
       });
+  }
+
+  // track screen on google analytics
+  async function tracker() {
+
+    Analytics.setUserId(user.email);
+    Analytics.logEvent('screens', {
+      user: user.email,
+      screen: 'Settings screen',
+    });
+  }
+
+  function handleFeedback() {
+
+    bottomSheetModalRef.current?.present()
   }
 
   /**
@@ -90,34 +134,37 @@ export default function GeneralSettingsScreen() {
    */
   function renderItem({ item }) {
     return (
-      <TouchableOpacity
-        onPress={() =>
-          item.action
-            ? handleAction(item.action)
-            : navigation.navigate('Setting Options', { setting: item })
-        }
-      >
-        <View style={[styles.row]}>
-          <MaterialIcons
-            name={item.icon ? item.icon : 'settings'}
-            size={24}
-            color={item?.color}
-            style={styles.avatar}
-          />
-          <View style={styles.rowText}>
-            <Text style={[styles.title, { color: item?.color }]}>{item.title}</Text>
+      <View>
+        <TouchableOpacity
+          onPress={() =>
+            item.action
+              ? handleAction(item.action)
+              : navigation.navigate('Setting Options', { setting: item })
+          }
+        >
+          <View style={[styles.row]}>
+            <MaterialIcons
+              name={item.icon ? item.icon : 'settings'}
+              size={24}
+              color={item?.color}
+              style={styles.avatar}
+            />
+            <View style={styles.rowText}>
+              <Text style={[styles.title, { color: item?.color }]}>{item.title}</Text>
 
-            {
-              /** Display Description if available */
-              item.description ? (
-                <Text style={styles.description}> {item.description} </Text>
-              ) : (
-                <></>
-              )
-            }
+              {
+                /** Display Description if available */
+                item.description ? (
+                  <Text style={styles.description}> {item.description} </Text>
+                ) : (
+                  <></>
+                )
+              }
+            </View>
           </View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+
+      </View>
     );
   }
 
@@ -128,6 +175,32 @@ export default function GeneralSettingsScreen() {
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
       />
+      <BottomSheetModalProvider>
+        <BottomSheetModal
+          ref={bottomSheetModalRef}
+          index={0}
+          snapPoints={snapPoints}
+          backgroundStyle={{ backgroundColor: "#F4F4F5", padding: 10, elevation: 5, borderTopColor: "#D4D4D8", borderTopWidth: 1 }}
+        >
+          <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+            <Text style={{ color: "gray", fontSize: 14 }}>
+              Give us A feedback on how to improve
+            </Text>
+            <TouchableOpacity style={styles.button} onPress={() => console.log("thank you")}>
+              <Ionicons name="send" size={20} color="#47a67f" />
+            </TouchableOpacity>
+          </View>
+          <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}>
+            <TextInput
+              style={styles.input}
+              placeholder="What's on your mind?"
+              onChangeText={text => setText(text)}
+              value={text}
+            />
+          </View>
+
+        </BottomSheetModal>
+      </BottomSheetModalProvider>
     </View>
   );
 }
@@ -154,5 +227,13 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 'bold',
     paddingRight: 10,
+  },
+  input: {
+    height: "40%",
+    width: '80%',
+    borderRadius: 10,
+    backgroundColor: "white",
+    paddingHorizontal: 10,
+    marginVertical: 10,
   },
 });

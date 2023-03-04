@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   InteractionManager,
   FlatList,
@@ -16,6 +15,10 @@ import SearchButton from '../../components/SearchButton';
 import RenderItem from './RenderItem';
 import { t } from 'i18n-js';
 import { StockItemAnimation } from '../../components/StockItemAnimation';
+import * as Analytics from 'expo-firebase-analytics';
+import { onAuthStateChanged } from '@firebase/auth';
+import { auth } from '../../../firebase';
+
 
 //const AVATAR =
 //'https://cdn4.vectorstock.com/i/1000x1000/16/38/add-item-icon-vector-16301638.jpg';
@@ -24,6 +27,7 @@ export default function ItemListScreen({ navigation }) {
   // Set the state
   const [items, setItems] = useState([]);
   const [showLoading, setShowLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -35,9 +39,21 @@ export default function ItemListScreen({ navigation }) {
   );
 
   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
     refreshItems();
   }, []);
 
+  // track screen on google analytics
+  async function tracker() {
+
+    Analytics.setUserId(user.email);
+    Analytics.logEvent('screens', {
+      user: user.email,
+      screen: 'Items Screen',
+    });
+  }
   /**
    * Refresh Suppliers from DB
    */

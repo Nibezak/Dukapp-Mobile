@@ -13,32 +13,18 @@ import OrderService from '../../services/OrderService';
 import { useFocusEffect } from '@react-navigation/native';
 import { Title, ActivityIndicator } from 'react-native-paper';
 import RevenueBarChart from '../reports/RevenueBarChart';
-import { AntDesign, Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 import { WelcomeAnimation } from '../../components/WelcomeAnimation';
 import { getSetting } from '../../models/AsyncStorage';
-import { AuthContext } from '../../context/AuthProvider';
-
-import {
-  BottomSheetModal,
-  BottomSheetModalProvider
-} from '@gorhom/bottom-sheet';
-import { Text } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
-import { TouchableOpacity } from 'react-native';
-/**
- * Screen component
- */
+import * as Analytics from 'expo-firebase-analytics';
+import { onAuthStateChanged } from '@firebase/auth';
+import { auth } from '../../../firebase';
 export default function WelcomeScreen({ navigation }) {
   const [orders, setOrders] = useState([]);
   const [orderType, setOrderType] = useState('sale');
   const [showLoading, setShowLoading] = useState(true);
   const [currency, setCurrency] = useState('RWF');
-  const { user } = useContext(AuthContext);
-  const { database, setDatabase } = useState('');
-  const [text, setText] = useState('');
-  const bottomSheetModalRef = useRef(null);
-  const snapPoints = ["38%", "48%"];
-
+  const [user, setUser] = useState(null);
   useFocusEffect(
     useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
@@ -49,10 +35,23 @@ export default function WelcomeScreen({ navigation }) {
   );
 
   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
     setHeader();
     retrieveCurrency()
     refreshOrders();
   }, []);
+
+
+  async function tracker() {
+
+    Analytics.setUserId(user.email);
+    Analytics.logEvent('screens', {
+      user: user.email,
+      screen: 'home screen',
+    });
+  }
 
   function setHeader() {
     navigation.setOptions({
@@ -90,11 +89,6 @@ export default function WelcomeScreen({ navigation }) {
         </>
       ),
     });
-  }
-
-  function handleFeedback() {
-
-    bottomSheetModalRef.current?.present()
   }
 
   // Fetch Orders
@@ -155,37 +149,6 @@ export default function WelcomeScreen({ navigation }) {
             keyExtractor={keyExtractor}
             nestedScrollEnabled
           />
-          <BottomSheetModalProvider>
-            <BottomSheetModal
-              ref={bottomSheetModalRef}
-              index={0}
-              snapPoints={snapPoints}
-              backgroundStyle={{ backgroundColor: "#F4F4F5", padding: 10, elevation: 5, borderTopColor: "#D4D4D8", borderTopWidth: 1 }}
-            >
-              <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
-                <Text style={{ color: "gray", fontSize: 14 }}>
-                  Give us A feedback on how to improve
-                </Text>
-                <TouchableOpacity style={styles.button}
-                  onPress={async () =>
-                    await analytics().logEvent('generalEvent', {
-                      item: 'it worked!',
-                    })
-                  }>
-                  <Ionicons name="send" size={20} color="#47a67f" />
-                </TouchableOpacity>
-              </View>
-              <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="What's on your mind?"
-                  onChangeText={text => setText(text)}
-                  value={text}
-                />
-              </View>
-
-            </BottomSheetModal>
-          </BottomSheetModalProvider>
         </>
       )}
     </View>
