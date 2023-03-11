@@ -35,6 +35,8 @@ export default function GeneralSettingsScreen() {
   const navigation = useNavigation();
 
   useEffect(() => {
+    tracker()
+    // setting up the header
     navigation.setOptions({
       headerTitle: 'Settings',
       headerTitleAlign: 'center',
@@ -79,11 +81,12 @@ export default function GeneralSettingsScreen() {
 
   // track screen on google analytics
   async function tracker() {
-
     Analytics.setUserId(user.email);
-    Analytics.logEvent('screens', {
+    Analytics.logEvent('users', {
       user: user.email,
-      screen: 'Settings screen',
+      screen: 'screens',
+      navigation: 'Settings Screen',
+
     });
   }
 

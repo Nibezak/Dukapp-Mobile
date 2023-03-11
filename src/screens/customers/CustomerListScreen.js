@@ -31,6 +31,7 @@ export default function CustomerListScreen({ navigation }) {
       setUser(user);
     });
     refreshCustomers();
+    tracker();
   }, []);
 
   /**
@@ -39,11 +40,12 @@ export default function CustomerListScreen({ navigation }) {
 
   // track screen on google analytics
   async function tracker() {
-
     Analytics.setUserId(user.email);
-    Analytics.logEvent('screens', {
+    Analytics.logEvent('users', {
       user: user.email,
-      screen: 'Customer screen',
+      screen: 'screens',
+      navigation: 'Customer Screen',
+
     });
   }
   async function refreshCustomers() {

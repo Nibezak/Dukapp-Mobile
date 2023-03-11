@@ -14,12 +14,12 @@ export default function FieldText(props) {
       value={props.value}
       onChangeText={props.onChangeText}
       style={{
-        // flex: 1,
+        flex: 1,
         width: "100%",
         marginHorizontal: 5,
         marginVertical: 10,
         paddingVertical: 1,
-        backgroundColor: "#F1F5F9",
+        backgroundColor: "transparent",
       }}
 
       onEndEditing={props.onEndEditing}

@@ -1,6 +1,8 @@
 import {
     AntDesign,
+    Feather,
     FontAwesome5,
+    Ionicons,
     MaterialCommunityIcons,
     MaterialIcons,
 } from '@expo/vector-icons';
@@ -19,11 +21,10 @@ export default function SideBar() {
     const SupplierIcon = (
         <MaterialCommunityIcons name="truck-delivery-outline" size={24} color="#10b981" />
     );
-    const ReportInsightsIcon = <MaterialIcons name="insights" size={24} color="#10b981" />;
-    const PurchasesIcon = <AntDesign name="shoppingcart" size={24} color="#10b981" />;
-    const ReceiptsIcon = <FontAwesome5 name="receipt" size={24} color="#10b981" />;
+    const ReportInsightsIcon = <Feather name="bar-chart" size={24} color="#10b981" />
+    const ReceiptsIcon = <Ionicons name="ios-receipt-outline" size={24} color="#10b981" />
     const ShareIcon = <AntDesign name="sharealt" size={24} color="#10b981" />;
-    const FeedBackIcon = <MaterialIcons name="feedback" size={24} color="#10b981" />;
+    const BankIcon = <Ionicons name="card-outline" size={24} color="#10b981" />
 
     const [selectedId, setSelectedId] = useState(null);
     const [businessName, setBusinessName] = useState(null);
@@ -32,8 +33,8 @@ export default function SideBar() {
         { icon: HomeIcon, title: 'Home', route: 'HomeScreen' },
         // { icon: SupplierIcon, title: 'Suppliers', route: 'Supplier List' },
         { icon: ReceiptsIcon, title: 'Receipts', route: 'Sale Receipt' },
-        { icon: ReportInsightsIcon, title: 'Reports', route: 'Insights' },
-        // { icon: PurchasesIcon, title: 'Your Purchases', route: '' },
+        { icon: BankIcon, title: 'Transactions', route: 'SMS Transactions' },
+        { icon: ReportInsightsIcon, title: 'Report Insights', route: 'Insights' },
     ];
 
     const bottomListItems = [
@@ -75,7 +76,7 @@ export default function SideBar() {
 
     const renderItem = ({ item }) => {
         const backgroundColor = item.title === selectedId ? 'white' : 'white';
-        const color = item.title === selectedId ? 'black' : 'black';
+        const color = item.title === selectedId ? '#47a67f' : '#47a67f';
         return (
             <Item
                 onPress={() => navigate(item)}
@@ -174,5 +175,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginLeft: 20,
         paddingLeft: 20,
+        fontWeight: "bold",
+        color: "#47a67f",
     },
 });

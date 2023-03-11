@@ -62,8 +62,8 @@ export default function EditItemScreen({ navigation, route }) {
       Alert.alert(
         'The Stock of : ' + item.name + ' is insuffient #',
         'The remaining quantity is : ' +
-          item.quantity +
-          ' Please Add more stock to be able to sell',
+        item.quantity +
+        ' Please Add more stock to be able to sell',
         [
           {
             text: 'Cancel',
@@ -205,7 +205,7 @@ export default function EditItemScreen({ navigation, route }) {
                   placeholder={t('item.re_order_level_placeholder')}
                   keyboardType="numeric"
                 />
-                <InputTextDisabled
+                <FieldText
                   title={t('item.quantity')}
                   value={quantity.toString()}
                   onChangeText={setQuantity}
@@ -228,6 +228,7 @@ export default function EditItemScreen({ navigation, route }) {
                   underlineColorAndroid="transparent"
                   placeholder={t('item.unit_cost_price_placeholder')}
                   keyboardType="numeric"
+
                 />
               </>
             )}

@@ -4835,6 +4835,11 @@ expo-sharing@^11.0.1:
   resolved "https://registry.npmjs.org/expo-sharing/-/expo-sharing-11.0.1.tgz"
   integrity sha512-GlI2+fRxfdCNUftFPfqhbCSd6OQaVf/WNAADWZnRanRQRbQdQjM6L0oMmUTwQStc36cmzl+vGgNlouwdmTDseA==
 
+expo-sms@~11.0.0:
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/expo-sms/-/expo-sms-11.0.0.tgz#5e1a92f4e39427ddbf20e5760c6895071fac7b80"
+  integrity sha512-WfFNqk6ipxacZbdcyMvsLoURWMKgZJmtNQbh6ktaNuh376/MgvskRhEGJmfDLcQXrRKa+pheICNUcf8y94O9Ag==
+
 expo-splash-screen@~0.17.5:
   version "0.17.5"
   resolved "https://registry.npmjs.org/expo-splash-screen/-/expo-splash-screen-0.17.5.tgz"

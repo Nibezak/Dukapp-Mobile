@@ -42,6 +42,7 @@ export default function ItemListScreen({ navigation }) {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
     });
+    tracker();
     refreshItems();
   }, []);
 
@@ -49,9 +50,11 @@ export default function ItemListScreen({ navigation }) {
   async function tracker() {
 
     Analytics.setUserId(user.email);
-    Analytics.logEvent('screens', {
+    Analytics.logEvent('users', {
       user: user.email,
-      screen: 'Items Screen',
+      screen: 'screens',
+      navigation: 'Item Screen',
+
     });
   }
   /**

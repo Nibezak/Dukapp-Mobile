@@ -38,18 +38,21 @@ export default function WelcomeScreen({ navigation }) {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
     });
+    tracker();
     setHeader();
     retrieveCurrency()
     refreshOrders();
   }, []);
 
-
+  // track screen on google analytics
   async function tracker() {
 
     Analytics.setUserId(user.email);
-    Analytics.logEvent('screens', {
+    Analytics.logEvent('users', {
       user: user.email,
-      screen: 'home screen',
+      screen: 'screens',
+      navigation: 'Home Screen',
+
     });
   }
 
@@ -165,6 +168,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    backgroundColor: "white",
     paddingHorizontal: 5,
   },
   sales: {

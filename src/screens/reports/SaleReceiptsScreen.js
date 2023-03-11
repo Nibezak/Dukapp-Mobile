@@ -6,7 +6,6 @@ import {
   FlatList,
   Dimensions,
   ActivityIndicator,
-  Text,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import ItemService from '../../services/ItemService';
@@ -80,14 +79,7 @@ export default function SaleReceiptsScreen({ navigation, route }) {
     });
   }
 
-  // const renderOrder = useCallback(({ item, index }) => {
-  //   return (
-  //     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-  //       {index % 2 === 0 && <RenderReceipt item={item} />}
-  //       {index % 2 === 1 && <RenderReceipt item={item} />}
-  //     </View>
-  //   );
-  // });
+
 
   const renderOrder = useCallback((item) => (
     <View style={{ flex: 0.5, marginHorizontal: 2 }}>

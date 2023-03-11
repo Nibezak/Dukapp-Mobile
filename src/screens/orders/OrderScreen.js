@@ -58,15 +58,18 @@ export default function OrderScreen({ navigation, route }) {
     refreshOrders();
     resetToDefaultSuggestion();
     setHeader();
+    tracker();
+
   }, [orderType]);
 
   // track screen on google analytics
   async function tracker() {
-
     Analytics.setUserId(user.email);
-    Analytics.logEvent('screens', {
+    Analytics.logEvent('users', {
       user: user.email,
-      screen: 'Order screen',
+      screen: 'screens',
+      navigation: 'Order Screen',
+
     });
   }
   /**

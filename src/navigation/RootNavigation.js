@@ -65,6 +65,7 @@ import { doc, getDoc } from '@firebase/firestore';
 import { db, auth } from '../../firebase';
 import PropTypes from 'prop-types';
 import Database from '../database/Database';
+import { TransactionsScreen } from '../screens/account/TransactionsScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -225,12 +226,12 @@ export function NavStack() {
 
       <Stack.Screen name="Orders" component={OrderScreen} options={{ presentation: "modal", }} />
       <Stack.Screen name="Order Details" component={OrderDetailsSCreen} />
-      <Stack.Screen name="Purchase Details" component={PurchaseDetailsScreen} />
       <Stack.Screen name="Add Payment To Order" component={OrderPaymentScreen} />
       <Stack.Screen name="Order Receipt" component={ReceiptScreen} />
       <Stack.Screen name="Sale Receipt" component={SaleReceiptsScreen} />
 
       {/** Order Purchase Screen */}
+      <Stack.Screen name="Purchase Details" component={PurchaseDetailsScreen} />
       <Stack.Screen name="Purchase Orders" component={PurchaseOrderScreen} options={{ presentation: "modal", }} />
       {/** Items*/}
       <Stack.Screen
@@ -316,18 +317,22 @@ export function NavStack() {
       />
       {/** Reports*/}
       <Stack.Screen name="Insights" component={SummaryReportScreen} />
-      <Stack.Screen name="Fast Going" component={FastGoingScreen} options={{
+      {/* <Stack.Screen name="Fast Going" component={FastGoingScreen} options={{
         title: 'Fast Going',
         headerBackTitle: ''
-      }} />
-      <Stack.Screen name="Stock" component={InStockScreen} options={{
+      }} /> */}
+      {/* <Stack.Screen name="Stock" component={InStockScreen} options={{
         title: 'In Stock',
         headerBackTitle: ''
 
-      }} />
-      <Stack.Screen name="By Mobile" component={ByMobileScreen} options={{
+      }} /> */}
+      {/* <Stack.Screen name="By Mobile" component={ByMobileScreen} options={{
         title: 'By Mobile',
         headerBackTitle: ''
+      }} /> */}
+      {/** transactions */}
+      <Stack.Screen name="SMS Transactions" component={TransactionsScreen} options={{
+        title: 'Transactions',
       }} />
 
       {/** Settings*/}
