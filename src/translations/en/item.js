@@ -5,7 +5,7 @@ export default {
   items_description: "Stock Management",
 
   // ITEM forms
-  is_item_service: "Item is service",
+  is_item_service: "Item is a service",
   name: "Item Name",
   name_placeholder: "Inyange Milk 500ML",
   description: "Description",

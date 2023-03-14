@@ -21,7 +21,7 @@ export default function FieldText(props) {
         paddingVertical: 1,
         backgroundColor: "transparent",
       }}
-
+      onBlur={props.onBlur}
       onEndEditing={props.onEndEditing}
       ref={props.ref}
       autoFocus={props.autoFocus}

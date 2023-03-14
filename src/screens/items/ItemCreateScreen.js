@@ -1,25 +1,20 @@
-import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { t } from "i18n-js";
-import FieldText from "../../components/FieldText";
-import InputSwitch from "../../components/InputSwitch";
-import Button from "../../components/Button";
-import ItemService from "../../services/ItemService";
-import OrderService from "./../../services/OrderService";
-import { ScrollView } from "react-native-gesture-handler";
+import React, { useState } from 'react';
+import { StyleSheet, View, Text } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { t } from 'i18n-js';
+import { Formik } from 'formik';
+import {
+  serviceValidationSchema,
+  normalValidationSchema,
+} from '../../helpers/validation/itemValidation.js';
+import FieldText from '../../components/FieldText';
+import InputSwitch from '../../components/InputSwitch';
+import Button from '../../components/Button';
+import ItemService from '../../services/ItemService';
+import OrderService from './../../services/OrderService';
+import { ScrollView } from 'react-native-gesture-handler';
 
 export default function CreateItemScreen({ navigation, route }) {
-  // Define state
-  const [name, setName] = useState(route.params?.item_name);
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [reOrderLevel, setReorderLevel] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [unitPrice, setUnitPrice] = useState("");
-  const [salePrice, setSalePrice] = useState("");
-  const [items, setItems] = useState([]);
-
   // Product is Service?
   const [isService, setIsService] = useState(false);
   const toggleSwitch = () => setIsService((previousState) => !previousState);
@@ -27,26 +22,14 @@ export default function CreateItemScreen({ navigation, route }) {
   /**
    * Add new stock in the database
    */
-  async function addStock() {
-    // Prepare data to save
-    const item = {
-      name: name,
-      description: description,
-      category: category,
-      reorder_level: isService ? 0 : reOrderLevel,
-      quantity: isService ? 0 : quantity,
-      cost_price: isService ? 0 : unitPrice,
-      sale_price: salePrice,
-      is_service: isService,
-    };
-
+  async function addStock(item) {
     // Store data in database
     const result = await ItemService.save(item);
 
     const item_id = result.insertId;
 
     // Redirect to previous screen after selling
-    if (route.params?.action_type == "add_product_and_sale") {
+    if (route.params?.action_type == 'add_product_and_sale') {
       // 1. Get last Item added to the DB
       ItemService.find(item_id).then((item) => {
         // 2. After retrieving the last created item,then
@@ -80,112 +63,174 @@ export default function CreateItemScreen({ navigation, route }) {
    * Render to the screen
    */
   return (
-
     <>
       <KeyboardAwareScrollView>
         <ScrollView>
-          <View
-            style={{
-              flexDirection: "row",
-              paddingLeft: 10,
-              paddingRight: 10,
-              borderWidth: 1,
-              borderBottomColor: "#cbd5e0",
+          <Formik
+            initialValues={{
+              name: '',
+              description: '',
+              category: '',
+              reOrderLevel: '',
+              quantity: '',
+              unitPrice: '',
+              salePrice: '',
             }}
+            onSubmit={(values) => {
+              // Prepare data to save
+
+              const item = {
+                name: values.name,
+                description: values.description,
+                category: values.category,
+                reorder_level: isService ? 0 : values.reOrderLevel,
+                quantity: isService ? 0 : values.quantity,
+                cost_price: isService ? 0 : values.unitPrice,
+                sale_price: values.salePrice,
+                is_service: isService,
+              };
+              addStock(item);
+            }}
+            validationSchema={isService ? serviceValidationSchema : normalValidationSchema}
           >
-            <InputSwitch
-              onValueChange={toggleSwitch}
-              value={isService}
-              title={t("item.is_item_service")}
-            />
-          </View>
-          <View style={styles.row}>
-            <FieldText
-              value={name}
-              title={t("item.name")}
-              onChangeText={setName}
-              underlineColorAndroid="transparent"
-              placeholder={t("item.name_placeholder")}
-            />
-          </View>
-          <View style={styles.row}>
-            <FieldText
-              title={t("item.description")}
-              onChangeText={setDescription}
-              underlineColorAndroid="transparent"
-              placeholder={t("item.description_placeholder")}
-            />
-          </View>
-          <View style={styles.row}>
-            <FieldText
-              title={t("item.category")}
-              onChangeText={setCategory}
-              underlineColorAndroid="transparent"
-              placeholder={t("item.category_placeholder")}
-            />
-          </View>
-
-          {/** Only display this section if this is not a service */}
-          {
-            isService ? (
-              <></>
-            ) : (
+            {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
               <>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    paddingLeft: 10,
+                    paddingRight: 10,
+                    borderWidth: 1,
+                    borderBottomColor: '#cbd5e0',
+                  }}
+                >
+                  <InputSwitch
+                    onValueChange={toggleSwitch}
+                    value={isService}
+                    title={t('item.is_item_service')}
+                  />
+                </View>
                 <View style={styles.row}>
                   <FieldText
-                    title={t("item.re_order_level")}
-                    value={reOrderLevel.toString()}
-                    onChangeText={setReorderLevel}
+                    value={values.name}
+                    title={t('item.name')}
+                    onBlur={handleBlur('name')}
+                    onChangeText={handleChange('name')}
                     underlineColorAndroid="transparent"
-                    placeholder={t("item.re_order_level_placeholder")}
+                    placeholder={t('item.name_placeholder')}
+                  />
+                </View>
+                {errors.name && <Text style={{ color: 'red', marginLeft: 15 }}>{errors.name}</Text>}
+                <View style={styles.row}>
+                  <FieldText
+                    title={t('item.description')}
+                    onChangeText={handleChange('description')}
+                    value={values.description}
+                    onBlur={handleBlur('description')}
+                    underlineColorAndroid="transparent"
+                    placeholder={t('item.description_placeholder')}
+                  />
+                </View>
+                {errors.description && (
+                  <Text style={{ color: 'red', marginLeft: 15 }}>{errors.description}</Text>
+                )}
+                <View style={styles.row}>
+                  <FieldText
+                    title={t('item.category')}
+                    onChangeText={handleChange('category')}
+                    value={values.category}
+                    onBlur={handleBlur('category')}
+                    underlineColorAndroid="transparent"
+                    placeholder={t('item.category_placeholder')}
+                  />
+                </View>
+                {errors.category && (
+                  <Text style={{ color: 'red', marginLeft: 15 }}>{errors.category}</Text>
+                )}
+
+                {/** Only display this section if this is not a service */}
+                {isService ? (
+                  <></>
+                ) : (
+                  <>
+                    <View style={styles.row}>
+                      <FieldText
+                        title={t('item.re_order_level')}
+                        onChangeText={handleChange('reOrderLevel')}
+                        value={values.reOrderLevel}
+                        onBlur={handleBlur('reOrderLevel')}
+                        underlineColorAndroid="transparent"
+                        placeholder={t('item.re_order_level_placeholder')}
+                        keyboardType="numeric"
+                      />
+                    </View>
+                    {errors.reOrderLevel && (
+                      <Text style={{ color: 'red', marginLeft: 15 }}>{errors.reOrderLevel}</Text>
+                    )}
+
+                    <View style={styles.row}>
+                      <FieldText
+                        title={t('item.quantity')}
+                        onChangeText={handleChange('quantity')}
+                        value={values.quantity}
+                        onBlur={handleBlur('quantity')}
+                        underlineColorAndroid="transparent"
+                        placeholder={t('item.quantity_placeholder')}
+                        keyboardType="numeric"
+                      />
+                    </View>
+
+                    {errors.quantity && (
+                      <Text style={{ color: 'red', marginLeft: 15 }}>{errors.quantity}</Text>
+                    )}
+
+                    <View style={styles.row}>
+                      <FieldText
+                        title={t('item.unit_cost_price')}
+                        onChangeText={handleChange('unitPrice')}
+                        value={values.unitPrice}
+                        onBlur={handleBlur('unitPrice')}
+                        underlineColorAndroid="transparent"
+                        placeholder={t('item.unit_cost_price_placeholder')}
+                        keyboardType="numeric"
+                      />
+                    </View>
+                    {errors.unitPrice && (
+                      <Text style={{ color: 'red', marginLeft: 15 }}>{errors.unitPrice}</Text>
+                    )}
+                  </>
+                )}
+                {/** END OF NON SERVICE PRODUCT */}
+                <View style={styles.row}>
+                  <FieldText
+                    title={t('item.unit_sale_price')}
+                    onChangeText={handleChange('salePrice')}
+                    value={values.salePrice}
+                    onBlur={handleBlur('salePrice')}
+                    underlineColorAndroid="transparent"
+                    placeholder={t('item.unit_sale_price_placeholder')}
                     keyboardType="numeric"
                   />
                 </View>
+                {errors.salePrice && (
+                  <Text style={{ color: 'red', marginLeft: 15 }}>{errors.salePrice}</Text>
+                )}
 
                 <View style={styles.row}>
-                  <FieldText
-                    title={t("item.quantity")}
-                    value={quantity.toString()}
-                    onChangeText={setQuantity}
-                    underlineColorAndroid="transparent"
-                    placeholder={t("item.quantity_placeholder")}
-                    keyboardType="numeric"
-                  />
-                </View>
-
-                <View style={styles.row}>
-                  <FieldText
-                    title={t("item.unit_cost_price")}
-                    value={unitPrice.toString()}
-                    onChangeText={setUnitPrice}
-                    underlineColorAndroid="transparent"
-                    placeholder={t("item.unit_cost_price_placeholder")}
-                    keyboardType="numeric"
-                  />
+                  <Button
+                    onPress={() => navigation.goBack()}
+                    color={'#f1f1f1'}
+                    backgroundColor={'#f59e0b'}
+                  >
+                    {t('common.cancel')}
+                  </Button>
+                  <Button onPress={handleSubmit} color={'#f1f1f1'} backgroundColor={'#47a67f'}>
+                    {t('common.save')}
+                  </Button>
                 </View>
               </>
-            )
-          }
-          {/** END OF NON SERVICE PRODUCT */}
-          <View style={styles.row}>
-            <FieldText
-              title={t("item.unit_sale_price")}
-              onChangeText={setSalePrice}
-              underlineColorAndroid="transparent"
-              placeholder={t("item.unit_sale_price_placeholder")}
-              keyboardType="numeric"
-            />
-          </View>
-
-          <View style={styles.row}>
-            <Button onPress={() => navigation.goBack()} color={"#f1f1f1"} backgroundColor={"#f59e0b"}>
-              {t("common.cancel")}
-            </Button>
-            <Button onPress={addStock} color={"#f1f1f1"} backgroundColor={"#47a67f"}>
-              {t("common.save")}
-            </Button>
-
-          </View>
+            )}
+          </Formik>
         </ScrollView>
       </KeyboardAwareScrollView>
     </>
@@ -198,9 +243,9 @@ export default function CreateItemScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   row: {
-    flexDirection: "row",
+    flexDirection: 'row',
   },
 });
