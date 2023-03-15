@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -26,6 +26,7 @@ import Order from '../../models/Order';
 import Item from '../../models/Item';
 import { isFirstDayOfMonth } from 'date-fns';
 import NextButton from '../../components/NextButton';
+import { ThemeContext } from '../../../App';
 
 // Retrieve user windows height
 const windowHeight = Dimensions.get('window').height;
@@ -39,6 +40,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
   const [items, setItems] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [currency, setCurrency] = useState(null);
+  const { theme } = useContext(ThemeContext);
 
   useFocusEffect(
     useCallback(() => {
@@ -54,11 +56,13 @@ export default function OrderDetailsScreen({ navigation, route }) {
       navigation.navigate('Order Receipt', {
         order: order,
         customer: customer,
-      })
+      });
     }
     navigation.setOptions({
       headerTitle:
         orderType.substr(0, 4).charAt(0).toUpperCase() + ' #' + route.params.order.id.toString(),
+      headerTitleStyle: { color: theme.text },
+      headerStyle: { backgroundColor: theme.accent },
     });
     updateNavRight();
 
@@ -83,16 +87,27 @@ export default function OrderDetailsScreen({ navigation, route }) {
   function updateNavRight() {
     navigation.setOptions({
       headerRight: () => (
-        <View style={{ flexDirection: 'row' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text
-            style={{ paddingRight: 14, backgroundColor: "#F1F5F9", marginRight: 14, paddingLeft: 14, borderRadius: 10, textTransform: 'uppercase', fontWeight: 'bold', color: '#94A3B8', paddingTop: 2, elevation: 3 }}
+            style={{
+              paddingHorizontal: 14,
+              backgroundColor: theme.background,
+              marginRight: 14,
+              borderRadius: 10,
+              textTransform: 'uppercase',
+              fontWeight: 'bold',
+              color: theme.text,
+              opacity: 0.8,
+              paddingVertical: 3,
+              elevation: 3,
+            }}
           >
             {route.params.order.status}
           </Text>
 
           {/* Show delete button */}
           <TouchableOpacity onPress={handleDeleteButton} style={{ paddingRight: 20 }}>
-            <MaterialIcons name="delete" size={24} color="#ef4444" />
+            <MaterialIcons name="delete" size={24} color={theme.danger} />
           </TouchableOpacity>
         </View>
       ),
@@ -169,7 +184,9 @@ export default function OrderDetailsScreen({ navigation, route }) {
         if (stockItem.quantity <= 0) {
           return Alert.alert(
             'The Stock of : ' + stockItem.name + ' is insuffient #',
-            'The remaining quantity is : ' + stockItem.quantity + ' Please Add more stock to be able to sell',
+            'The remaining quantity is : ' +
+              stockItem.quantity +
+              ' Please Add more stock to be able to sell',
             [
               {
                 text: 'Cancel',
@@ -199,7 +216,6 @@ export default function OrderDetailsScreen({ navigation, route }) {
     OrderService.updateOrderItem(orderItem, action).then(() => {
       // Refresh the order details page
       refreshOrder();
-
     });
   }
 
@@ -310,7 +326,9 @@ export default function OrderDetailsScreen({ navigation, route }) {
     if (item.quantity <= 0) {
       Alert.alert(
         'The Stock of ' + item.name + ' is insuffient #',
-        'The remaining quantity is : ' + item.quantity + ' Please Add more stock to be able to sell',
+        'The remaining quantity is : ' +
+          item.quantity +
+          ' Please Add more stock to be able to sell',
         [
           {
             text: 'Cancel',
@@ -424,7 +442,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
     navigation.navigate('Order Receipt', {
       order: order,
       customer: customer,
-    })
+    });
   }
 
   const renderOrderLineItem = useCallback(({ item }) => {
@@ -442,7 +460,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
   const keyExtractor = useCallback((item, index) => index.toString(), []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/** Order Payment*/}
       <RenderPayment customer={customer} order={order} />
 
@@ -465,7 +483,11 @@ export default function OrderDetailsScreen({ navigation, route }) {
           style={styles.suggestions}
           data={suggestions}
           renderItem={({ item }) => (
-            <SuggestionButton title={item.name} onPress={() => saleSuggestion(item)} />
+            <SuggestionButton
+              title={item.name}
+              onPress={() => saleSuggestion(item)}
+              theme={theme}
+            />
           )}
           pagingEnabled={true}
           keyExtractor={keyExtractor}
@@ -480,6 +502,8 @@ export default function OrderDetailsScreen({ navigation, route }) {
           onPress={sellNewItem}
           value={typing}
           placeholder={t('order.type_to_sell')}
+          theme={theme}
+          bottom={10}
         />
       </KeyboardAvoidingView>
     </View>

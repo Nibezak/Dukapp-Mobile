@@ -1,26 +1,27 @@
-import React from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  KeyboardAvoidingView,
-  TouchableOpacity,
-} from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import { FontAwesome } from "@expo/vector-icons";
+import React from 'react';
+import { View, Text, TextInput, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 export default function InputSend(props) {
+  const { theme, bottom } = props;
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.accent, marginBottom: bottom ? bottom : 55 },
+      ]}
+    >
       <TextInput
         value={props.value}
-        style={styles.input}
+        style={[styles.input, { color: theme.text }]}
         underlineColorAndroid="transparent"
         placeholder={props.placeholder}
+        placeholderTextColor={theme.text}
         onChangeText={props.onChangeText}
       />
 
       <TouchableOpacity onPress={props.onPress} style={styles.saleButton}>
-        <FontAwesome name="send" size={24} color="#47a67f" />
+        <FontAwesome name="send" size={24} color={theme.primary} />
       </TouchableOpacity>
     </View>
   );
@@ -28,12 +29,9 @@ export default function InputSend(props) {
 
 const styles = {
   container: {
-    flexDirection: "row",
-    backgroundColor: "#e0e0e0",
-    borderColor: "#cfd8dc",
-    borderTopWidth: 1,
+    flexDirection: 'row',
     padding: 2,
-    margin: 10,
+    marginHorizontal: 10,
     borderRadius: 20,
   },
   input: {
@@ -43,11 +41,10 @@ const styles = {
     flex: 1,
   },
   saleButton: {
-    alignSelf: "center",
-    color: "#16a34a",
+    alignSelf: 'center',
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     padding: 10,
-    marginRight: 5
+    marginRight: 5,
   },
 };

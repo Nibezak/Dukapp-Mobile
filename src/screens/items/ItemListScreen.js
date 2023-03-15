@@ -139,7 +139,7 @@ export default function ItemListScreen({ navigation }) {
           <FloatingButton onPress={() => navigation.navigate('New Item')} />
         </>
       ) : (
-        <StockItemAnimation />
+        <StockItemAnimation theme={theme} />
       )}
     </View>
   );

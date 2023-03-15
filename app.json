@@ -24,6 +24,13 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
+      },
+      "splash": {
+        "backgroundColor": "#ffffff",
+        "image": "./assets/splash.png",
+        "dark": {
+          "backgroundColor": "#000000",
+          "image": "./assets/splash-dark.png"}
       }
     },
     "extra": {

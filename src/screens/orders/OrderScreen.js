@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import {
   StyleSheet,
   View,
@@ -22,7 +22,7 @@ import { ToastAndroid } from 'react-native';
 import * as Analytics from 'expo-firebase-analytics';
 import { onAuthStateChanged } from '@firebase/auth';
 import { auth } from '../../../firebase';
-
+import { ThemeContext } from '../../../App';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -36,6 +36,7 @@ export default function OrderScreen({ navigation, route }) {
   const [showIsLoading, setShowIsLoading] = useState(true);
   const [orderLoading, setOrderLoading] = useState(false);
   const [user, setUser] = useState(null);
+  const { theme } = useContext(ThemeContext);
 
   /** Fix the undefined order_type error */
   const orderType = route.order_type == undefined ? 'sale' : routeParams.order_type;
@@ -59,8 +60,7 @@ export default function OrderScreen({ navigation, route }) {
     resetToDefaultSuggestion();
     setHeader();
     tracker();
-
-  }, [orderType]);
+  }, [orderType, theme]);
 
   // track screen on google analytics
   async function tracker() {
@@ -69,7 +69,6 @@ export default function OrderScreen({ navigation, route }) {
       user: user.email,
       screen: 'screens',
       navigation: 'Order Screen',
-
     });
   }
   /**
@@ -86,6 +85,12 @@ export default function OrderScreen({ navigation, route }) {
   function setHeader() {
     navigation.setOptions({
       headerTitleAlign: 'center',
+      headerTitleStyle: {
+        color: theme.text,
+      },
+      headerStyle: {
+        backgroundColor: theme.accent,
+      },
       headerRight: () => (
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -94,7 +99,7 @@ export default function OrderScreen({ navigation, route }) {
           <AntDesign
             name="minuscircleo"
             size={24}
-            color="#718096"
+            color={theme.primary}
             style={{ fontWeight: 'semibold' }}
           />
         </TouchableOpacity>
@@ -103,7 +108,7 @@ export default function OrderScreen({ navigation, route }) {
         <AntDesign
           name="menuunfold"
           size={24}
-          color="#47a67f"
+          color={theme.primary}
           onPress={() => navigation.openDrawer()}
           style={{ paddingLeft: 10 }}
         />
@@ -141,7 +146,9 @@ export default function OrderScreen({ navigation, route }) {
     if (item.quantity <= 0) {
       Alert.alert(
         'The Stock of : ' + item.name + ' is insuffient #',
-        'The remaining quantity is : ' + item.quantity + ' Please Add more stock to be able to sell',
+        'The remaining quantity is : ' +
+          item.quantity +
+          ' Please Add more stock to be able to sell',
         [
           {
             text: 'Cancel',
@@ -170,8 +177,7 @@ export default function OrderScreen({ navigation, route }) {
         // 5. Reset suggestions
         resetToDefaultSuggestion();
 
-        ToastAndroid.show("Order Successfully Made", ToastAndroid.SHORT);
-
+        ToastAndroid.show('Order Successfully Made', ToastAndroid.SHORT);
       })
       .catch((error) => {
         throw error;
@@ -283,7 +289,9 @@ export default function OrderScreen({ navigation, route }) {
   ));
 
   const renderSuggestion = useCallback(({ item }) => {
-    return <SuggestionButton title={item.name} onPress={() => saleSuggestion(item)} />;
+    return (
+      <SuggestionButton title={item.name} onPress={() => saleSuggestion(item)} theme={theme} />
+    );
   }, []);
 
   const keyExtractor = useCallback((item, index) => index.toString(), []);
@@ -300,7 +308,7 @@ export default function OrderScreen({ navigation, route }) {
    * Render to the screen
    */
   return (
-    <View style={[styles.container]}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Display order summary */}
       <FlatList
         inverted
@@ -320,7 +328,7 @@ export default function OrderScreen({ navigation, route }) {
       {/* Only show suggestion when user has entered something to search */}
       {(suggestions.length > 0 && typing.length > 0) > 0 ? (
         <FlatList
-          style={styles.suggestions}
+          style={[styles.suggestions, { backgroundColor: theme.accent }]}
           data={suggestions}
           renderItem={renderSuggestion}
           pagingEnabled={true}
@@ -333,11 +341,12 @@ export default function OrderScreen({ navigation, route }) {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} enabled>
         {/**Quick sale */}
         <InputSend
-          style={{ bottom: 140 }}
+          style={{ bottom: 140, backgroundColor: theme.accent }}
           onChangeText={handleTypingSuggestions}
           onPress={sellNewItem}
           value={typing}
           placeholder={'Quick sale'}
+          theme={theme}
         />
       </KeyboardAvoidingView>
     </View>
@@ -357,8 +366,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     height: windowHeight,
     position: 'relative',
-    backgroundColor: '#f1f1f1',
+    marginTop: 10,
     elevation: 15,
+    flex: 1,
   },
   row: {
     flexDirection: 'row',

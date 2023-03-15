@@ -14,6 +14,7 @@ import * as Analytics from 'expo-firebase-analytics';
 import { onAuthStateChanged } from '@firebase/auth';
 import { auth } from '../../../firebase';
 import { ThemeContext } from '../../../App';
+import { StatusBar } from 'expo-status-bar';
 export default function WelcomeScreen({ navigation }) {
   const [orders, setOrders] = useState([]);
   const [orderType, setOrderType] = useState('sale');
@@ -131,7 +132,14 @@ export default function WelcomeScreen({ navigation }) {
    */
   if (showLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: theme.background,
+        }}
+      >
         <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
       </View>
     );
@@ -141,6 +149,7 @@ export default function WelcomeScreen({ navigation }) {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/** Welcome Section of the screen */}
+      <StatusBar style={theme.statusbar} />
 
       {orders.length === 0 ? (
         <WelcomeAnimation />

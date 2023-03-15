@@ -154,7 +154,7 @@ function NavTab() {
         tabBarStyle: {
           backgroundColor: theme.accent,
           borderRadius: 10,
-          // position: 'absolute',
+          position: 'absolute',
           borderTopWidth: 0,
           // alignItems: 'center',
           // justifyContent: 'center',

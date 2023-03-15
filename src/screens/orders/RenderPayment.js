@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View } from 'react-native';
 import { money } from '../../helpers/Numbers';
 import { useNavigation } from '@react-navigation/native';
 import { t } from 'i18n-js';
 import ButtonFilled from '../../components/ButtonFilled';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { ThemeContext } from '../../../App';
 /**
  * Render payment section
  */
 export default function RenderPayment({ order, customer }) {
   const navigation = useNavigation();
+  const { theme } = useContext(ThemeContext);
 
   const handleOnPressCustomer = () =>
     navigation.navigate('Search Customer', {
@@ -28,8 +30,8 @@ export default function RenderPayment({ order, customer }) {
     <View style={{ flexDirection: 'row' }}>
       {/* CUSTOMER SECTION */}
       <View style={{ flex: 1 }}>
-        <ButtonFilled onPress={handleOnPressCustomer} color={'#a3a3a3'} labelColor={'#fafafa'}>
-          <MaterialCommunityIcons name={'account'} size={16} />{' '}
+        <ButtonFilled onPress={handleOnPressCustomer} color={theme.accent} labelColor={theme.text}>
+          <MaterialCommunityIcons name={'account'} size={16} />
           {t('order.customer_paid_by', {
             customer: customer.names,
           })}
@@ -40,8 +42,8 @@ export default function RenderPayment({ order, customer }) {
       <View style={{ flex: 1 }}>
         <ButtonFilled
           onPress={handleOnPressPayment}
-          color={order.payments[0].method == 'credit' ? '#facc15' : '#dcfce7'}
-          labelColor={order.payments[0].method == 'credit' ? '#0f172a' : '#14532d'}
+          color={order.payments[0].method === 'credit' ? '#facc15' : '#dcfce7'}
+          labelColor={order.payments[0].method === 'credit' ? '#0f172a' : '#14532d'}
         >
           {order.payments[0].title} {'-'} {money(order.total, order.payments[0].currency)}
         </ButtonFilled>

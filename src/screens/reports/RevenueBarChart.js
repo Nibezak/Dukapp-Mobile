@@ -75,7 +75,7 @@ export default function RevenueBarChart({ startDate, endDate }) {
   }
   return (
     <>
-      <View>
+      <View style={{ alignItems: 'center' }}>
         {/* <LineChart
           style={{
             margin: 8,
