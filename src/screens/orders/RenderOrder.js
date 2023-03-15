@@ -5,70 +5,89 @@ import { money } from '../../helpers/Numbers';
 import { useNavigation } from '@react-navigation/native';
 import { getSetting } from '../../models/AsyncStorage';
 import { Feather, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useContext } from 'react';
+import { ThemeContext } from '../../../App';
 
 export default function RenderOrder({ item, parentRefresher }) {
   const navigation = useNavigation();
   const order = item.item;
-  const [customer, setCustomer] = useState({ name: 'Guest' })
+  const [customer, setCustomer] = useState({ name: 'Guest' });
   const payment = order.payments[0];
   const [currency, setCurrency] = useState(null);
+  const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
     retrieveSetting();
   }, []);
 
-
   function retrieveSetting() {
-    getSetting("app_default_currency").then(setCurrency);
+    getSetting('app_default_currency').then(setCurrency);
   }
   const dayjs = require('dayjs');
-  const date = order.created_at
-  const orderDate = payment.date_paid
+  const date = order.created_at;
+  const orderDate = payment.date_paid;
   function handleNavigation() {
     if (order.status !== 'completed') {
       navigation.navigate('Order Details', {
         order: order,
-      })
-    }
-    else {
+      });
+    } else {
       navigation.navigate('Order Receipt', {
         order: order,
         customer: customer,
-      })
+      });
     }
   }
   return (
     <TouchableOpacity
-      style={{ backgroundColor: "white", padding: 5, borderRadius: 10, marginBottom: 7, elevation: 2.5, marginTop: 3.5 }}
+      style={{
+        backgroundColor: theme.accent,
+        padding: 5,
+        borderRadius: 10,
+        marginBottom: 7,
+        elevation: 2.5,
+        marginTop: 3.5,
+      }}
       key={order.id}
       activeOpacity={0.8}
       onPress={handleNavigation}
     >
-
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 2 }}>
         <Text
-          style={{ paddingHorizontal: 5, paddingVertical: 2, borderRadius: 30, color: '#62656b' }}
+          style={{
+            paddingHorizontal: 5,
+            paddingVertical: 2,
+            borderRadius: 30,
+            color: theme.text,
+            opacity: 0.65,
+          }}
         >
           {dayjs(date).format('DD MMM YYYY')}
         </Text>
         <Text
-          style={{ paddingHorizontal: 5, paddingVertical: 2, borderRadius: 30, color: '#62656b' }}
+          style={{
+            paddingHorizontal: 5,
+            paddingVertical: 2,
+            borderRadius: 30,
+            color: theme.text,
+            opacity: 0.65,
+          }}
         >
           {/* {dayjs(date).format('h: mm A')} */}
           {orderDate}
         </Text>
       </View>
       <View style={styles.rows}>
-        <Text style={styles.orderNumberColumn}>
+        <Text style={[styles.orderNumberColumn, { color: theme.text }]}>
           {order.order_type.substr(0, 1).toUpperCase()}
           {'#' + order.id}
         </Text>
-        <Text style={styles.itemNameColumn} numberOfLines={2}>
+        <Text style={[styles.itemNameColumn, { color: theme.text }]} numberOfLines={2}>
           {order.line_items.length === 1
             ? order.line_items[0].name
             : t('order.items', { count: order.line_items.length })}
         </Text>
-        <Text style={[styles.amount]}>{money(order.total, currency)}</Text>
+        <Text style={[styles.amount, { color: theme.text }]}>{money(order.total, currency)}</Text>
         <View style={styles.itemPriceColumn}>
           <Text
             style={[
@@ -82,7 +101,6 @@ export default function RenderOrder({ item, parentRefresher }) {
           </Text>
           {order.status === 'completed' ? (
             <FontAwesome name="check-circle" size={20} color="#10b981" style={{ marginRight: 5 }} />
-
           ) : (
             <>
               <MaterialCommunityIcons name="dots-circle" size={20} color="#64748B" />
@@ -101,7 +119,6 @@ const styles = {
     marginVertical: 1.8,
     paddingHorizontal: 1,
     marginHorizontal: 3,
-
   },
 
   amount: {

@@ -1,40 +1,46 @@
-import React from "react";
-import { View, TouchableOpacity, Text, ScrollView } from "react-native";
+import React from 'react';
+import { View, TouchableOpacity, Text, ScrollView } from 'react-native';
 
 /**
  * Suggestion button
  */
 export default function SuggestionButton(props) {
+  const { theme } = props;
   return (
-    <ScrollView style={styles.scrollView}>
-      <View style={styles.view}>
-        <TouchableOpacity style={styles.suggestionButton} onPress={props.onPress}>
-          <Text style={styles.suggestionText}>{props.title}</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+    // <ScrollView style={[styles.scrollView, { backgroundColor: theme.background }]}>
+    <View style={[styles.view]}>
+      <TouchableOpacity
+        style={[
+          styles.suggestionButton,
+          { backgroundColor: theme.accent, borderBottomWidth: 0.3, borderColor: theme.text },
+        ]}
+        onPress={props.onPress}
+      >
+        <Text style={[styles.suggestionText, { color: theme.text }]}>{props.title}</Text>
+      </TouchableOpacity>
+    </View>
+    // </ScrollView>
   );
 }
 
 const styles = {
   suggestionButton: {
-    flexDirection: "row",
+    flexDirection: 'row',
     borderRadius: 10,
-    borderWidth: 0.5,
-    borderColor: "#f9fafb",
-    marginHorizontal: 1.5,
+    border: 0.5,
+    borderColor: '#f9fafb',
+    marginHorizontal: 2,
     marginVertical: 1,
     paddingVertical: 10,
-    backgroundColor: "#f1f1f1"
+    backgroundColor: '#f1f1f1',
   },
   suggestionText: {
-    color: "#2d3748",
-    fontWeight: "600",
+    fontWeight: '600',
     fontSize: 16,
-    paddingHorizontal: 2,
+    paddingHorizontal: 10,
   },
-  scrollView: {
+  view: {
     padding: 3,
-    backgroundColor: "#f4f4f4"
+    // backgroundColor: '#f4f4f4',
   },
 };

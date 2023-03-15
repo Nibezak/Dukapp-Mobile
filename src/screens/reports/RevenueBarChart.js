@@ -1,7 +1,8 @@
 import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { View, Dimensions, InteractionManager } from 'react-native';
 import { BarChart, LineChart } from 'react-native-chart-kit';
+import { ThemeContext } from '../../../App';
 import ReportService from '../../services/ReportService';
 
 const screenWidth = Dimensions.get('window').width;
@@ -34,6 +35,7 @@ export default function RevenueBarChart({ startDate, endDate }) {
   const [inStock, setInStock] = useState(0);
   const [lowStock, setLowStock] = useState(0);
   const [reportDays, setReportDays] = useState(7);
+  const { theme } = useContext(ThemeContext);
   const [dataSets, setDataSets] = useState({
     days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     profits: [0, 0, 0, 0, 0, 0, 0],
@@ -73,7 +75,7 @@ export default function RevenueBarChart({ startDate, endDate }) {
   }
   return (
     <>
-      <View>
+      <View style={{ alignItems: 'center' }}>
         {/* <LineChart
           style={{
             margin: 8,
@@ -93,9 +95,9 @@ export default function RevenueBarChart({ startDate, endDate }) {
           height={300}
           fromZero={false}
           chartConfig={{
-            backgroundColor: '#FFFFF',
-            backgroundGradientFrom: '#f7fafc',
-            backgroundGradientTo: '#f7fafc',
+            // backgroundColor: '#FFFFF',
+            backgroundGradientFrom: theme.accent,
+            backgroundGradientTo: theme.accent,
             decimalPlaces: 0,
             color: (opacity = 1) => `rgba(16, 180, 128, ${opacity})`,
             style: {

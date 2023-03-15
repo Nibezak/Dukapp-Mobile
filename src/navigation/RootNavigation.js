@@ -66,10 +66,11 @@ import { db, auth } from '../../firebase';
 import PropTypes from 'prop-types';
 import Database from '../database/Database';
 import { TransactionsScreen } from '../screens/account/TransactionsScreen';
+import { ThemeContext } from '../../App';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
-const OrderType = 'sale'
+const OrderType = 'sale';
 function AuthStackNavigator() {
   enableScreens();
   return (
@@ -92,7 +93,6 @@ function NavDrawer() {
       initialRouteName="InitialSettings"
       screenOptions={{ headerShown: false, headerBackTitleVisible: false }}
     >
-
       <Drawer.Screen
         name="InitialSettings"
         component={OnboardingScreen}
@@ -145,9 +145,23 @@ function NavDrawer() {
 function NavTab() {
   enableScreens();
   const navigation = useNavigation();
+  const { theme } = useContext(ThemeContext);
 
   return (
-    <Tab.Navigator initialRouteName="HomeScreen">
+    <Tab.Navigator
+      initialRouteName="HomeScreen"
+      screenOptions={{
+        tabBarStyle: {
+          backgroundColor: theme.accent,
+          borderRadius: 10,
+          position: 'absolute',
+          borderTopWidth: 0,
+          // alignItems: 'center',
+          // justifyContent: 'center',
+        },
+        // tabBarBackground: { backgroundColor: '#000' },
+      }}
+    >
       <Tab.Screen
         name="HomeScreen"
         component={WelcomeScreen}
@@ -155,6 +169,7 @@ function NavTab() {
           tabBarLabel: '',
           tabBarActiveTintColor: '#47a67f',
           tabBarIcon: ({ color, size }) => <Ionicons name="md-home" size={size} color={color} />,
+          // tabBarBackground: '#000',
         }}
       />
 
@@ -179,12 +194,7 @@ function NavTab() {
           tabBarLabel: '',
           tabBarActiveTintColor: '#47a67f',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name="md-add-circle"
-              size={36}
-              component={OrderScreen}
-              color={color}
-            />
+            <Ionicons name="md-add-circle" size={36} component={OrderScreen} color={color} />
           ),
         }}
       />
@@ -219,12 +229,12 @@ export function NavStack() {
   const navigation = useNavigation();
 
   return (
-    <Stack.Navigator initialRouteName="Welcome" animationEnabled={true} >
+    <Stack.Navigator initialRouteName="Welcome" animationEnabled={true}>
       <Stack.Screen name="InitialSettings" component={OnboardingScreen} />
       <Stack.Screen name="Welcome" component={NavTab} options={{ headerShown: false }} />
       {/** Orders*/}
 
-      <Stack.Screen name="Orders" component={OrderScreen} options={{ presentation: "modal", }} />
+      <Stack.Screen name="Orders" component={OrderScreen} options={{ presentation: 'modal' }} />
       <Stack.Screen name="Order Details" component={OrderDetailsSCreen} />
       <Stack.Screen name="Add Payment To Order" component={OrderPaymentScreen} />
       <Stack.Screen name="Order Receipt" component={ReceiptScreen} />
@@ -232,14 +242,18 @@ export function NavStack() {
 
       {/** Order Purchase Screen */}
       <Stack.Screen name="Purchase Details" component={PurchaseDetailsScreen} />
-      <Stack.Screen name="Purchase Orders" component={PurchaseOrderScreen} options={{ presentation: "modal", }} />
+      <Stack.Screen
+        name="Purchase Orders"
+        component={PurchaseOrderScreen}
+        options={{ presentation: 'modal' }}
+      />
       {/** Items*/}
       <Stack.Screen
         name="New Item"
         component={ItemCreateScreen}
         options={{
           ...TransitionPresets.ModalTransition,
-          headerBackTitle: ''
+          headerBackTitle: '',
         }}
       />
       <Stack.Screen name="Edit Item" component={ItemEditScreen} />
@@ -248,7 +262,7 @@ export function NavStack() {
         component={ItemSearchScreen}
         options={{
           headerShown: false,
-          headerBackTitle: ''
+          headerBackTitle: '',
         }}
       />
       <Stack.Screen
@@ -256,7 +270,7 @@ export function NavStack() {
         component={ItemListScreen}
         options={{
           title: 'Stock Items',
-          headerBackTitle: ''
+          headerBackTitle: '',
         }}
       />
       <Stack.Screen
@@ -264,22 +278,24 @@ export function NavStack() {
         component={LowStockScreen}
         options={{
           title: 'Low Stock',
-          headerBackTitle: ''
+          headerBackTitle: '',
         }}
       />
-      <Stack.Screen name="In Stock" component={SummaryReportScreen} options={{
-        title: 'In Stock',
-        headerBackTitle: ''
-
-      }} />
+      <Stack.Screen
+        name="In Stock"
+        component={SummaryReportScreen}
+        options={{
+          title: 'In Stock',
+          headerBackTitle: '',
+        }}
+      />
       {/** Customer*/}
       <Stack.Screen
         name="New Customer"
         component={CustomerCreateScreen}
         options={{
           ...TransitionPresets.ModalTransition,
-          headerBackTitle: ''
-
+          headerBackTitle: '',
         }}
       />
       <Stack.Screen name="Edit Customer" component={CustomerEditScreen} />
@@ -331,9 +347,13 @@ export function NavStack() {
         headerBackTitle: ''
       }} /> */}
       {/** transactions */}
-      <Stack.Screen name="SMS Transactions" component={TransactionsScreen} options={{
-        title: 'Transactions',
-      }} />
+      <Stack.Screen
+        name="SMS Transactions"
+        component={TransactionsScreen}
+        options={{
+          title: 'Transactions',
+        }}
+      />
 
       {/** Settings*/}
       <Stack.Screen name="General Settings" component={SettingGeneralScreen} />
@@ -357,7 +377,6 @@ export default function RootNavigation() {
       setIsLoading(false);
     }, 1000);
   }, [user]);
-
 
   // Show loading indicator as we wait for the secure storage to
   // be read for use.
@@ -389,5 +408,3 @@ export default function RootNavigation() {
     </>
   );
 }
-
-

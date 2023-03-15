@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { t } from 'i18n-js';
 import { MaterialIcons } from '@expo/vector-icons';
 import { money, number } from '../../helpers/Numbers';
 import { getSetting } from '../../models/AsyncStorage';
+import { ThemeContext } from '../../../App';
 /**
  * Render Item of the chat
  */
@@ -15,16 +16,17 @@ export default function RenderOrderLineItem({
   onChangingQuantity,
 }) {
   const [currency, setCurrency] = useState(null);
+  const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
     getSetting('app_default_currency').then(setCurrency);
   }, []);
 
   return (
-    <View style={styles.row}>
+    <View style={[styles.row, { borderBottomColor: theme.text }]}>
       <View style={styles.itemNameColumn}>
-        <Text style={styles.itemName}>{item.name}</Text>
-        <Text style={styles.unitPrice}>
+        <Text style={[styles.itemName, { color: theme.text }]}>{item.name}</Text>
+        <Text style={[styles.unitPrice, { color: theme.text, opacity: 0.7 }]}>
           {t('order.unit_price')}
           {money(item.unit_sales_price, currency)}
         </Text>
@@ -32,26 +34,26 @@ export default function RenderOrderLineItem({
 
       <View style={styles.quantityColumn}>
         <TouchableOpacity onPress={onReduceQuantity}>
-          <MaterialIcons name="remove" size={30} color="red" />
+          <MaterialIcons name="remove" size={30} color={theme.danger} />
         </TouchableOpacity>
 
         <TextInput
           editable={false}
-          style={styles.quantityInput}
+          style={[styles.quantityInput, { color: theme.text, backgroundColor: theme.accent }]}
           defaultValue={number(item.quantity)}
           onChangeText={onChangingQuantity}
           keyboardType="numeric"
         />
 
         <TouchableOpacity onPress={onIncreaseQuantity}>
-          <MaterialIcons name="add" size={30} color="#16a34a" />
+          <MaterialIcons name="add" size={30} color={theme.primary} />
         </TouchableOpacity>
       </View>
 
       <View style={styles.priceColumn}>
         <TextInput
           defaultValue={number(item.total).toString()}
-          style={styles.totalPriceInput}
+          style={[styles.totalPriceInput, { color: theme.text, backgroundColor: theme.accent }]}
           onChangeText={(text) => onPriceChange(text)}
           keyboardType="numeric"
         />
@@ -69,8 +71,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 10,
     paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#a0aec0',
+    borderBottomWidth: 0.5,
   },
   totalPriceInput: {
     paddingHorizontal: 5,

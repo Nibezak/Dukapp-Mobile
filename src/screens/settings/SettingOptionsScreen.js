@@ -1,24 +1,28 @@
-import { MaterialIcons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
-import {
-  Text,
-  FlatList,
-  TouchableOpacity,
-  View,
-  StyleSheet,
-} from "react-native";
-import BackupService from "../../services/BackupService";
-import ItemService from "../../services/ItemService";
+import { MaterialIcons } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
+import { useContext } from 'react';
+import { Text, FlatList, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { ThemeContext } from '../../../App';
+import BackupService from '../../services/BackupService';
+import ItemService from '../../services/ItemService';
 
 export default function SettingOPtionsScreen({ navigation, route }) {
   const { setting } = route.params;
   const [isLoading, setIsLoading] = useState(0);
+  const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
     navigation.setOptions({
       headerTitle: setting.title,
+      headerTitleStyle: {
+        color: theme.text,
+      },
+      headerStyle: {
+        backgroundColor: theme.accent,
+        color: theme.text,
+      },
     });
-  }, []);
+  }, [theme, navigation, setting.title]);
 
   /**
    * Handle Database Seed
@@ -41,25 +45,22 @@ export default function SettingOPtionsScreen({ navigation, route }) {
    */
   async function handleAction(methodName, settingKey) {
     switch (methodName.toLowerCase()) {
-      case "handledatabaseseed":
+      case 'handledatabaseseed':
         seedDatabase(settingKey);
         break;
-      case "handledatabasereset":
+      case 'handledatabasereset':
         handleDatabaseReset();
         break;
-      case "backup_application":
+      case 'backup_application':
         BackupService.backupEntireApp();
-        ToastAndroid.show(
-          t("setting.application_backup_is_done"),
-          ToastAndroid.SHORT
-        );
+        ToastAndroid.show(t('setting.application_backup_is_done'), ToastAndroid.SHORT);
 
         break;
-      case "logout":
+      case 'logout':
         logout();
         break;
       default:
-        console.log("Unable to find method associated with " + methodName);
+        console.log('Unable to find method associated with ' + methodName);
         break;
     }
   }
@@ -72,18 +73,25 @@ export default function SettingOPtionsScreen({ navigation, route }) {
         onPress={() =>
           item.action
             ? handleAction(item.action, item.key)
-            : navigation.navigate("Setting Edit", { setting: item })
+            : navigation.navigate('Setting Edit', { setting: item })
         }
       >
         <View style={[styles.row]}>
           <View style={styles.rowText}>
-            <Text style={[styles.title, { color: item?.color }]}>
+            <Text style={[styles.title, { color: item.color ? item.color : theme.text }]}>
               {item.title}
             </Text>
             {
               /** Display Description if available */
               item.description ? (
-                <Text style={styles.description}>{item.description}</Text>
+                <Text
+                  style={[
+                    styles.description,
+                    { color: item.color ? item.color : theme.text, opacity: 0.7 },
+                  ]}
+                >
+                  {item.description}
+                </Text>
               ) : (
                 <></>
               )
@@ -94,11 +102,13 @@ export default function SettingOPtionsScreen({ navigation, route }) {
     );
   }
   return (
-    <FlatList
-      data={setting.options}
-      renderItem={renderItem}
-      keyExtractor={(item, index) => index.toString()}
-    />
+    <View style={{ backgroundColor: theme.background, flex: 1 }}>
+      <FlatList
+        data={setting.options}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+      />
+    </View>
   );
 }
 
@@ -107,10 +117,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   row: {
-    flexDirection: "row",
+    flexDirection: 'row',
     padding: 15,
     borderBottomWidth: 1,
-    borderBottomColor: "#e2e8f0",
+    borderBottomColor: '#e2e8f0',
   },
   avatar: {
     borderRadius: 20,
@@ -122,7 +132,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     paddingRight: 10,
   },
 });

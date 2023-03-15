@@ -13,39 +13,44 @@ import { generalSettings } from './settings';
 import BackupService from '../../services/BackupService';
 import { useNavigation } from '@react-navigation/native';
 import ItemInventory from '../../models/ItemInventory';
-import {
-  BottomSheetModal,
-  BottomSheetModalProvider
-} from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useRef } from 'react';
 import { TextInput } from 'react-native';
 import * as Analytics from 'expo-firebase-analytics';
 import { onAuthStateChanged } from '@firebase/auth';
 import { auth } from '../../../firebase';
-
+import { ThemeContext } from '../../../App';
+import { StatusBar } from 'expo-status-bar';
 
 export default function GeneralSettingsScreen() {
   const { logout } = useContext(AuthContext);
   const [settings, setSettings] = useState(generalSettings);
   const [text, setText] = useState('');
   const bottomSheetModalRef = useRef(null);
-  const snapPoints = ["38%", "48%"];
+  const snapPoints = ['38%', '48%'];
   const [user, setUser] = useState(null);
+  const { theme } = useContext(ThemeContext);
 
   const navigation = useNavigation();
 
   useEffect(() => {
-    tracker()
+    tracker();
     // setting up the header
     navigation.setOptions({
       headerTitle: 'Settings',
       headerTitleAlign: 'center',
+      headerTitleStyle: {
+        color: theme.text,
+      },
+      headerStyle: {
+        backgroundColor: theme.accent,
+      },
       headerLeft: () => (
         <TouchableOpacity style={{ paddingLeft: 10 }}>
           <AntDesign
             name="menuunfold"
             size={24}
-            color="#47a67f"
+            color={theme.primary}
             onPress={() => navigation.openDrawer()}
           />
         </TouchableOpacity>
@@ -53,11 +58,14 @@ export default function GeneralSettingsScreen() {
 
       headerRight: () => (
         <>
-          <View style={{ flexDirection: "row" }}>
-            <MaterialCommunityIcons name="message-processing-outline" size={24}
-              color="#47a67f"
+          <View style={{ flexDirection: 'row' }}>
+            <MaterialCommunityIcons
+              name="message-processing-outline"
+              size={24}
+              color={theme.primary}
               onPress={handleFeedback}
-              style={{ paddingRight: 10, marginTop: 5 }} />
+              style={{ paddingRight: 10, marginTop: 5 }}
+            />
           </View>
         </>
       ),
@@ -86,13 +94,11 @@ export default function GeneralSettingsScreen() {
       user: user.email,
       screen: 'screens',
       navigation: 'Settings Screen',
-
     });
   }
 
   function handleFeedback() {
-
-    bottomSheetModalRef.current?.present()
+    bottomSheetModalRef.current?.present();
   }
 
   /**
@@ -149,16 +155,20 @@ export default function GeneralSettingsScreen() {
             <MaterialIcons
               name={item.icon ? item.icon : 'settings'}
               size={24}
-              color={item?.color}
+              color={item.color ? item?.color : theme.text}
               style={styles.avatar}
             />
             <View style={styles.rowText}>
-              <Text style={[styles.title, { color: item?.color }]}>{item.title}</Text>
+              <Text style={[styles.title, { color: item.color ? item?.color : theme.text }]}>
+                {item.title}
+              </Text>
 
               {
                 /** Display Description if available */
                 item.description ? (
-                  <Text style={styles.description}> {item.description} </Text>
+                  <Text style={[styles.description, { color: theme.text, opacity: 0.7 }]}>
+                    {item.description}
+                  </Text>
                 ) : (
                   <></>
                 )
@@ -166,13 +176,13 @@ export default function GeneralSettingsScreen() {
             </View>
           </View>
         </TouchableOpacity>
-
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar style={theme.statusbar} />
       <FlatList
         data={settings}
         renderItem={renderItem}
@@ -183,25 +193,30 @@ export default function GeneralSettingsScreen() {
           ref={bottomSheetModalRef}
           index={0}
           snapPoints={snapPoints}
-          backgroundStyle={{ backgroundColor: "#F4F4F5", padding: 10, elevation: 5, borderTopColor: "#D4D4D8", borderTopWidth: 1 }}
+          backgroundStyle={{
+            backgroundColor: '#F4F4F5',
+            padding: 10,
+            elevation: 5,
+            borderTopColor: '#D4D4D8',
+            borderTopWidth: 1,
+          }}
         >
-          <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
-            <Text style={{ color: "gray", fontSize: 14 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+            <Text style={{ color: 'gray', fontSize: 14 }}>
               Give us A feedback on how to improve
             </Text>
-            <TouchableOpacity style={styles.button} onPress={() => console.log("thank you")}>
+            <TouchableOpacity style={styles.button} onPress={() => console.log('thank you')}>
               <Ionicons name="send" size={20} color="#47a67f" />
             </TouchableOpacity>
           </View>
-          <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}>
+          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
             <TextInput
               style={styles.input}
               placeholder="What's on your mind?"
-              onChangeText={text => setText(text)}
+              onChangeText={(text) => setText(text)}
               value={text}
             />
           </View>
-
         </BottomSheetModal>
       </BottomSheetModalProvider>
     </View>
@@ -232,10 +247,10 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   input: {
-    height: "40%",
+    height: '40%',
     width: '80%',
     borderRadius: 10,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     paddingHorizontal: 10,
     marginVertical: 10,
   },
