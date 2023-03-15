@@ -18,7 +18,8 @@ import { StockItemAnimation } from '../../components/StockItemAnimation';
 import * as Analytics from 'expo-firebase-analytics';
 import { onAuthStateChanged } from '@firebase/auth';
 import { auth } from '../../../firebase';
-
+import { ThemeContext } from '../../../App';
+import { useContext } from 'react';
 
 //const AVATAR =
 //'https://cdn4.vectorstock.com/i/1000x1000/16/38/add-item-icon-vector-16301638.jpg';
@@ -28,6 +29,7 @@ export default function ItemListScreen({ navigation }) {
   const [items, setItems] = useState([]);
   const [showLoading, setShowLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const { theme } = useContext(ThemeContext);
 
   useFocusEffect(
     useCallback(() => {
@@ -48,13 +50,11 @@ export default function ItemListScreen({ navigation }) {
 
   // track screen on google analytics
   async function tracker() {
-
     Analytics.setUserId(user.email);
     Analytics.logEvent('users', {
       user: user.email,
       screen: 'screens',
       navigation: 'Item Screen',
-
     });
   }
   /**
@@ -76,18 +76,26 @@ export default function ItemListScreen({ navigation }) {
     navigation.setOptions({
       headerTitle: t('item.items_header'),
       headerTitleAlign: 'center',
+      headerTitleStyle: {
+        color: theme.text,
+      },
       headerLeft: () => (
         <TouchableOpacity style={{ paddingLeft: 10 }}>
           <AntDesign
             name="menuunfold"
             size={24}
-            color="#47a67f"
+            color={theme.primary}
             onPress={() => navigation.openDrawer()}
           />
         </TouchableOpacity>
       ),
 
-      headerRight: () => <SearchButton onPress={() => navigation.navigate('Item Search')} />,
+      headerRight: () => (
+        <SearchButton onPress={() => navigation.navigate('Item Search')} color={theme.primary} />
+      ),
+      headerStyle: {
+        backgroundColor: theme.accent,
+      },
     });
   }
 
@@ -119,7 +127,7 @@ export default function ItemListScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {items.length > 0 ? (
         <>
           <FlatList

@@ -1,5 +1,7 @@
-import React from "react";
-import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import React from 'react';
+import { useContext } from 'react';
+import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
+import { ThemeContext } from '../../App';
 
 export default function Metric({
   number,
@@ -9,18 +11,18 @@ export default function Metric({
   titleStyle,
   descriptionStyle,
 }) {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <TouchableOpacity
       activeOpacity={activeOpacity}
-      style={styles.buttonStyle}
+      style={[styles.buttonStyle, { backgroundColor: theme.accent }]}
       onPress={onPress}
     >
       <View style={styles.row}>
         <View style={styles.rowText}>
-          <Text style={[styles.title, titleStyle]}>{number}</Text>
-          <Text style={[styles.description, descriptionStyle]}>
-            {description}
-          </Text>
+          <Text style={[styles.title, { color: theme.text }]}>{number}</Text>
+          <Text style={[styles.description, descriptionStyle]}>{description}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -32,25 +34,25 @@ export default function Metric({
  */
 const styles = StyleSheet.create({
   row: {
-    alignContent: "center",
-    flexDirection: "row",
+    alignContent: 'center',
+    flexDirection: 'row',
     padding: 2,
   },
   rowText: {
     flex: 1,
   },
   description: {
-    justifyContent: "center",
+    justifyContent: 'center',
     fontSize: 14,
-    color: "#4a5568",
-    alignSelf: "center",
+    color: '#4a5568',
+    alignSelf: 'center',
   },
   title: {
-    color: "#4a5568",
+    color: '#4a5568',
     fontSize: 15,
-    alignSelf: "center",
-    textAlign: "center",
-    fontWeight: "bold",
+    alignSelf: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
   buttonStyle: {
     flex: 1,
@@ -60,6 +62,6 @@ const styles = StyleSheet.create({
     marginVertical: 3,
     padding: 5,
     margin: 1,
-    backgroundColor: "#fff",
+    // backgroundColor: '#fff',
   },
 });

@@ -10,6 +10,12 @@ import en from './src/translations/en';
 import fr from './src/translations/fr';
 import rw from './src/translations/rw';
 import registerNNPushToken from 'native-notify';
+import { Theme } from './src/helpers/theme';
+import { useState } from 'react';
+import { createContext } from 'react';
+import { LogBox } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect } from 'react';
 
 // Set the key-value pairs for the different languages you want to support.
 i18n.translations = {
@@ -27,7 +33,6 @@ getSetting('app_language').then((lang) => (i18n.locale = lang));
 i18n.fallbacks = true;
 
 // log an event when the app is launched
-
 
 function App() {
   return (
@@ -48,11 +53,27 @@ const theme = {
   },
 };
 
+export const ThemeContext = createContext();
+LogBox.ignoreAllLogs();
+
 export default function Main() {
   registerNNPushToken(5821, 'VZzLGzSIMPpBmmQN0CMG2I');
+  const [theme, setTheme] = useState(Theme.light);
+  const [currentTheme, setCurrentTheme] = useState(Theme.light);
+  AsyncStorage.getItem('@theme').then(setCurrentTheme);
+
+  useEffect(() => {
+    if (currentTheme && currentTheme === 'light') {
+      setTheme(Theme.light);
+    } else {
+      setTheme(Theme.dark);
+    }
+  }, [currentTheme]);
   return (
-    <PaperProvider theme={theme}>
+    // <PaperProvider theme={theme}>
+    <ThemeContext.Provider value={{ theme, setTheme }}>
       <App />
-    </PaperProvider>
+    </ThemeContext.Provider>
+    // </PaperProvider>
   );
 }

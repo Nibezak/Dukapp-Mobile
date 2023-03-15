@@ -1,11 +1,5 @@
 import React, { useEffect, useCallback, useState, useContext, useRef } from 'react';
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  Image,
-  InteractionManager,
-} from 'react-native';
+import { View, FlatList, StyleSheet, Image, InteractionManager } from 'react-native';
 import HomeSummary from './HomeSummary';
 import { t } from 'i18n-js';
 import RenderOrder from '../orders/RenderOrder';
@@ -19,12 +13,15 @@ import { getSetting } from '../../models/AsyncStorage';
 import * as Analytics from 'expo-firebase-analytics';
 import { onAuthStateChanged } from '@firebase/auth';
 import { auth } from '../../../firebase';
+import { ThemeContext } from '../../../App';
 export default function WelcomeScreen({ navigation }) {
   const [orders, setOrders] = useState([]);
   const [orderType, setOrderType] = useState('sale');
   const [showLoading, setShowLoading] = useState(true);
   const [currency, setCurrency] = useState('RWF');
   const [user, setUser] = useState(null);
+  const { theme } = useContext(ThemeContext);
+
   useFocusEffect(
     useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
@@ -40,19 +37,17 @@ export default function WelcomeScreen({ navigation }) {
     });
     tracker();
     setHeader();
-    retrieveCurrency()
+    retrieveCurrency();
     refreshOrders();
-  }, []);
+  }, [theme]);
 
   // track screen on google analytics
   async function tracker() {
-
     Analytics.setUserId(user.email);
     Analytics.logEvent('users', {
       user: user.email,
       screen: 'screens',
       navigation: 'Home Screen',
-
     });
   }
 
@@ -60,7 +55,11 @@ export default function WelcomeScreen({ navigation }) {
     navigation.setOptions({
       headerTitle: () => (
         <Image
-          source={require('./../../../assets/snack-icon.png')}
+          source={
+            theme.theme === 'light'
+              ? require('./../../../assets/snack-icon.png')
+              : require('./../../../assets/snack-icon-dark.png')
+          }
           style={{ width: 120, height: 100 }}
         />
       ),
@@ -69,7 +68,7 @@ export default function WelcomeScreen({ navigation }) {
         <AntDesign
           name="menuunfold"
           size={24}
-          color="#47a67f"
+          color={theme.primary}
           onPress={() => navigation.openDrawer()}
           style={{ paddingLeft: 10 }}
         />
@@ -77,13 +76,14 @@ export default function WelcomeScreen({ navigation }) {
 
       headerRight: () => (
         <>
-          <View style={{ flexDirection: "row" }}>
-            <AntDesign name="shoppingcart"
+          <View style={{ flexDirection: 'row' }}>
+            <AntDesign
+              name="shoppingcart"
               size={24}
-              color="#47a67f"
+              color={theme.primary}
               onPress={() =>
-                navigation.navigate("Purchase Orders", {
-                  order_type: "purchase",
+                navigation.navigate('Purchase Orders', {
+                  order_type: 'purchase',
                 })
               }
               style={{ paddingRight: 10, marginTop: 5 }}
@@ -91,15 +91,20 @@ export default function WelcomeScreen({ navigation }) {
           </View>
         </>
       ),
+      headerStyle: {
+        backgroundColor: theme.accent,
+      },
     });
   }
 
   // Fetch Orders
   async function refreshOrders() {
-    return OrderService.ordersWithItems(setOrders, orderType, null, 8).then(() => setShowLoading(false))
+    return OrderService.ordersWithItems(setOrders, orderType, null, 8).then(() =>
+      setShowLoading(false)
+    );
   }
   function retrieveCurrency() {
-    getSetting("app_default_currency").then(setCurrency);
+    getSetting('app_default_currency').then(setCurrency);
   }
 
   /**
@@ -134,7 +139,7 @@ export default function WelcomeScreen({ navigation }) {
 
   // If we reach here it means that the list of customers has finished loading
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/** Welcome Section of the screen */}
 
       {orders.length === 0 ? (
@@ -168,8 +173,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "white",
-    paddingHorizontal: 5,
+    // backgroundColor: 'white',
+    // paddingHorizontal: 5,
   },
   sales: {
     marginTop: 5,
@@ -181,15 +186,15 @@ const styles = StyleSheet.create({
     color: '#718096',
   },
   input: {
-    height: "40%",
+    height: '40%',
     width: '80%',
     borderRadius: 10,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     paddingHorizontal: 10,
     marginVertical: 10,
   },
   button: {
     paddingHorizontal: 10,
-    marginHorizontal: 5
-  }
+    marginHorizontal: 5,
+  },
 });
