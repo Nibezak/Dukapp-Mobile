@@ -60,7 +60,6 @@ import { ByMobileScreen } from '../screens/reports/ByMobileScreen';
 import { InStockScreen } from '../screens/reports/InStockScreen';
 import PurchaseOrderScreen from '../screens/orders/PurchaseOrderScreen';
 import PurchaseDetailsScreen from '../screens/orders/PurchaseDetailsScreen';
-import PhoneNumberLoginScreen from '../screens/auth/PhoneNumberLoginScreen';
 import { doc, getDoc } from '@firebase/firestore';
 import { db, auth } from '../../firebase';
 import PropTypes from 'prop-types';
@@ -75,12 +74,11 @@ function AuthStackNavigator() {
   enableScreens();
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName="PhoneNumber"
       screenOptions={{ headerShown: false, headerBackTitleVisible: false }}
     >
       <Stack.Screen name="Guest Home" component={GuestHomeScreen} />
       <Stack.Screen name="PhoneNumber" component={PhoneNumberScreen} />
-      <Stack.Screen name="Login" component={PhoneNumberLoginScreen} />
       <Stack.Screen name="Otp" component={OtpScreen} />
     </Stack.Navigator>
   );
