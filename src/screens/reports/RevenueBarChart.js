@@ -65,7 +65,7 @@ export default function RevenueBarChart({ startDate, endDate }) {
     datasets: [
       {
         data: dataSets.profits,
-        color: (opacity = 9) => `rgba(16, 185, 129, ${opacity})`, // optional
+        color: (opacity = 9) => `rgba(16, 180, 128, ${opacity})`, // optional
         strokeWidth: 2, // optional
       },
     ],
@@ -91,22 +91,40 @@ export default function RevenueBarChart({ startDate, endDate }) {
         /> */}
         <BarChart
           data={barData}
-          width={Dimensions.get('window').width - 16}
+          width={Dimensions.get('window').width - 20}
+          // hidePointsAtIndex={[0, 1, 2, 3, 5, 6]}
+          segments={1}
           height={300}
           fromZero={false}
+          // withCustomBarColorFromData
+          // withInnerLines={false}
+          showBarTops={false}
+          showValuesOnTopOfBars={true}
+          withHorizontalLabels={false}
           chartConfig={{
-            // backgroundColor: '#FFFFF',
+            // sty
+            formatTopBarValue: (value) => formatNumber(value),
+            fillShadowGradientToOpacity: 0.6,
+            fillShadowGradientFromOpacity: 0.6,
             backgroundGradientFrom: theme.accent,
             backgroundGradientTo: theme.accent,
+            barRadius: 10,
+            barPercentage: 0.4,
             decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(16, 180, 128, ${opacity})`,
-            style: {
-              borderRadius: 16,
+            color: (opacity = 0) => `rgba(16, 180, 128, ${opacity})`,
+            propsForBackgroundLines: {
+              strokeDasharray: '10',
+            },
+            propsForLabels: {
+              fontSize: 10,
+              fill: theme.text,
             },
           }}
           style={{
             marginVertical: 2,
             borderRadius: 10,
+            elevation: 5,
+            alignItems: 'flex-start',
           }}
         />
       </View>

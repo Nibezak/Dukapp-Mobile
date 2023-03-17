@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import {
   StyleSheet,
   View,
@@ -14,6 +14,7 @@ import { ReceiptAnimation } from '../../components/ReceiptAnimation';
 import RenderReceipt from '../orders/RenderReceipt';
 import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { ThemeContext } from '../../../App';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -24,6 +25,7 @@ export default function SaleReceiptsScreen({ navigation, route }) {
   const [items, setItems] = useState([]);
   const [setLastOrder, setsetLastOrder] = useState();
   const [showLoading, setShowLoading] = useState(true);
+  const { theme } = useContext(ThemeContext);
 
   useFocusEffect(
     useCallback(() => {
@@ -38,8 +40,8 @@ export default function SaleReceiptsScreen({ navigation, route }) {
   useEffect(() => {
     getItems();
     refreshOrders();
-    setHeader()
-  }, [orderType]);
+    setHeader();
+  }, [orderType, theme]);
 
   /**
    * Fetch Orders
@@ -51,26 +53,36 @@ export default function SaleReceiptsScreen({ navigation, route }) {
   function setHeader() {
     navigation.setOptions({
       headerTitleAlign: 'center',
+      headerStyle: {
+        backgroundColor: theme.accent,
+      },
+      headerTintColor: theme.text,
       headerRight: () => (
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ paddingHorizontal: 10, marginHorizontal: 10, }}>
-          <AntDesign name="minuscircleo" size={24} color="#718096" style={{ fontWeight: "semibold" }} />
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ paddingHorizontal: 10, marginHorizontal: 10 }}
+        >
+          <AntDesign
+            name="minuscircleo"
+            size={24}
+            color={theme.primary}
+            style={{ fontWeight: 'semibold' }}
+          />
         </TouchableOpacity>
       ),
       headerLeft: () => (
         <AntDesign
           name="menuunfold"
           size={24}
-          color="#47a67f"
+          color={theme.primary}
           onPress={() => navigation.openDrawer()}
           style={{ paddingLeft: 10 }}
         />
       ),
     });
-
   }
   async function getItems() {
-    ItemService.getItems()
-      .then(setItems);
+    ItemService.getItems().then(setItems);
   }
 
   function refreshOrders() {
@@ -79,14 +91,11 @@ export default function SaleReceiptsScreen({ navigation, route }) {
     });
   }
 
-
-
   const renderOrder = useCallback((item) => (
     <View style={{ flex: 0.5, marginHorizontal: 2 }}>
       <RenderReceipt item={item} index={item.id} key={item.id} />
     </View>
   ));
-
 
   const keyExtractor = useCallback((item, index) => index.toString(), []);
 
@@ -96,8 +105,15 @@ export default function SaleReceiptsScreen({ navigation, route }) {
    */
   if (showLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: theme.background,
+        }}
+      >
+        <ActivityIndicator style={{ margin: 8 }} size="small" color={theme.primary} />
       </View>
     );
   }
@@ -106,10 +122,9 @@ export default function SaleReceiptsScreen({ navigation, route }) {
    * Render to the screen
    */
   return (
-    <View style={{ marginVertical: 10, }}>
+    <View style={{ marginVertical: 10 }}>
       {orders.length > 0 ? (
         <FlatList
-
           style={{ bottom: 1 }}
           data={orders}
           renderItem={renderOrder}
@@ -128,7 +143,6 @@ export default function SaleReceiptsScreen({ navigation, route }) {
  * Styles for the
  */
 const styles = StyleSheet.create({
-
   row: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',

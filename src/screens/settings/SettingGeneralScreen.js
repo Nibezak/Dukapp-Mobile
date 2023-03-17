@@ -39,12 +39,8 @@ export default function GeneralSettingsScreen() {
     navigation.setOptions({
       headerTitle: 'Settings',
       headerTitleAlign: 'center',
-      headerTitleStyle: {
-        color: theme.text,
-      },
-      headerStyle: {
-        backgroundColor: theme.accent,
-      },
+      headerTintColor: theme.text,
+      headerStyle: { backgroundColor: theme.accent },
       headerLeft: () => (
         <TouchableOpacity style={{ paddingLeft: 10 }}>
           <AntDesign
@@ -74,7 +70,7 @@ export default function GeneralSettingsScreen() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
     });
-  });
+  }, [theme]);
 
   /**
    * Get General Settings

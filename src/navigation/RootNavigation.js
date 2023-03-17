@@ -60,7 +60,6 @@ import LowStockScreen from '../screens/items/LowStockScreen';
 // import { InStockScreen } from '../screens/reports/InStockScreen';
 import PurchaseOrderScreen from '../screens/orders/PurchaseOrderScreen';
 import PurchaseDetailsScreen from '../screens/orders/PurchaseDetailsScreen';
-
 import { TransactionsScreen } from '../screens/account/TransactionsScreen';
 import { ThemeContext } from '../../App';
 const Stack = createStackNavigator();
@@ -154,6 +153,9 @@ function NavTab() {
           // alignItems: 'center',
           // justifyContent: 'center',
         },
+        tabBarActiveTintColor: theme.primary,
+        // tabBarInactiveTintColor: theme.colorIcon,
+        tabBarInactiveTintColor: theme.theme === 'light' ? theme.colorIcon : '#8696a0',
         // tabBarBackground: { backgroundColor: '#000' },
       }}
     >
@@ -162,7 +164,6 @@ function NavTab() {
         component={WelcomeScreen}
         options={{
           tabBarLabel: '',
-          tabBarActiveTintColor: '#47a67f',
           tabBarIcon: ({ color, size }) => <Ionicons name="md-home" size={size} color={color} />,
           // tabBarBackground: '#000',
         }}
@@ -174,7 +175,6 @@ function NavTab() {
         options={{
           title: 'Stock Items',
           tabBarLabel: '',
-          tabBarActiveTintColor: '#47a67f',
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="list-alt" size={size} color={color} />
           ),
@@ -187,7 +187,6 @@ function NavTab() {
         options={{
           title: 'Orders',
           tabBarLabel: '',
-          tabBarActiveTintColor: '#47a67f',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="md-add-circle" size={36} component={OrderScreen} color={color} />
           ),
@@ -200,7 +199,7 @@ function NavTab() {
         options={{
           title: 'Customers',
           tabBarLabel: '',
-          tabBarActiveTintColor: '#47a67f',
+
           tabBarIcon: ({ color, size }) => <Ionicons name="person" size={24} color={color} />,
         }}
       />
@@ -211,7 +210,7 @@ function NavTab() {
         options={{
           title: 'General Settings',
           tabBarLabel: '',
-          tabBarActiveTintColor: '#47a67f',
+
           tabBarIcon: ({ color, size }) => <Feather name="settings" size={size} color={color} />,
         }}
       />
@@ -364,6 +363,7 @@ export function NavStack() {
 export default function RootNavigation() {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useContext(AuthContext);
+  const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
     // Check if the user is logged in or not
@@ -377,8 +377,15 @@ export default function RootNavigation() {
   // be read for use.
   if (isLoading) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size="large" color="#4a5568" />
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: theme.background,
+        }}
+      >
+        <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
   }

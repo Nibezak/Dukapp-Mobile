@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useContext } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -23,11 +23,11 @@ import ReceiptOrderItems from './ReceiptOrderItems';
 import ZigzagView from 'react-native-zigzag-view';
 import { getSetting } from '../../models/AsyncStorage';
 import ViewShot from 'react-native-view-shot';
-import * as Sharing from "expo-sharing"
+import * as Sharing from 'expo-sharing';
 import * as Print from 'expo-print';
 import CheckButton from '../../components/CheckButton';
 import * as Analytics from 'expo-firebase-analytics';
-
+import { ThemeContext } from '../../../App';
 
 // Retrieve user windows height
 const windowHeight = Dimensions.get('window').height;
@@ -46,6 +46,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
   const [tin, setTin] = useState([]);
   const [person, setPerson] = useState([]);
   const [currency, setCurrency] = useState(null);
+  const { theme } = useContext(ThemeContext);
 
   useFocusEffect(
     useCallback(() => {
@@ -70,7 +71,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
     getOrderCustomer();
 
     //Fetch app settings
-    retrieveSetting()
+    retrieveSetting();
     // Fetch order from the database
 
     refreshOrder();
@@ -81,6 +82,10 @@ export default function OrderDetailsScreen({ navigation, route }) {
    */
   function updateNavRight() {
     navigation.setOptions({
+      headerStyle: {
+        backgroundColor: theme.accent,
+      },
+      headerTintColor: theme.text,
       headerRight: () => (
         <View style={{ flexDirection: 'row' }}>
           <TouchableOpacity onPress={printReceipt} style={{ paddingRight: 20 }}>
@@ -90,17 +95,22 @@ export default function OrderDetailsScreen({ navigation, route }) {
           {/* Capture ScreenShot */}
           <TouchableOpacity
             onPress={() => {
-              ref.current.capture().then(uri => {
-                console.log("capture receipt uri ", uri);
-                setImageUri(uri)
+              ref.current.capture().then((uri) => {
+                console.log('capture receipt uri ', uri);
+                setImageUri(uri);
               });
             }}
             style={{ paddingRight: 20 }}
           >
-            <MaterialCommunityIcons name="fit-to-screen" size={24} color="#47a67f" onPress={captureAndShareReceipt}
-              onLongPress={() => ToastAndroid.show(('Share receipt on other platforms'), ToastAndroid.SHORT)}
+            <MaterialCommunityIcons
+              name="fit-to-screen"
+              size={24}
+              color="#47a67f"
+              onPress={captureAndShareReceipt}
+              onLongPress={() =>
+                ToastAndroid.show('Share receipt on other platforms', ToastAndroid.SHORT)
+              }
             />
-
           </TouchableOpacity>
         </View>
       ),
@@ -115,14 +125,13 @@ export default function OrderDetailsScreen({ navigation, route }) {
   function captureAndShareReceipt() {
     ref.current.capture().then((uri) => {
       // capture the screenshot
-      console.log("file uri ", uri);
+      console.log('file uri ', uri);
       //after capturing , send the screeenshot
 
-      Sharing.shareAsync("file://" + uri);
+      Sharing.shareAsync('file://' + uri);
     }),
-      (error) => console.error("Oops, snapshot failed", error);
-  };
-
+      (error) => console.error('Oops, snapshot failed', error);
+  }
 
   /**
    * Method to destroy the order from the database
@@ -194,10 +203,8 @@ export default function OrderDetailsScreen({ navigation, route }) {
     });
   }
 
-
   const dayjs = require('dayjs');
   const date = payment.date_paid;
-
 
   const html = `
   <html>
@@ -331,7 +338,9 @@ export default function OrderDetailsScreen({ navigation, route }) {
               Customer:   ${customer.names}
               
               <td>
-                Invoice #: ${payment.transaction_id}<br> Created: ${order.created_at}<br> Time: ${order.created_at}
+                Invoice #: ${payment.transaction_id}<br> Created: ${order.created_at}<br> Time: ${
+    order.created_at
+  }
               </td>
             </tr>
           </table>
@@ -371,13 +380,8 @@ export default function OrderDetailsScreen({ navigation, route }) {
   </html>
   `;
 
-
   const ReceiptItems = useCallback(({ item }) => {
-    return (
-      <ReceiptOrderItems
-        item={item}
-      />
-    );
+    return <ReceiptOrderItems item={item} />;
   }, []);
 
   async function handleCheckout() {
@@ -394,38 +398,36 @@ export default function OrderDetailsScreen({ navigation, route }) {
           { text: 'Checkout', onPress: () => checkout() },
         ]
       );
+    } else {
+      navigation.navigate('Order Sale');
     }
-    else {
-      navigation.navigate('Order Sale')
-    }
-
   }
   async function checkout() {
     Analytics.logEvent('checkout', {
       shop: businessName,
-      method: 'checkout'
+      method: 'checkout',
     });
     OrderService.addComplete(order.id).then(() => {
       navigation.navigate('Order Sale').then(() => {
         ToastAndroid.show('Checkout complete', ToastAndroid.SHORT);
-      })
-    })
+      });
+    });
   }
   const keyExtractor = useCallback((item, index) => index.toString(), []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container]}>
       <ScrollView>
-
         <View>
           <ViewShot
             options={{
               fileName: `S0D-${order.id} Invoice statement`,
-              format: "png",
+              format: 'png',
               quality: 1.0,
             }}
-            style={{ backgroundColor: "#f1f1f1" }}
-            ref={ref}>
+            style={{ backgroundColor: '#f1f1f1' }}
+            ref={ref}
+          >
             <ZigzagView>
               <Image
                 source={require('./../../../assets/snack-icon.png')}
@@ -436,13 +438,9 @@ export default function OrderDetailsScreen({ navigation, route }) {
               <View style={styles.shopDetailsContainer}>
                 <Text style={styles.shopName}>{businessName}</Text>
                 <Text style={styles.shopAddress}>{address}</Text>
-                <Text style={styles.shopAddress}>
-                  {phone}
-                </Text>
+                <Text style={styles.shopAddress}>{phone}</Text>
 
-                <Text style={styles.shopAddress}>
-                  {email}
-                </Text>
+                <Text style={styles.shopAddress}>{email}</Text>
               </View>
 
               {/** ORDER DETAILS */}
@@ -492,7 +490,6 @@ export default function OrderDetailsScreen({ navigation, route }) {
               </View>
             </ZigzagView>
           </ViewShot>
-
         </View>
       </ScrollView>
       <View>
@@ -500,8 +497,6 @@ export default function OrderDetailsScreen({ navigation, route }) {
       </View>
     </View>
   );
-
-
 }
 
 /**
@@ -512,7 +507,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   orderContainer: {
-    paddingHorizontal: 30
+    paddingHorizontal: 30,
   },
   shopDetailsContainer: {
     marginTop: 20,
@@ -590,7 +585,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     marginTop: 30,
-    padding: 30
+    padding: 30,
   },
   itemHeader: {
     flexDirection: 'row',
@@ -598,7 +593,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#cbd5e0',
     borderBottomWidth: 0.3,
     padding: 5,
-    marginBottom: 3
+    marginBottom: 3,
   },
   itemNameHeader: {
     marginTop: 8,
@@ -616,5 +611,3 @@ const styles = StyleSheet.create({
     color: '#4a5568',
   },
 });
-
-

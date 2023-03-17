@@ -1,7 +1,7 @@
 const white = '#ffffff';
-const darkBlue = '#4a5567';
-const darkBlue1 = '#252d3b';
-
+const darkBlue2 = '#2a3942';
+const darkBlue1 = '#111b21';
+const darkBlue = '#202c33';
 const green = '#47a67f';
 const red = '#d94818';
 
@@ -14,6 +14,7 @@ export const Theme = {
     text: darkBlue,
     primary: green,
     danger: red,
+    colorIcon: '#2a3942',
   },
   dark: {
     statusbar: 'light',
@@ -23,6 +24,7 @@ export const Theme = {
     text: white,
     primary: green,
     danger: red,
+    colorIcon: '#8696a0',
   },
   colors: {
     white,
