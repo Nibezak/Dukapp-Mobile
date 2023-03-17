@@ -85,12 +85,8 @@ export default function OrderScreen({ navigation, route }) {
   function setHeader() {
     navigation.setOptions({
       headerTitleAlign: 'center',
-      headerTitleStyle: {
-        color: theme.text,
-      },
-      headerStyle: {
-        backgroundColor: theme.accent,
-      },
+      headerTintColor: theme.text,
+      headerStyle: { backgroundColor: theme.accent },
       headerRight: () => (
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -298,8 +294,15 @@ export default function OrderScreen({ navigation, route }) {
 
   if (showIsLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: theme.background,
+        }}
+      >
+        <ActivityIndicator style={{ margin: 8 }} size="small" color={theme.primary} />
       </View>
     );
   }
@@ -318,8 +321,16 @@ export default function OrderScreen({ navigation, route }) {
         keyExtractor={keyExtractor}
       />
       {orderLoading ? (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 15 }}>
-          <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 15,
+            backgroundColor: theme.background,
+          }}
+        >
+          <ActivityIndicator style={{ margin: 8 }} size="small" color={theme.primary} />
         </View>
       ) : (
         <></>

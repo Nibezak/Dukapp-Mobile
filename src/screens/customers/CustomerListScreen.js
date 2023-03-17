@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { View, StyleSheet, InteractionManager, FlatList, ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
@@ -11,11 +11,13 @@ import { CustomersAnimation } from '../../components/CustomersAnimation';
 import * as Analytics from 'expo-firebase-analytics';
 import { onAuthStateChanged } from '@firebase/auth';
 import { auth } from '../../../firebase';
+import { ThemeContext } from '../../../App';
 
 export default function CustomerListScreen({ navigation }) {
   const [customers, setCustomers] = useState([]);
   const [showLoading, setShowLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const { theme } = useContext(ThemeContext);
 
   useFocusEffect(
     useCallback(() => {
@@ -45,7 +47,6 @@ export default function CustomerListScreen({ navigation }) {
       user: user.email,
       screen: 'screens',
       navigation: 'Customer Screen',
-
     });
   }
   async function refreshCustomers() {
@@ -60,17 +61,28 @@ export default function CustomerListScreen({ navigation }) {
     navigation.setOptions({
       headerTitle: 'Customers',
       headerTitleAlign: 'center',
+      headerTitleStyle: {
+        color: theme.text,
+      },
+      headerStyle: {
+        backgroundColor: theme.accent,
+      },
       headerLeft: () => (
         <TouchableOpacity style={{ paddingLeft: 10 }}>
           <AntDesign
             name="menuunfold"
             size={24}
-            color="#47a67f"
+            color={theme.primary}
             onPress={() => navigation.openDrawer()}
           />
         </TouchableOpacity>
       ),
-      headerRight: () => <SearchButton onPress={() => navigation.navigate('Search Customer')} />,
+      headerRight: () => (
+        <SearchButton
+          onPress={() => navigation.navigate('Search Customer')}
+          color={theme.primary}
+        />
+      ),
     });
   }
 

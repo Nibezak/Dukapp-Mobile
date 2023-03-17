@@ -27,7 +27,7 @@ export function WelcomeAnimation() {
                 order_type: 'sale',
               })
             }
-            color={'#47a67f'}
+            color={theme.primary}
           >
             {t('welcome.place_an_order')}
           </ButtonFilled>

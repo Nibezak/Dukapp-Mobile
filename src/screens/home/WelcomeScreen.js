@@ -140,7 +140,7 @@ export default function WelcomeScreen({ navigation }) {
           backgroundColor: theme.background,
         }}
       >
-        <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+        <ActivityIndicator style={{ margin: 8 }} size="small" color={theme.primary} />
       </View>
     );
   }
