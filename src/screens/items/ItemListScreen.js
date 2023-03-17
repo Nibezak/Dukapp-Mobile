@@ -46,7 +46,7 @@ export default function ItemListScreen({ navigation }) {
     });
     tracker();
     refreshItems();
-  }, []);
+  }, [theme]);
 
   // track screen on google analytics
   async function tracker() {
@@ -76,9 +76,7 @@ export default function ItemListScreen({ navigation }) {
     navigation.setOptions({
       headerTitle: t('item.items_header'),
       headerTitleAlign: 'center',
-      headerTitleStyle: {
-        color: theme.text,
-      },
+      headerTintColor: theme.text,
       headerLeft: () => (
         <TouchableOpacity style={{ paddingLeft: 10 }}>
           <AntDesign
@@ -120,8 +118,15 @@ export default function ItemListScreen({ navigation }) {
    */
   if (showLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: theme.background,
+        }}
+      >
+        <ActivityIndicator style={{ margin: 8 }} size="small" color={theme.text} />
       </View>
     );
   }
@@ -148,6 +153,7 @@ export default function ItemListScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingBottom: 50,
   },
   row: {
     flexDirection: 'row',

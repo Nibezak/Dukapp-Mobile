@@ -1,46 +1,43 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { t } from "i18n-js";
+import React, { useContext } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { t } from 'i18n-js';
+import { ThemeContext } from '../../../App';
 
 export default function RenderCustomer({ item, index, onPress }) {
   const navigation = useNavigation();
+  const { theme } = useContext(ThemeContext);
 
   // If item is for adding a customer, then return a different
   // View
-  if (item.id === "add_customer") {
+  if (item.id === 'add_customer') {
     return (
-      <TouchableOpacity onPress={() => navigation.navigate("New Customer")}>
+      <TouchableOpacity onPress={() => navigation.navigate('New Customer')}>
         {/** Give options to add a new item */}
         <View
           style={[
             styles.row,
             {
               padding: 10,
-              backgroundColor: "#f0fdf4",
-              alignContent: "center",
-              alignItems: "center",
+              backgroundColor: '#f0fdf4',
+              alignContent: 'center',
+              alignItems: 'center',
             },
           ]}
         >
-          <MaterialIcons
-            name="add"
-            size={34}
-            color="#15803d"
-            style={[styles.avatar]}
-          />
+          <MaterialIcons name="add" size={34} color="#15803d" style={[styles.avatar]} />
 
           <Text
             style={{
               fontSize: 18,
-              alignSelf: "center",
-              textAlign: "center",
-              fontWeight: "700",
-              color: "#15803d",
+              alignSelf: 'center',
+              textAlign: 'center',
+              fontWeight: '700',
+              color: '#15803d',
             }}
           >
-            {t("customer.new_customer")}
+            {t('customer.new_customer')}
           </Text>
         </View>
       </TouchableOpacity>
@@ -50,12 +47,7 @@ export default function RenderCustomer({ item, index, onPress }) {
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={styles.row}>
-        <MaterialIcons
-          name="person"
-          style={styles.avatar}
-          size={32}
-          color="#4a5568"
-        />
+        <MaterialIcons name="person" style={styles.avatar} size={32} color="#4a5568" />
 
         <View style={styles.rowText}>
           <Text style={styles.names}>{item.names}</Text>
@@ -74,10 +66,10 @@ export default function RenderCustomer({ item, index, onPress }) {
 
 const styles = {
   row: {
-    flexDirection: "row",
+    flexDirection: 'row',
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: '#eee',
   },
   avatar: {
     borderRadius: 20,
@@ -95,7 +87,7 @@ const styles = {
     fontSize: 14,
   },
   names: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     paddingRight: 10,
   },
 };

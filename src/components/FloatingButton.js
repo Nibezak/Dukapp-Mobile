@@ -1,20 +1,19 @@
-import React from "react";
-import { Text, TouchableOpacity } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useTheme } from "react-native-paper";
+import React, { useContext } from 'react';
+import { Text, TouchableOpacity } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useTheme } from 'react-native-paper';
+import { ThemeContext } from '../../App';
 
 export default function FloatingButton({ onPress, children, color }) {
   useTheme;
   const { floatingButton, floatingButtonIcon } = styles;
-  const buttonColor = color == undefined ? "#f7fafc" : color;
+  const { theme } = useContext(ThemeContext);
+  const buttonColor = color == undefined ? theme.accent : color;
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[floatingButton, { borderColor: buttonColor }]}
-    >
-      <Text style={[floatingButtonIcon, { color: buttonColor }]}>
-        <MaterialIcons name="add" size={32} color="#dcfce7" />
+    <TouchableOpacity onPress={onPress} style={[floatingButton, { backgroundColor: buttonColor }]}>
+      <Text style={[floatingButtonIcon]}>
+        <MaterialIcons name="add" size={32} color={theme.text} />
       </Text>
     </TouchableOpacity>
   );
@@ -22,20 +21,20 @@ export default function FloatingButton({ onPress, children, color }) {
 
 const styles = {
   floatingButton: {
-    position: "absolute",
+    position: 'absolute',
     width: 48,
     height: 48,
-    alignItems: "center",
-    justifyContent: "center",
-    right: 20,
-    bottom: 20,
-    backgroundColor: "#2d3748",
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 15,
+    bottom: 60,
+    backgroundColor: '#2d3748',
     borderRadius: 30,
     elevation: 4,
   },
   floatingButtonIcon: {
-    alignSelf: "center",
+    alignSelf: 'center',
     fontSize: 40,
-    color: "#bbf7d0",
+    color: '#bbf7d0',
   },
 };

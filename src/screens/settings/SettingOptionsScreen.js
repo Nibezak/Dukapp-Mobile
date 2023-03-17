@@ -14,9 +14,7 @@ export default function SettingOPtionsScreen({ navigation, route }) {
   useEffect(() => {
     navigation.setOptions({
       headerTitle: setting.title,
-      headerTitleStyle: {
-        color: theme.text,
-      },
+      headerTintColor: theme.text,
       headerStyle: {
         backgroundColor: theme.accent,
         color: theme.text,

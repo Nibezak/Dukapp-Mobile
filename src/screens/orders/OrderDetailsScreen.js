@@ -61,7 +61,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
     navigation.setOptions({
       headerTitle:
         orderType.substr(0, 4).charAt(0).toUpperCase() + ' #' + route.params.order.id.toString(),
-      headerTitleStyle: { color: theme.text },
+      headerTintColor: theme.text,
       headerStyle: { backgroundColor: theme.accent },
     });
     updateNavRight();
