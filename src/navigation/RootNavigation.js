@@ -55,15 +55,11 @@ import { Feather, FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icon
 
 import SideBar from '../components/SideBar';
 import LowStockScreen from '../screens/items/LowStockScreen';
-import { FastGoingScreen } from '../screens/reports/FastGoingScreen';
-import { ByMobileScreen } from '../screens/reports/ByMobileScreen';
-import { InStockScreen } from '../screens/reports/InStockScreen';
+// import { FastGoingScreen } from '../screens/reports/FastGoingScreen';
+// import { ByMobileScreen } from '../screens/reports/ByMobileScreen';
+// import { InStockScreen } from '../screens/reports/InStockScreen';
 import PurchaseOrderScreen from '../screens/orders/PurchaseOrderScreen';
 import PurchaseDetailsScreen from '../screens/orders/PurchaseDetailsScreen';
-import { doc, getDoc } from '@firebase/firestore';
-import { db, auth } from '../../firebase';
-import PropTypes from 'prop-types';
-import Database from '../database/Database';
 import { TransactionsScreen } from '../screens/account/TransactionsScreen';
 import { ThemeContext } from '../../App';
 const Stack = createStackNavigator();
