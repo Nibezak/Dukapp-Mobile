@@ -10,7 +10,7 @@ export default function OtpScreen({ route, navigation }) {
   const { phoneNumber, email, password } = route.params;
 
   const [invalidCode, setInvalidCode] = useState(false);
-  const { register, isLoading } = useContext(AuthContext);
+  const { login, isLoading } = useContext(AuthContext);
 
   /**
    * handle Verification
@@ -19,7 +19,7 @@ export default function OtpScreen({ route, navigation }) {
    * @returns
    */
   async function handleOtpVerification(code) {
-    register(phoneNumber, code, email, password);
+    login(phoneNumber, code);
   }
 
   return (
