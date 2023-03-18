@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import FieldText from '../../components/FieldText';
 import Button from '../../components/Button';
@@ -9,11 +9,22 @@ import OrderService from '../../services/OrderService';
 import CustomerService from '../../services/CustomerService';
 import { ScrollView } from 'react-native-gesture-handler';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { ThemeContext } from '../../../App';
+import ButtonFilled from '../../components/ButtonFilled';
 
 export default function CustomerCreateScreen({ navigation, route }) {
   // Set order if available
   const [customers, setCustomers] = useState([]);
+  const { theme } = useContext(ThemeContext);
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerTintColor: theme.text,
+      headerStyle: {
+        backgroundColor: theme.accent,
+      },
+    });
+  }, [theme]);
   /**
    * Save a Customer in DB
    */
@@ -42,8 +53,8 @@ export default function CustomerCreateScreen({ navigation, route }) {
   }
 
   return (
-    <KeyboardAwareScrollView>
-      <ScrollView style={styles.container}>
+    <ScrollView style={{ flex: 1, backgroundColor: theme.background }}>
+      <KeyboardAwareScrollView>
         <Formik
           initialValues={{ names: '', phone: '', email: '', address: '', note: '' }}
           onSubmit={(values) => {
@@ -132,23 +143,34 @@ export default function CustomerCreateScreen({ navigation, route }) {
                   }}
                 />
               </View>
-              <View style={[styles.row, { borderBottomWidth: 0 }]}>
-                <Button
+              <View style={[styles.row, { borderBottomWidth: 0, justifyContent: 'space-evenly' }]}>
+                <ButtonFilled
+                  onPress={() => navigation.goBack()}
+                  color={'#f59e0b'}
+                  labelColor={theme.text}
+                >
+                  {t('common.cancel')}
+                </ButtonFilled>
+                <ButtonFilled onPress={handleSubmit} color={theme.primary} labelColor={theme.text}>
+                  {t('common.save')}
+                </ButtonFilled>
+                {/* <Button
                   onPress={() => navigation.goBack()}
                   color={'#f1f1f1'}
                   backgroundColor={'#f59e0b'}
                 >
-                  {t('common.cancel')}
-                </Button>
-                <Button onPress={handleSubmit} color={'#f1f1f1'} backgroundColor={'#47a67f'}>
-                  {t('common.save')}
-                </Button>
+                </Button> */}
+                {/* <Button
+                  onPress={handleSubmit}
+                  color={'#f1f1f1'}
+                  backgroundColor={'#47a67f'}
+                ></Button> */}
               </View>
             </>
           )}
         </Formik>
-      </ScrollView>
-    </KeyboardAwareScrollView>
+      </KeyboardAwareScrollView>
+    </ScrollView>
   );
 }
 

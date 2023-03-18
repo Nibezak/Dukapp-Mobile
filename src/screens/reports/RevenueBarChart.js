@@ -38,7 +38,7 @@ export default function RevenueBarChart({ startDate, endDate }) {
   const { theme } = useContext(ThemeContext);
   const [dataSets, setDataSets] = useState({
     days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    profits: [0, 0, 0, 0, 0, 0, 0],
+    profits: [100, 200, 300, 100, 400, 200, 300],
   });
 
   useFocusEffect(
@@ -92,24 +92,25 @@ export default function RevenueBarChart({ startDate, endDate }) {
         <BarChart
           data={barData}
           width={Dimensions.get('window').width - 20}
-          // hidePointsAtIndex={[0, 1, 2, 3, 5, 6]}
-          segments={1}
+          // hidePointsAtIndex={[0]}
+          segments={10}
           height={300}
-          fromZero={false}
+          fromZero={true}
           // withCustomBarColorFromData
-          // withInnerLines={false}
+          withInnerLines={false}
           showBarTops={false}
-          showValuesOnTopOfBars={true}
+          flatColor={true}
+          showValuesOnTopOfBars={false}
           withHorizontalLabels={false}
           chartConfig={{
             // sty
             formatTopBarValue: (value) => formatNumber(value),
-            fillShadowGradientToOpacity: 0.6,
+            fillShadowGradientToOpacity: 0.1,
             fillShadowGradientFromOpacity: 0.6,
             backgroundGradientFrom: theme.accent,
             backgroundGradientTo: theme.accent,
             barRadius: 10,
-            barPercentage: 0.4,
+            barPercentage: 0.5,
             decimalPlaces: 0,
             color: (opacity = 0) => `rgba(16, 180, 128, ${opacity})`,
             propsForBackgroundLines: {
@@ -124,7 +125,7 @@ export default function RevenueBarChart({ startDate, endDate }) {
             marginVertical: 2,
             borderRadius: 10,
             elevation: 5,
-            alignItems: 'flex-start',
+
           }}
         />
       </View>

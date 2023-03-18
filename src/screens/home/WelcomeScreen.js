@@ -2,7 +2,6 @@ import React, { useEffect, useCallback, useState, useContext, useRef } from 'rea
 import { View, FlatList, StyleSheet, Image, InteractionManager } from 'react-native';
 import HomeSummary from './HomeSummary';
 import { t } from 'i18n-js';
-import RenderOrder from '../orders/RenderOrder';
 import OrderService from '../../services/OrderService';
 import { useFocusEffect } from '@react-navigation/native';
 import { Title, ActivityIndicator } from 'react-native-paper';
@@ -15,6 +14,7 @@ import { onAuthStateChanged } from '@firebase/auth';
 import { auth } from '../../../firebase';
 import { ThemeContext } from '../../../App';
 import { StatusBar } from 'expo-status-bar';
+import RecentOrder from '../orders/RecentOrders';
 export default function WelcomeScreen({ navigation }) {
   const [orders, setOrders] = useState([]);
   const [orderType, setOrderType] = useState('sale');
@@ -112,7 +112,7 @@ export default function WelcomeScreen({ navigation }) {
    * Render an order item.
    */
   const renderOrder = useCallback((item) => (
-    <RenderOrder
+    <RecentOrder
       item={item}
       index={item.id}
       key={item.id}
@@ -165,6 +165,7 @@ export default function WelcomeScreen({ navigation }) {
             renderItem={renderOrder}
             keyExtractor={keyExtractor}
             nestedScrollEnabled
+            horizontal={true} // add this line to make the list scroll horizontally
           />
         </>
       )}

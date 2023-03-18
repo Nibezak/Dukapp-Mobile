@@ -91,7 +91,7 @@ export default function SaleReceiptsScreen({ navigation, route }) {
     });
   }
 
-  const renderOrder = useCallback((item) => (
+  const renderReceipt = useCallback((item) => (
     <View style={{ flex: 0.5, marginHorizontal: 2 }}>
       <RenderReceipt item={item} index={item.id} key={item.id} />
     </View>
@@ -122,12 +122,12 @@ export default function SaleReceiptsScreen({ navigation, route }) {
    * Render to the screen
    */
   return (
-    <View style={{ marginVertical: 10 }}>
+    <View style={{ paddingVertical: 10, backgroundColor: theme.background, flex: 1 }}>
       {orders.length > 0 ? (
         <FlatList
           style={{ bottom: 1 }}
           data={orders}
-          renderItem={renderOrder}
+          renderItem={renderReceipt}
           keyExtractor={keyExtractor}
           numColumns={2}
         />

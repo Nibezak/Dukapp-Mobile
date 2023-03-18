@@ -6,168 +6,111 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
-  Button,
 } from 'react-native';
 import { t } from 'i18n-js';
 import ButtonFilled from '../../components/ButtonFilled';
 import PhoneInput from 'react-native-phone-number-input';
-import { Formik } from 'formik';
-import registerValidationSchema from '../../helpers/validation/registerValidation';
 import { AuthContext } from '../../context/AuthProvider';
 import { sendOTP } from '../../api/VerifyPhone';
-import { ScrollView, TextInput } from 'react-native-gesture-handler';
-import { auth, db } from '../../../firebase';
-import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from 'firebase/auth';
-import ShowPassword from '../../components/ShowPassword';
-import { setDoc, doc } from 'firebase/firestore';
+import { ScrollView } from 'react-native-gesture-handler';
+import { ThemeContext } from '../../../App';
+import { StatusBar } from 'expo-status-bar';
 
 export default function PhoneNumberScreen({ navigation }) {
+  const [value, setValue] = useState('');
   const [formattedValue, setFormattedValue] = useState('');
   const phoneInput = useRef(null);
-  let [userExist, setUserExist] = useState(false);
-  const [validationMessage, setValidationMessage] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const toggleSwitch = () => setShowPassword((previousState) => !previousState);
-
   const { error, isLoading, setIsLoading } = useContext(AuthContext);
+  const { theme } = useContext(ThemeContext);
 
   /**
    * @todo, implement the verification backend in the context
    * sendSmsVerification
    */
-  async function handleSignUp(data) {
-    const { password, phone } = data;
-    const email = `${phone}@dukapp.com`;
+  async function handleSignUp() {
+
     setIsLoading(true);
     // check if the user exist in our system
-    await fetchSignInMethodsForEmail(auth, email).then((signInMethods) => {
-      if (signInMethods.length > 0) {
-        setIsLoading(false);
-        return setValidationMessage('This account is already registered');
-      } else {
-        //   Send SMS to verify this phone
-        sendOTP(formattedValue.substring(1, 13))
-          .then((sent) => {
-            setIsLoading(false);
-            navigation.navigate('Otp', {
-              phoneNumber: formattedValue,
-              email: email,
-              password: password,
-            });
-          })
-          .catch((error) => {
-            setIsLoading(false);
-            console.log(error);
-          });
-      }
-    });
+    sendOTP(formattedValue).then(() => {
+      navigation.navigate('Otp', {
+        phoneNumber: formattedValue,
+      });
+      setIsLoading(false);
+    })
+
   }
 
   return (
     <>
-      <ScrollView style={styles.container}>
+      <StatusBar style={theme.statusbar} />
+      <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
         <View style={styles.wrapper}>
           <View style={styles.welcome}>
-            <Image source={require('./../../../assets/snack-icon.png')} style={styles.appName} />
-            <Text style={styles.pitch}>{t('auth.welcome_to_dukapp_app')}</Text>
-            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-              <Text style={styles.verifyPhone}>sign up to your shop</Text>
-              <Text style={{ color: '#3498db', marginLeft: 20, fontSize: 17, marginTop: 20 }}>
-                or
+            <Image
+              source={
+                theme.theme === 'light'
+                  ? require('./../../../assets/snack-icon.png')
+                  : require('./../../../assets/snack-icon-dark.png')
+              }
+              style={styles.appName}
+            />
+            <Text style={[styles.pitch, { color: theme.text, opacity: 0.7 }]}>
+              {t('auth.welcome_to_dukapp_app')}
+            </Text>
+            <TouchableOpacity
+              style={{ marginHorizontal: 30 }}
+              onPress={() => navigation.navigate('Login')}
+            >
+              <Text style={[styles.verifyPhone, { color: theme.text, opacity: 0.7 }]}>
+                {t('auth.verify_your_phone')}
               </Text>
-              <TouchableOpacity
-                style={{ marginHorizontal: 30, marginTop: 20 }}
-                onPress={() => navigation.navigate('Login')}
-              >
-                <Text style={{ color: '#47a67f', fontSize: 15, fontWeight: 'bold' }}>
-                  {'Sign in '}
-                </Text>
-              </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
           </View>
-          <Formik
-            initialValues={{ phone: '', password: '', confirmPassword: '' }}
-            onSubmit={(values) => {
-              handleSignUp(values);
+          <PhoneInput
+            ref={phoneInput}
+            defaultValue={value}
+            defaultCode="RW"
+            layout="first"
+            onChangeText={(text) => {
+              setValue(text);
             }}
-            validationSchema={registerValidationSchema}
+            onChangeFormattedText={(text) => {
+              setFormattedValue(text);
+            }}
+            countryPickerProps={{ withAlphaFilter: true }}
+            withShadow
+            autoFocus
+            autoFormat={true}
+            initialCountry="rw"
+          />
+
+          <Text style={[styles.carrierCharges, { color: theme.text, opacity: 0.7 }]}>
+            {t('auth.carrier_charge_may_apply')}
+          </Text>
+
+          {error && <Text style={{ color: theme.danger }}>{error}</Text>}
+          {isLoading && (
+            <ActivityIndicator style={{ marginTop: 8 }} size="small" color={theme.primary} />
+          )}
+
+          <TouchableOpacity
+            onPress={async () => {
+              // Checking if the link is supported for links with custom URL scheme.
+              const supported = await Linking.canOpenURL('https://butike.app');
+            }}
+
           >
-            {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-              <View>
-                <PhoneInput
-                  ref={phoneInput}
-                  defaultValue={values.phone}
-                  defaultCode="RW"
-                  layout="first"
-                  onChangeText={handleChange('phone')}
-                  onChangeFormattedText={(text) => {
-                    setFormattedValue(text);
-                  }}
-                  textInputProps={{
-                    onBlur: handleBlur('phone'),
-                  }}
-                  countryPickerProps={{ withAlphaFilter: true }}
-                  withShadow
-                  autoFocus
-                  autoFormat={true}
-                  initialCountry="rw"
-                />
-                {touched.phone && errors.phone && (
-                  <Text style={{ color: 'red' }}>{errors.phone}</Text>
-                )}
-                <TextInput
-                  style={styles.passwordInput}
-                  placeholder="Enter your password"
-                  secureTextEntry={!showPassword}
-                  onChangeText={handleChange('password')}
-                  onBlur={handleBlur('password')}
-                  value={values.password}
-                />
-
-                {touched.password && errors.password && (
-                  <Text style={{ color: 'red' }}>{errors.password}</Text>
-                )}
-                <TextInput
-                  style={styles.confirmPasswordInput}
-                  placeholder="Confirm your password"
-                  secureTextEntry={!showPassword}
-                  onChangeText={handleChange('confirmPassword')}
-                  onBlur={handleBlur('confirmPassword')}
-                  value={values.confirmPassword}
-                />
-                {touched.confirmPassword && errors.confirmPassword && (
-                  <Text style={{ color: 'red' }}>{errors.confirmPassword}</Text>
-                )}
-
-                <ShowPassword
-                  onValueChange={toggleSwitch}
-                  value={showPassword}
-                  title={'show password'}
-                />
-                {validationMessage && <Text style={{ color: 'red' }}>{validationMessage}</Text>}
-                {error && <Text style={{ color: 'red' }}>{error}</Text>}
-                <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-                  <Text style={styles.carrierCharges}>{t('auth.carrier_charge_may_apply')}</Text>
-                </View>
-                {isLoading && (
-                  <ActivityIndicator style={{ marginTop: 8 }} size="small" color="gray" />
-                )}
-
-                <TouchableOpacity
-                  onPress={async () => {
-                    // Checking if the link is supported for links with custom URL scheme.
-                    const supported = await Linking.canOpenURL('https://butike.app');
-                  }}
-                >
-                  <Text style={styles.termsLink}>{t('common.terms_and_condition')}</Text>
-                </TouchableOpacity>
-                <ButtonFilled onPress={handleSubmit}>
-                  {t('auth.accept_tc_and_continue')}
-                </ButtonFilled>
-                {/* <Button title="Submit" onPress={handleSubmit} /> */}
-              </View>
-            )}
-          </Formik>
+            <Text style={[styles.termsLink, { color: theme.text, opacity: 0.7 }]}>
+              {t('common.terms_and_condition')}
+            </Text>
+          </TouchableOpacity>
+          <ButtonFilled
+            onPress={handleSignUp}
+            color={theme.accent}
+            labelColor={theme.text}
+          >
+            {t('auth.accept_tc_and_continue')}
+          </ButtonFilled>
         </View>
       </ScrollView>
     </>
@@ -208,7 +151,7 @@ const styles = StyleSheet.create({
     color: '#718096',
     fontWeight: '600',
     fontSize: 12,
-    paddingTop: 3,
+    paddingTop: 20,
     fontStyle: 'italic',
   },
   message: {
@@ -253,26 +196,7 @@ const styles = StyleSheet.create({
   },
   termsLink: {
     fontSize: 14,
-    marginTop: 10,
+    marginTop: 30,
     textDecorationLine: 'underline',
-  },
-  passwordInput: {
-    backgroundColor: '#f1f1f1',
-    borderRadius: 10,
-    width: 300,
-    padding: 10,
-    marginTop: 20,
-    marginBottom: 8,
-    marginHorizontal: 10,
-    elevation: 2,
-  },
-  confirmPasswordInput: {
-    backgroundColor: '#f1f1f1',
-    borderRadius: 10,
-    width: 300,
-    padding: 10,
-    marginVertical: 5,
-    marginHorizontal: 10,
-    elevation: 2,
   },
 });

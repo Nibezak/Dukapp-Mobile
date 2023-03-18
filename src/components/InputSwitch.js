@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, Switch, Text, TextInput } from 'react-native';
+import { ThemeContext } from '../../App';
 
 /**
  * Styles for the Components
@@ -22,17 +23,14 @@ const styles = {
 };
 
 export default function InputSwitch(props) {
+  const { theme } = useContext(ThemeContext);
   /**
    * Condistionally Display the label
    * based on the title availability
    */
   function DisplayLabel() {
     if (props.title) {
-      return (
-        <Text style={styles.label}>
-          {props.title}
-        </Text>
-      );
+      return <Text style={[styles.label, { color: theme.text, opacity: 0.7 }]}>{props.title}</Text>;
     }
 
     return <></>;
@@ -43,8 +41,8 @@ export default function InputSwitch(props) {
       <DisplayLabel />
       <Switch
         style={styles.switch}
-        trackColor={{ false: '#767577', true: '#cbd5e0' }}
-        thumbColor={props.value ? '#16a34a' : '#f4f3f4'}
+        trackColor={{ false: theme.colorIcon, true: theme.colorIcon }}
+        thumbColor={props.value ? theme.primary : '#f4f3f4'}
         ios_backgroundColor="#cbd5e0"
         onValueChange={props.onValueChange}
         value={props.value}

@@ -66,9 +66,11 @@ export default function RenderItem({ item, index, onPress }) {
               style={[
                 styles.details,
                 {
-                  padding: 3,
+                  paddingHorizontal: 10,
+                  paddingVertical: 1,
                   backgroundColor: isLowStock && !isService ? '#fef9c3' : '#f0fdf4',
                   margin: 5,
+                  borderRadius: 30,
                   color: isLowStock && !isService ? '#854d0e' : '#15803d',
                 },
               ]}
@@ -109,6 +111,7 @@ const styles = {
   },
   rowText: {
     flex: 1,
+    paddingHorizontal: 5,
   },
   details: {
     alignSelf: 'flex-end',

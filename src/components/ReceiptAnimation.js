@@ -17,9 +17,9 @@ export function ReceiptAnimation() {
           source={require('../../assets/WelcomeAnimation/welcomeReceipt.png')}
           style={[styles.image, { width, resizeMode: 'contain' }]}
         />
-        <Text style={styles.title}>Start by creating a Stock</Text>
+        <Text style={styles.title}>Records Receipts </Text>
         <Text style={styles.description}>
-          manage products in your stock, calculate income and revenue for you , and create receipts
+          Find Customer Receipts in a single Library
         </Text>
         <View>
           <ButtonFilled onPress={() => navigation.navigate('New Item')} color={'#47a67f'}>

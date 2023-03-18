@@ -44,7 +44,7 @@ export default function RenderOrder({ item, parentRefresher }) {
         backgroundColor: theme.accent,
         padding: 5,
         borderRadius: 10,
-        marginBottom: 7,
+        marginBottom: 6,
         elevation: 2.5,
         marginTop: 3.5,
       }}

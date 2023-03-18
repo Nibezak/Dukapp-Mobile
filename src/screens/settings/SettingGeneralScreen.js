@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, ToastAndroid, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { View, Text, ToastAndroid, StyleSheet, FlatList, TouchableOpacity, InteractionManager } from 'react-native';
 import { AntDesign, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { t } from 'i18n-js';
 import { AuthContext } from '../../context/AuthProvider';
@@ -11,7 +11,7 @@ import OrderItem from '../../models/OrderItem';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { generalSettings } from './settings';
 import BackupService from '../../services/BackupService';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import ItemInventory from '../../models/ItemInventory';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useRef } from 'react';
@@ -32,6 +32,15 @@ export default function GeneralSettingsScreen() {
   const { theme } = useContext(ThemeContext);
 
   const navigation = useNavigation();
+  useFocusEffect(
+    useCallback(() => {
+      const task = InteractionManager.runAfterInteractions(() => {
+        // Theme task
+
+        theme
+      });
+    }, [])
+  );
 
   useEffect(() => {
     tracker();
@@ -190,19 +199,20 @@ export default function GeneralSettingsScreen() {
           index={0}
           snapPoints={snapPoints}
           backgroundStyle={{
-            backgroundColor: '#F4F4F5',
+            backgroundColor: theme.accent,
             padding: 10,
             elevation: 5,
-            borderTopColor: '#D4D4D8',
+            borderTopColor: theme.colorIcon,
             borderTopWidth: 1,
           }}
+          handleIndicatorStyle={{ backgroundColor: theme.colorIcon }}
         >
           <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-            <Text style={{ color: 'gray', fontSize: 14 }}>
+            <Text style={{ color: theme.text, opacity: 0.7, fontSize: 14 }}>
               Give us A feedback on how to improve
             </Text>
             <TouchableOpacity style={styles.button} onPress={() => console.log('thank you')}>
-              <Ionicons name="send" size={20} color="#47a67f" />
+              <Ionicons name="send" size={20} color={theme.primary} />
             </TouchableOpacity>
           </View>
           <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
@@ -226,8 +236,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e2e8f0',
+
   },
   avatar: {
     borderRadius: 20,

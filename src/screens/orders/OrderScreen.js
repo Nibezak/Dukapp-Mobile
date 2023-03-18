@@ -143,8 +143,8 @@ export default function OrderScreen({ navigation, route }) {
       Alert.alert(
         'The Stock of : ' + item.name + ' is insuffient #',
         'The remaining quantity is : ' +
-          item.quantity +
-          ' Please Add more stock to be able to sell',
+        item.quantity +
+        ' Please Add more stock to be able to sell',
         [
           {
             text: 'Cancel',
@@ -379,7 +379,9 @@ const styles = StyleSheet.create({
     position: 'relative',
     marginTop: 10,
     elevation: 15,
-    flex: 1,
+    marginBottom: 5,
+    paddingBottom: 5
+
   },
   row: {
     flexDirection: 'row',

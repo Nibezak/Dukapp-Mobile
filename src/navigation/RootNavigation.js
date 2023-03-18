@@ -60,7 +60,6 @@ import LowStockScreen from '../screens/items/LowStockScreen';
 // import { InStockScreen } from '../screens/reports/InStockScreen';
 import PurchaseOrderScreen from '../screens/orders/PurchaseOrderScreen';
 import PurchaseDetailsScreen from '../screens/orders/PurchaseDetailsScreen';
-
 import { TransactionsScreen } from '../screens/account/TransactionsScreen';
 import { ThemeContext } from '../../App';
 const Stack = createStackNavigator();

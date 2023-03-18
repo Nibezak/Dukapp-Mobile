@@ -20,13 +20,13 @@ export default function RenderCustomer({ item, index, onPress }) {
             styles.row,
             {
               padding: 10,
-              backgroundColor: '#f0fdf4',
+              backgroundColor: theme.accent,
               alignContent: 'center',
               alignItems: 'center',
             },
           ]}
         >
-          <MaterialIcons name="add" size={34} color="#15803d" style={[styles.avatar]} />
+          <MaterialIcons name="add" size={34} color={theme.primary} style={[styles.avatar]} />
 
           <Text
             style={{
@@ -34,7 +34,7 @@ export default function RenderCustomer({ item, index, onPress }) {
               alignSelf: 'center',
               textAlign: 'center',
               fontWeight: '700',
-              color: '#15803d',
+              color: theme.primary,
             }}
           >
             {t('customer.new_customer')}
@@ -47,17 +47,17 @@ export default function RenderCustomer({ item, index, onPress }) {
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={styles.row}>
-        <MaterialIcons name="person" style={styles.avatar} size={32} color="#4a5568" />
+        <MaterialIcons name="person" style={styles.avatar} size={32} color={theme.colorIcon} />
 
         <View style={styles.rowText}>
-          <Text style={styles.names}>{item.names}</Text>
-          <Text style={styles.phone}>{item.phone}</Text>
+          <Text style={[styles.names, { color: theme.text }]}>{item.names}</Text>
+          <Text style={[styles.phone, { color: theme.text }]}>{item.phone}</Text>
         </View>
         <View style={styles.rowText}>
-          <Text style={styles.phone}>{item.address}</Text>
+          <Text style={[styles.phone, { color: theme.text }]}>{item.address}</Text>
         </View>
         <Text>
-          <MaterialIcons name="chevron-right" size={32} color="#a0aec0" />
+          <MaterialIcons name="chevron-right" size={32} color={theme.colorIcon} />
         </Text>
       </View>
     </TouchableOpacity>

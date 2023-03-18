@@ -1,7 +1,8 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/core';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useContext } from 'react';
-import { Text, FlatList, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { Text, FlatList, TouchableOpacity, View, StyleSheet, InteractionManager } from 'react-native';
 import { ThemeContext } from '../../../App';
 import BackupService from '../../services/BackupService';
 import ItemService from '../../services/ItemService';
@@ -10,6 +11,17 @@ export default function SettingOPtionsScreen({ navigation, route }) {
   const { setting } = route.params;
   const [isLoading, setIsLoading] = useState(0);
   const { theme } = useContext(ThemeContext);
+
+  useFocusEffect(
+    useCallback(() => {
+      const task = InteractionManager.runAfterInteractions(() => {
+        // Theme task
+
+        theme
+      });
+    }, [])
+  );
+
 
   useEffect(() => {
     navigation.setOptions({
@@ -117,8 +129,6 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e2e8f0',
   },
   avatar: {
     borderRadius: 20,
