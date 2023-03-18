@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import { t } from 'i18n-js';
 import FieldText from '../../components/FieldText';
@@ -7,10 +7,22 @@ import { Formik } from 'formik';
 import validationSchema from '../../helpers/validation/customerValidation.js';
 import CustomerService from '../../services/CustomerService';
 import { ScrollView } from 'react-native-gesture-handler';
+import { ThemeContext } from '../../../App';
+import ButtonFilled from '../../components/ButtonFilled';
 
 export default function CustomerEditScreen({ navigation, route }) {
   // Retrieve Customer
   const [customer, setCustomer] = useState(route.params.customer);
+  const { theme } = useContext(ThemeContext);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerTintColor: theme.text,
+      headerStyle: {
+        backgroundColor: theme.accent,
+      },
+    });
+  }, [theme]);
 
   /**
    * Save a Customer in DB
@@ -30,7 +42,7 @@ export default function CustomerEditScreen({ navigation, route }) {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
       <Formik
         initialValues={{
           names: customer.names,
@@ -132,12 +144,21 @@ export default function CustomerEditScreen({ navigation, route }) {
               <Text style={{ fontSize: 13, color: 'red', marginLeft: 20 }}>{errors.note}</Text>
             )}
             <View style={[styles.row, { borderBottomWidth: 0 }]}>
-              <Button onPress={handDeleteCustomer} color={'#f1f1f1'} backgroundColor={'#ef4444'}>
+              <ButtonFilled
+                onPress={handDeleteCustomer}
+                color={theme.danger}
+                labelColor={theme.text}
+              >
                 {t('common.delete')}
-              </Button>
-              <Button onPress={handleSubmit} color={'#f1f1f1'} backgroundColor={'#47a67f'}>
+              </ButtonFilled>
+              <ButtonFilled onPress={handleSubmit} color={theme.primary} labelColor={theme.text}>
                 {t('common.save')}
-              </Button>
+              </ButtonFilled>
+              {/* <Button onPress={handDeleteCustomer} color={'#f1f1f1'} backgroundColor={'#ef4444'}>
+              </Button> */}
+              {/* <Button onPress={handleSubmit} color={'#f1f1f1'} backgroundColor={'#47a67f'}>
+                {t('common.save')}
+              </Button> */}
             </View>
           </>
         )}
@@ -157,5 +178,6 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     padding: 10,
+    justifyContent: 'space-evenly',
   },
 });

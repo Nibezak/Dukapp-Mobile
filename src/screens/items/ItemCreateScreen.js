@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { t } from 'i18n-js';
@@ -13,12 +13,27 @@ import Button from '../../components/Button';
 import ItemService from '../../services/ItemService';
 import OrderService from './../../services/OrderService';
 import { ScrollView } from 'react-native-gesture-handler';
+import { ThemeContext } from '../../../App.js';
+import ButtonFilled from '../../components/ButtonFilled.js';
 
 export default function CreateItemScreen({ navigation, route }) {
   // Product is Service?
   const [isService, setIsService] = useState(false);
+  const { theme } = useContext(ThemeContext);
   const toggleSwitch = () => setIsService((previousState) => !previousState);
 
+  const navBar = () => {
+    navigation.setOptions({
+      headerTintColor: theme.text,
+      headerStyle: {
+        backgroundColor: theme.accent,
+      },
+    });
+  };
+
+  useEffect(() => {
+    navBar();
+  }, [theme]);
   /**
    * Add new stock in the database
    */
@@ -64,7 +79,7 @@ export default function CreateItemScreen({ navigation, route }) {
    */
   return (
     <>
-      <KeyboardAwareScrollView>
+      <KeyboardAwareScrollView style={{ backgroundColor: theme.background }}>
         <ScrollView>
           <Formik
             initialValues={{
@@ -217,16 +232,20 @@ export default function CreateItemScreen({ navigation, route }) {
                 )}
 
                 <View style={styles.row}>
-                  <Button
+                  <ButtonFilled
                     onPress={() => navigation.goBack()}
-                    color={'#f1f1f1'}
-                    backgroundColor={'#f59e0b'}
+                    color={'#f59e0b'}
+                    labelColor={theme.text}
                   >
                     {t('common.cancel')}
-                  </Button>
-                  <Button onPress={handleSubmit} color={'#f1f1f1'} backgroundColor={'#47a67f'}>
+                  </ButtonFilled>
+                  <ButtonFilled
+                    onPress={handleSubmit}
+                    color={theme.primary}
+                    labelColor={theme.text}
+                  >
                     {t('common.save')}
-                  </Button>
+                  </ButtonFilled>
                 </View>
               </>
             )}
@@ -243,9 +262,10 @@ export default function CreateItemScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
   },
   row: {
     flexDirection: 'row',
+    justifyContent: 'space-evenly',
   },
 });

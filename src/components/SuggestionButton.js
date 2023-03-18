@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, TouchableOpacity, Text, ScrollView } from 'react-native';
+import { ThemeContext } from '../../App';
 
 /**
  * Suggestion button
  */
 export default function SuggestionButton(props) {
-  const { theme } = props;
+  const { theme } = useContext(ThemeContext);
   return (
     // <ScrollView style={[styles.scrollView, { backgroundColor: theme.background }]}>
     <View style={[styles.view]}>

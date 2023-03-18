@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, View, Text, ToastAndroid, TouchableOpacity, Alert } from 'react-native';
 import { t } from 'i18n-js';
 import InputTextDisabled from '../../components/InputTextDisabled';
@@ -16,9 +16,13 @@ import Item from '../../models/Item';
 import { MaterialIcons } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { ThemeContext } from '../../../App';
+import ButtonFilled from '../../components/ButtonFilled';
+
 export default function EditItemScreen({ navigation, route }) {
   // Define state
   const [item, setItem] = useState(route.params.item);
+  const { theme } = useContext(ThemeContext);
 
   // Product is Service?
   const [isService, setIsService] = useState(item.is_service == 1); // Convert 1 to true and 0 to false
@@ -30,10 +34,14 @@ export default function EditItemScreen({ navigation, route }) {
       setName(route.params.item_name);
     }
     updateNavRight();
-  }, []);
+  }, [theme]);
 
   function updateNavRight() {
     navigation.setOptions({
+      headerTintColor: theme.text,
+      headerStyle: {
+        backgroundColor: theme.accent,
+      },
       headerRight: () => (
         <>
           <View style={{ flexDirection: 'row' }}>
@@ -41,10 +49,10 @@ export default function EditItemScreen({ navigation, route }) {
               onPress={handleSaleItem}
               style={{ paddingRight: 20, marginHorizontal: 20, marginVertical: 3 }}
             >
-              <Text style={{ color: '#10b981', fontWeight: 'bold' }}>{t('item.sale')}</Text>
+              <Text style={{ color: theme.text, fontWeight: 'bold' }}>{t('item.sale')}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleDeleteButton} style={{ paddingRight: 20 }}>
-              <MaterialIcons name="delete" size={24} color="#ef4444" />
+              <MaterialIcons name="delete" size={24} color={theme.danger} />
             </TouchableOpacity>
           </View>
         </>
@@ -86,7 +94,7 @@ export default function EditItemScreen({ navigation, route }) {
           onPress: () => console.log('Cancel Pressed'),
           style: 'CANCEL',
         },
-        { text: 'DELETE', onPress: () => deleteThisOrder() },
+        { text: 'DELETE', onPress: () => deleteThisOrder(), style: 'destructive' },
       ]
     );
   }
@@ -128,7 +136,7 @@ export default function EditItemScreen({ navigation, route }) {
    * Render to the screen
    */
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <KeyboardAwareScrollView>
         <View
           style={{
@@ -228,6 +236,7 @@ export default function EditItemScreen({ navigation, route }) {
                         onBlur={handleBlur('reOrderLevel')}
                         underlineColorAndroid="transparent"
                         placeholder={t('item.re_order_level_placeholder')}
+                        placeholderTextColor={theme.text}
                         keyboardType="numeric"
                       />
                       <FieldText
@@ -237,6 +246,7 @@ export default function EditItemScreen({ navigation, route }) {
                         onBlur={handleBlur('quantity')}
                         underlineColorAndroid="transparent"
                         placeholder={t('item.quantity_placeholder')}
+                        placeholderTextColor={theme.text}
                         keyboardType="numeric"
                       />
                     </View>
@@ -254,6 +264,7 @@ export default function EditItemScreen({ navigation, route }) {
                         onBlur={handleBlur('unitPrice')}
                         underlineColorAndroid="transparent"
                         placeholder={t('item.unit_cost_price_placeholder')}
+                        placeholderTextColor={theme.text}
                         keyboardType="numeric"
                       />
                     </>
@@ -267,6 +278,7 @@ export default function EditItemScreen({ navigation, route }) {
                     onBlur={handleBlur('salePrice')}
                     underlineColorAndroid="transparent"
                     placeholder={t('item.unit_sale_price_placeholder')}
+                    placeholderTextColor={theme.text}
                     keyboardType="numeric"
                   />
                 </View>
@@ -276,16 +288,16 @@ export default function EditItemScreen({ navigation, route }) {
                   }}
                 >
                   {errors.quantity && (
-                    <Text style={{ fontSize: 13, color: 'red' }}>{errors.quantity}</Text>
+                    <Text style={{ fontSize: 13, color: theme.danger }}>{errors.quantity}</Text>
                   )}
                   {errors.reOrderLevel && (
-                    <Text style={{ fontSize: 13, color: 'red' }}>{errors.reOrderLevel}</Text>
+                    <Text style={{ fontSize: 13, color: theme.danger }}>{errors.reOrderLevel}</Text>
                   )}
                   {errors.unitPrice && (
-                    <Text style={{ fontSize: 13, color: 'red' }}>{errors.unitPrice}</Text>
+                    <Text style={{ fontSize: 13, color: theme.danger }}>{errors.unitPrice}</Text>
                   )}
                   {errors.salePrice && (
-                    <Text style={{ fontSize: 13, color: 'red' }}>{errors.salePrice}</Text>
+                    <Text style={{ fontSize: 13, color: theme.danger }}>{errors.salePrice}</Text>
                   )}
                 </View>
 
@@ -294,9 +306,13 @@ export default function EditItemScreen({ navigation, route }) {
             {t('common.delete')}
           </Button> */}
                   <View style={{ width: '50%' }}>
-                    <Button onPress={handleSubmit} color={'#f1f1f1'} backgroundColor="#47a67f">
+                    <ButtonFilled
+                      onPress={handleSubmit}
+                      color={theme.primary}
+                      labelColor={theme.text}
+                    >
                       {t('common.save')}
-                    </Button>
+                    </ButtonFilled>
                   </View>
                 </View>
               </>
