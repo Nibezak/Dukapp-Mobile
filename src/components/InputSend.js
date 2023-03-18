@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, TextInput, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import { ThemeContext } from '../../App';
 export default function InputSend(props) {
-  const { theme, bottom } = props;
+  const { bottom } = props;
+  const { theme } = useContext(ThemeContext);
   return (
     <View
       style={[

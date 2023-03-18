@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,19 +7,22 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
-} from "react-native";
-import { t } from "i18n-js";
-import ButtonFilled from "../../components/ButtonFilled";
-import PhoneInput from "react-native-phone-number-input";
-import { AuthContext } from "../../context/AuthProvider";
-import { sendOTP } from "../../api/VerifyPhone";
-import { ScrollView } from "react-native-gesture-handler";
+} from 'react-native';
+import { t } from 'i18n-js';
+import ButtonFilled from '../../components/ButtonFilled';
+import PhoneInput from 'react-native-phone-number-input';
+import { AuthContext } from '../../context/AuthProvider';
+import { sendOTP } from '../../api/VerifyPhone';
+import { ScrollView } from 'react-native-gesture-handler';
+import { ThemeContext } from '../../../App';
+import { StatusBar } from 'expo-status-bar';
 
 export default function PhoneNumberScreen({ navigation }) {
-  const [value, setValue] = useState("");
-  const [formattedValue, setFormattedValue] = useState("");
+  const [value, setValue] = useState('');
+  const [formattedValue, setFormattedValue] = useState('');
   const phoneInput = useRef(null);
   const { error, isLoading, setIsLoading } = useContext(AuthContext);
+  const { theme } = useContext(ThemeContext);
 
   /**
    * @todo, implement the verification backend in the context
@@ -31,7 +34,7 @@ export default function PhoneNumberScreen({ navigation }) {
     sendOTP(formattedValue.substring(1, 13))
       .then((sent) => {
         setIsLoading(false);
-        navigation.navigate("Otp", {
+        navigation.navigate('Otp', {
           phoneNumber: formattedValue,
         });
       })
@@ -42,14 +45,29 @@ export default function PhoneNumberScreen({ navigation }) {
 
   return (
     <>
-      <ScrollView style={styles.container}>
+      <StatusBar style={theme.statusbar} />
+      <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
         <View style={styles.wrapper}>
           <View style={styles.welcome}>
-            <Image source={require('./../../../assets/snack-icon.png')} style={styles.appName} />
-            <Text style={styles.pitch}>{t("auth.welcome_to_dukapp_app")}</Text>
-            <Text style={styles.verifyPhone}>
-              {t("auth.verify_your_phone")}
+            <Image
+              source={
+                theme.theme === 'light'
+                  ? require('./../../../assets/snack-icon.png')
+                  : require('./../../../assets/snack-icon-dark.png')
+              }
+              style={styles.appName}
+            />
+            <Text style={[styles.pitch, { color: theme.text, opacity: 0.7 }]}>
+              {t('auth.welcome_to_dukapp_app')}
             </Text>
+            <TouchableOpacity
+              style={{ marginHorizontal: 30 }}
+              onPress={() => navigation.navigate('Login')}
+            >
+              <Text style={[styles.verifyPhone, { color: theme.text, opacity: 0.7 }]}>
+                {t('auth.verify_your_phone')}
+              </Text>
+            </TouchableOpacity>
           </View>
           <PhoneInput
             ref={phoneInput}
@@ -69,31 +87,31 @@ export default function PhoneNumberScreen({ navigation }) {
             initialCountry="rw"
           />
 
-          <Text style={styles.carrierCharges}>
-            {t("auth.carrier_charge_may_apply")}
+          <Text style={[styles.carrierCharges, { color: theme.text, opacity: 0.7 }]}>
+            {t('auth.carrier_charge_may_apply')}
           </Text>
 
-          {error && <Text style={{ color: "red" }}>{error}</Text>}
+          {error && <Text style={{ color: theme.danger }}>{error}</Text>}
           {isLoading && (
-            <ActivityIndicator
-              style={{ marginTop: 8 }}
-              size="small"
-              color="gray"
-            />
+            <ActivityIndicator style={{ marginTop: 8 }} size="small" color={theme.primary} />
           )}
 
           <TouchableOpacity
             onPress={async () => {
               // Checking if the link is supported for links with custom URL scheme.
-              const supported = await Linking.canOpenURL("https://butike.app");
+              const supported = await Linking.canOpenURL('https://butike.app');
             }}
           >
-            <Text style={styles.termsLink}>
-              {t("common.terms_and_condition")}
+            <Text style={[styles.termsLink, { color: theme.text, opacity: 0.7 }]}>
+              {t('common.terms_and_condition')}
             </Text>
           </TouchableOpacity>
-          <ButtonFilled onPress={handleSendSmsVerification}>
-            {t("auth.accept_tc_and_continue")}
+          <ButtonFilled
+            onPress={handleSendSmsVerification}
+            color={theme.accent}
+            labelColor={theme.text}
+          >
+            {t('auth.accept_tc_and_continue')}
           </ButtonFilled>
         </View>
       </ScrollView>
@@ -104,56 +122,56 @@ export default function PhoneNumberScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   wrapper: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   appName: {
     width: 140,
     height: 130,
-    alignSelf: "center",
+    alignSelf: 'center',
     marginBottom: 10,
   },
   pitch: {
     fontSize: 18,
     paddingHorizontal: 30,
     paddingBottom: 20,
-    textAlign: "center",
-    color: "#718096",
+    textAlign: 'center',
+    color: '#718096',
   },
   verifyPhone: {
-    color: "#718096",
-    fontWeight: "700",
+    color: '#718096',
+    fontWeight: '700',
     fontSize: 16,
-    alignSelf: "center",
+    alignSelf: 'center',
     marginTop: 20,
   },
   carrierCharges: {
-    color: "#718096",
-    fontWeight: "600",
+    color: '#718096',
+    fontWeight: '600',
     fontSize: 12,
     paddingTop: 20,
-    fontStyle: "italic",
+    fontStyle: 'italic',
   },
   message: {
     fontSize: 14,
     paddingHorizontal: 30,
-    color: "#4a5568",
-    textAlign: "center",
+    color: '#4a5568',
+    textAlign: 'center',
   },
   button: {
     borderRadius: 3,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginTop: 20,
     height: 50,
     width: 300,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#2d3748",
-    shadowColor: "rgba(0,0,0,0.4)",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#2d3748',
+    shadowColor: 'rgba(0,0,0,0.4)',
     shadowOffset: {
       width: 1,
       height: 5,
@@ -164,7 +182,7 @@ const styles = StyleSheet.create({
   },
 
   buttonText: {
-    color: "white",
+    color: 'white',
     fontSize: 14,
   },
   welcome: {
@@ -173,13 +191,13 @@ const styles = StyleSheet.create({
   status: {
     padding: 20,
     marginBottom: 20,
-    justifyContent: "center",
-    alignItems: "flex-start",
-    color: "gray",
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    color: 'gray',
   },
   termsLink: {
     fontSize: 14,
     marginTop: 30,
-    textDecorationLine: "underline",
+    textDecorationLine: 'underline',
   },
 });

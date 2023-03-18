@@ -1,27 +1,29 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, Picker, StyleSheet } from "react-native";
-import OrderService from "../../services/OrderService";
-import Button from "../../components/Button";
-import FieldText from "../../components/FieldText";
-import InputSelect from "../../components/InputSelect";
-import { getSetting } from "../../models/AsyncStorage";
-import { t } from "i18n-js";
-import InputText from "../../components/FieldText";
-import { unixHourStamp, unixMinuteStamp, unixTimeStamp } from "../../helpers/Dates";
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, Picker, StyleSheet } from 'react-native';
+import OrderService from '../../services/OrderService';
+import Button from '../../components/Button';
+import FieldText from '../../components/FieldText';
+import InputSelect from '../../components/InputSelect';
+import { getSetting } from '../../models/AsyncStorage';
+import { t } from 'i18n-js';
+import InputText from '../../components/FieldText';
+import { unixHourStamp, unixMinuteStamp, unixTimeStamp } from '../../helpers/Dates';
+import { ThemeContext } from '../../../App';
+import ButtonFilled from '../../components/ButtonFilled';
 
 var paymentOptions = [
-  { value: "Cash", label: "Cash" },
-  { value: "mobile_mtn_momo", label: "MTN MoMo" },
-  { value: "mobile_airtel_money", label: "Airtel Money" },
-  { value: "mobile_mpesa", label: "M-Pesa" },
-  { value: "credit", label: "Credit" },
-  { value: "others", label: "Others" },
+  { value: 'Cash', label: 'Cash' },
+  { value: 'mobile_mtn_momo', label: 'MTN MoMo' },
+  { value: 'mobile_airtel_money', label: 'Airtel Money' },
+  { value: 'mobile_mpesa', label: 'M-Pesa' },
+  { value: 'credit', label: 'Credit' },
+  { value: 'others', label: 'Others' },
 ];
 
 export default function OrderPaymentScreen({ navigation, route }) {
   const [order, setOrder] = useState(route.params.order);
   const orderPayment = route.params.order.payments[0];
-
+  const { theme } = useContext(ThemeContext);
   const [amount, setAmount] = useState(order.total);
   const [method, setMethod] = useState(orderPayment.method);
   const [title, setTitle] = useState(orderPayment.title);
@@ -30,10 +32,14 @@ export default function OrderPaymentScreen({ navigation, route }) {
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: "Payment - Order #" + order.id,
+      headerTitle: 'Payment - Order #' + order.id,
+      headerTintColor: theme.text,
+      headerStyle: {
+        backgroundColor: theme.accent,
+      },
     });
 
-    getSetting("app_default_currency").then(setCurrency);
+    getSetting('app_default_currency').then(setCurrency);
   }, []);
 
   function handleSetMethod(value, index) {
@@ -50,7 +56,7 @@ export default function OrderPaymentScreen({ navigation, route }) {
       {
         method: method,
         title: title,
-        transaction_id: "P" + unixTimeStamp(),
+        transaction_id: 'P' + unixTimeStamp(),
         amount: amount,
         currency: currency,
         date_paid: ` ${unixHourStamp()}:${unixMinuteStamp()}`,
@@ -62,24 +68,22 @@ export default function OrderPaymentScreen({ navigation, route }) {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.row}>
         <InputSelect
-          testID={"payment-option-selection"}
-          mode={"dropdown"}
-          title={"Payment Method"}
+          testID={'payment-option-selection'}
+          mode={'dropdown'}
+          title={'Payment Method'}
           selectedValue={method}
           style={{ height: 150, width: 150 }}
-          onValueChange={(itemValue, itemIndex) =>
-            handleSetMethod(itemValue, itemIndex)
-          }
+          onValueChange={(itemValue, itemIndex) => handleSetMethod(itemValue, itemIndex)}
           options={paymentOptions}
         />
       </View>
       <View style={styles.row}>
         <FieldText
           defaultValue={order.total.toString()}
-          title={"the about amount in " + currency + " Currency"}
+          title={'the about amount in ' + currency + ' Currency'}
           // onChangeText={setAmount}
           underlineColorAndroid="transparent"
           keyboardType="numeric"
@@ -88,12 +92,16 @@ export default function OrderPaymentScreen({ navigation, route }) {
         />
       </View>
       <View style={[styles.row, { borderBottomWidth: 0 }]}>
-        <Button onPress={() => navigation.goBack()} color={"#f1f1f1"} backgroundColor={'#f59e0b'}>
-          {"Cancel"}
-        </Button>
-        <Button onPress={handleAddPayment} color={"#f1f1f1"} backgroundColor={'#47a67f'}>
-          {"Save"}
-        </Button>
+        <ButtonFilled onPress={() => navigation.goBack()} color={'#f59e0b'} labelColor={theme.text}>
+          {'Cancel'}
+        </ButtonFilled>
+        <ButtonFilled onPress={handleAddPayment} color={theme.primary} labelColor={theme.text}>
+          {'Save'}
+        </ButtonFilled>
+        {/* <Button onPress={} color={'#f1f1f1'} backgroundColor={}>
+        </Button> */}
+        {/* <Button onPress={handleAddPayment} color={'#f1f1f1'} backgroundColor={'#47a67f'}>
+        </Button> */}
       </View>
     </View>
   );
@@ -107,14 +115,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
     padding: 10,
-    marginTop: 30
+    marginTop: 30,
   },
   amount: {
     fontSize: 14,
-    fontWeight: "800",
+    fontWeight: '800',
     paddingRight: 5,
   },
   itemName: {

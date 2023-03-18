@@ -190,19 +190,20 @@ export default function GeneralSettingsScreen() {
           index={0}
           snapPoints={snapPoints}
           backgroundStyle={{
-            backgroundColor: '#F4F4F5',
+            backgroundColor: theme.accent,
             padding: 10,
             elevation: 5,
-            borderTopColor: '#D4D4D8',
+            borderTopColor: theme.colorIcon,
             borderTopWidth: 1,
           }}
+          handleIndicatorStyle={{ backgroundColor: theme.colorIcon }}
         >
           <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-            <Text style={{ color: 'gray', fontSize: 14 }}>
+            <Text style={{ color: theme.text, opacity: 0.7, fontSize: 14 }}>
               Give us A feedback on how to improve
             </Text>
             <TouchableOpacity style={styles.button} onPress={() => console.log('thank you')}>
-              <Ionicons name="send" size={20} color="#47a67f" />
+              <Ionicons name="send" size={20} color={theme.primary} />
             </TouchableOpacity>
           </View>
           <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>

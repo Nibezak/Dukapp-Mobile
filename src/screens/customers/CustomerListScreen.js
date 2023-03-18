@@ -110,15 +110,22 @@ export default function CustomerListScreen({ navigation }) {
    */
   if (showLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          background: theme.background,
+        }}
+      >
+        <ActivityIndicator style={{ margin: 8 }} size="small" color={theme.primary} />
       </View>
     );
   }
 
   // If we reach here it means that the list of customers has finished loading
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {customers.length > 0 ? (
         <>
           <FlatList

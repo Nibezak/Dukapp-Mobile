@@ -122,7 +122,7 @@ export default function SaleReceiptsScreen({ navigation, route }) {
    * Render to the screen
    */
   return (
-    <View style={{ marginVertical: 10 }}>
+    <View style={{ paddingVertical: 10, backgroundColor: theme.background, flex: 1 }}>
       {orders.length > 0 ? (
         <FlatList
           style={{ bottom: 1 }}

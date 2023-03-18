@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   View,
   Text,
@@ -23,12 +23,14 @@ import Order from '../../models/Order';
 import OrderItem from '../../models/OrderItem';
 import Supplier from '../../models/Supplier';
 import { t } from 'i18n-js';
+import { ThemeContext } from '../../../App';
 
 export function OnboardingScreen() {
   const [currencyValue, setCurrencyValue] = useState('RWF');
   const [paymentValue, setPaymentValue] = useState('cash');
   const navigation = useNavigation();
   const [showLoading, setShowLoading] = useState(true);
+  const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
     /**
