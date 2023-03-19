@@ -66,24 +66,27 @@ export default function PhoneNumberScreen({ navigation }) {
               </Text>
             </TouchableOpacity>
           </View>
-          <PhoneInput
-            ref={phoneInput}
-            defaultValue={value}
-            defaultCode="RW"
-            layout="first"
-            onChangeText={(text) => {
-              setValue(text);
-            }}
-            onChangeFormattedText={(text) => {
-              setFormattedValue(text);
-            }}
-            countryPickerProps={{ withAlphaFilter: true }}
-            withShadow
-            autoFocus
-            autoFormat={true}
-            initialCountry="rw"
-          />
-
+          <View style={{ paddingTop: 10 }}>
+            <PhoneInput
+              ref={phoneInput}
+              defaultValue={value}
+              defaultCode="RW"
+              layout="second"
+              onChangeText={(text) => {
+                setValue(text);
+              }}
+              onChangeFormattedText={(text) => {
+                setFormattedValue(text);
+              }}
+              countryPickerProps={{ withAlphaFilter: true }}
+              withShadow
+              containerStyle={{ backgroundColor: "#CBD5E1", borderRadius: 100 }}
+              textContainerStyle={{ backgroundColor: "#E2E8F0", borderRadius: 100 }}
+              autoFocus
+              autoFormat={true}
+              initialCountry="rw"
+            />
+          </View>
           <Text style={[styles.carrierCharges, { color: theme.text, opacity: 0.7 }]}>
             {t('auth.carrier_charge_may_apply')}
           </Text>
@@ -131,6 +134,7 @@ const styles = StyleSheet.create({
     width: 140,
     height: 130,
     alignSelf: 'center',
+    marginTop: 20,
     marginBottom: 10,
   },
   pitch: {

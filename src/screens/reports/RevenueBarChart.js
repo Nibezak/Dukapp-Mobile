@@ -38,7 +38,7 @@ export default function RevenueBarChart({ startDate, endDate }) {
   const { theme } = useContext(ThemeContext);
   const [dataSets, setDataSets] = useState({
     days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    profits: [100, 200, 300, 100, 400, 200, 300],
+    profits: [0, 0, 0, 0, 0, 0, 0],
   });
 
   useFocusEffect(
@@ -91,12 +91,11 @@ export default function RevenueBarChart({ startDate, endDate }) {
         /> */}
         <BarChart
           data={barData}
-          width={Dimensions.get('window').width - 20}
+          width={Dimensions.get('window').width - 16}
           // hidePointsAtIndex={[0]}
-          segments={10}
+          //   segments={10}
           height={300}
           fromZero={true}
-          // withCustomBarColorFromData
           withInnerLines={false}
           showBarTops={false}
           flatColor={true}
