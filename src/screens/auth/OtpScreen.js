@@ -65,7 +65,7 @@ export default function OtpScreen({ route, navigation }) {
           ]}
           codeInputHighlightStyle={{ borderColor: theme.text }}
           onCodeFilled={handleOtpVerification}
-          // placeholderCharacter="_"
+        // placeholderCharacter="_"
         />
         {invalidCode && (
           <Text style={[styles.error, { color: theme.danger }]}>{t('auth.incorrect_code')}</Text>
