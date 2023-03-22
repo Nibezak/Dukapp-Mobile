@@ -1,6 +1,15 @@
-import { InteractionManager, ActivityIndicator, View, TouchableOpacity, Text, ScrollView, ToastAndroid, Alert } from 'react-native';
+import {
+  InteractionManager,
+  ActivityIndicator,
+  View,
+  TouchableOpacity,
+  Text,
+  ScrollView,
+  ToastAndroid,
+  Alert,
+} from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import ReportService from './../../services/ReportService';
 import { money, number } from '../../helpers/Numbers';
 import { getSetting } from '../../models/AsyncStorage';
@@ -12,6 +21,7 @@ import { AntDesign } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import OrderService from '../../services/OrderService';
 import { WelcomeInsights } from '../../components/WelcomeInsights';
+import { ThemeContext } from '../../../App';
 
 export default function SummaryReportScreen() {
   const [currency, setCurrency] = useState(null);
@@ -23,6 +33,7 @@ export default function SummaryReportScreen() {
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
   const navigation = useNavigation();
+  const { theme } = useContext(ThemeContext);
 
   // Date Picker
   const [datePicker, setDatePicker] = useState(false);
@@ -80,13 +91,17 @@ export default function SummaryReportScreen() {
     refreshOrders();
     // Load data for the report
     refreshReportByDate(startDate, endDate);
-  }, [startDate, endDate]);
+  }, [startDate, endDate, theme]);
 
   const keyExtractor = useCallback((index) => index.toString(), []);
 
   function setHeader() {
     navigation.setOptions({
       headerTitleAlign: 'center',
+      headerTintColor: theme.text,
+      headerStyle: {
+        backgroundColor: theme.accent,
+      },
       headerRight: () => (
         <>
           <View>
@@ -94,7 +109,12 @@ export default function SummaryReportScreen() {
               onPress={() => navigation.goBack()}
               style={{ paddingHorizontal: 10, marginHorizontal: 10 }}
             >
-              <AntDesign name="minuscircleo" size={24} color="#718096" style={{ fontWeight: 'semibold' }} />
+              <AntDesign
+                name="minuscircleo"
+                size={24}
+                color={theme.primary}
+                style={{ fontWeight: 'semibold' }}
+              />
             </TouchableOpacity>
           </View>
         </>
@@ -103,7 +123,7 @@ export default function SummaryReportScreen() {
         <AntDesign
           name="menuunfold"
           size={24}
-          color="#47a67f"
+          color={theme.primary}
           onPress={() => navigation.openDrawer()}
           style={{ paddingLeft: 10 }}
         />
@@ -112,7 +132,9 @@ export default function SummaryReportScreen() {
   }
 
   async function refreshOrders() {
-    return OrderService.ordersWithItems(setOrders, orderType, null, 8).then(() => setshowLoading(false))
+    return OrderService.ordersWithItems(setOrders, orderType, null, 8).then(() =>
+      setshowLoading(false)
+    );
   }
   /**
    * Fetch report from database based on the date
@@ -190,31 +212,40 @@ export default function SummaryReportScreen() {
     );
   }
 
-
   return (
-    <View style={styles.container}>
-
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {orders.length === 0 ? (
         <WelcomeInsights />
       ) : (
         <>
-
           <View>
-
             <View style={[styles.datePicker, { flexDirection: 'row' }]}>
               {/* SECTION FOR DATE PICKER */}
-              <TouchableOpacity onPress={() => setShowStartDatePicker(true)} style={styles.dateSelector}>
-                <View style={{ flexDirection: "row", justifyContent: "center" }}>
-                  <Text style={{ color: '#718096', fontSize: 12 }}>Start Date</Text>
+              <TouchableOpacity
+                onPress={() => setShowStartDatePicker(true)}
+                style={[styles.dateSelector, { backgroundColor: theme.accent }]}
+              >
+                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                  <Text style={{ color: theme.text, fontSize: 12 }}>Start Date</Text>
                 </View>
-                <Text style={styles.title}>{startDate.toString()}</Text>
+                <Text style={[styles.title, { color: theme.text, opacity: 0.7 }]}>
+                  {startDate.toString()}
+                </Text>
               </TouchableOpacity>
-              <Text style={[styles.title, { fontWeight: 'bold' }]}> {'-'} </Text>
-              <TouchableOpacity onPress={() => setShowEndDatePicker(true)} style={styles.dateSelector}>
-                <View style={{ flexDirection: "row", justifyContent: "center", }}>
-                  <Text style={{ color: '#718096', fontSize: 12 }}>End Date</Text>
+              <Text style={[styles.title, { fontWeight: 'bold', color: theme.text, opacity: 0.7 }]}>
+                {' '}
+                {'-'}{' '}
+              </Text>
+              <TouchableOpacity
+                onPress={() => setShowEndDatePicker(true)}
+                style={[styles.dateSelector, { backgroundColor: theme.accent }]}
+              >
+                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                  <Text style={{ color: theme.text, fontSize: 12 }}>End Date</Text>
                 </View>
-                <Text style={styles.title}>{endDate.toString()}</Text>
+                <Text style={[styles.title, { color: theme.text, opacity: 0.7 }]}>
+                  {endDate.toString()}
+                </Text>
               </TouchableOpacity>
             </View>
             {showStartDatePicker && (
@@ -226,10 +257,10 @@ export default function SummaryReportScreen() {
                 accentColor={'#718096'}
                 onChange={(event, date) => {
                   /** Hide the start date */
-                  setShowStartDatePicker(!showStartDatePicker)
+                  setShowStartDatePicker(!showStartDatePicker);
                   /** Update the start date */
                   ToastAndroid.show('Choose end date to continue', ToastAndroid.SHORT);
-                  setStartDate(date.toISOString().slice(0, 10))
+                  setStartDate(date.toISOString().slice(0, 10));
                 }}
               />
             )}
@@ -237,7 +268,7 @@ export default function SummaryReportScreen() {
             {showEndDatePicker && (
               <DateTimePicker
                 value={new Date(endDate)}
-                mode={'d  ate'}
+                mode={'date'}
                 display={'default'}
                 accentColor={'#718096'}
                 // Ensure This is always greator than start date
@@ -255,7 +286,7 @@ export default function SummaryReportScreen() {
             {/* END DATE PICKER SECTION */}
             <View
               style={{
-                backgroundColor: 'white',
+                backgroundColor: theme.accent,
                 paddingHorizontal: 10,
                 marginHorizontal: 10,
                 borderRadius: 10,
@@ -264,9 +295,11 @@ export default function SummaryReportScreen() {
               }}
             >
               <ScrollView>
-                <View style={{ backgroundColor: "white", marginRight: "1%", elevation: 30 }}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'center', paddingVertical: 10 }}>
-                    <Text style={{ color: '#818096' }}>Summary</Text>
+                <View style={{ marginRight: '1%' }}>
+                  <View
+                    style={{ flexDirection: 'row', justifyContent: 'center', paddingVertical: 10 }}
+                  >
+                    <Text style={{ color: theme.text, fontWeight: 'bold' }}>Summary</Text>
                   </View>
                   <View style={styles.row}>
                     {revenueSummaries.map((item, index) => (
@@ -287,7 +320,14 @@ export default function SummaryReportScreen() {
                       justifyContent: 'center',
                     }}
                   >
-                    <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>
+                    <Title
+                      style={{
+                        paddingHorizontal: 7,
+                        color: theme.text,
+                        fontWeight: 'bold',
+                        fontSize: 12,
+                      }}
+                    >
                       {t('report.payment_summary')}
                     </Title>
                   </View>
@@ -310,7 +350,14 @@ export default function SummaryReportScreen() {
                       justifyContent: 'center',
                     }}
                   >
-                    <Title style={{ paddingHorizontal: 7, color: '#818096', fontSize: 12 }}>
+                    <Title
+                      style={{
+                        paddingHorizontal: 7,
+                        color: theme.text,
+                        fontWeight: 'bold',
+                        fontSize: 12,
+                      }}
+                    >
                       {t('report.items_summary')}
                     </Title>
                   </View>
@@ -371,11 +418,10 @@ const styles = {
     marginHorizontal: 5,
     paddingVertical: 20,
     borderRadius: 10,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: '#f9f9f9',
 
     marginVertical: 30,
-    elevation: 5
-
+    elevation: 5,
   },
   value: {
     textAlign: 'center',
@@ -385,7 +431,6 @@ const styles = {
     color: '#4a5568',
   },
   datePicker: {
-
-    justifyContent: "center"
-  }
+    justifyContent: 'center',
+  },
 };
