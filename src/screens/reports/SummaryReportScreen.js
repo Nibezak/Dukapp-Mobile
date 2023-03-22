@@ -255,11 +255,11 @@ export default function SummaryReportScreen() {
                 maximumDate={new Date()}
                 display={'default'}
                 accentColor={'#718096'}
+                themeVariant={'dark'}
                 onChange={(event, date) => {
                   /** Hide the start date */
                   setShowStartDatePicker(!showStartDatePicker);
                   /** Update the start date */
-                  ToastAndroid.show('Choose end date to continue', ToastAndroid.SHORT);
                   setStartDate(date.toISOString().slice(0, 10));
                 }}
               />

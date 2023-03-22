@@ -69,7 +69,7 @@ const styles = {
     flexDirection: 'row',
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    // borderBottomColor: '#eee',
   },
   avatar: {
     borderRadius: 20,

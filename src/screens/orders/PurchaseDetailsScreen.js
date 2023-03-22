@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import {
     View,
     TouchableOpacity,
@@ -14,7 +14,7 @@ import { t } from 'i18n-js';
 import SuggestionButton from '../../components/SuggestionButton';
 import CustomerService from '../../services/CustomerService';
 import { useFocusEffect } from '@react-navigation/native';
-import { numberFromString, number } from '../../helpers/Numbers';
+import { ThemeContext } from '../../../App';
 import RenderOrderLineItem from './RenderOrderLineItem';
 import OrderService from '../../services/OrderService';
 import ItemService from '../../services/ItemService';
@@ -35,6 +35,8 @@ export default function PurchaseDetailsScreen({ navigation, route }) {
     const [items, setItems] = useState([]);
     const [suggestions, setSuggestions] = useState([]);
     const [currency, setCurrency] = useState(null);
+    const { theme } = useContext(ThemeContext);
+
 
     useFocusEffect(
         useCallback(() => {
@@ -49,6 +51,8 @@ export default function PurchaseDetailsScreen({ navigation, route }) {
         navigation.setOptions({
             headerTitle:
                 orderType.substr(0, 4).charAt(0).toUpperCase() + ' #' + route.params.order.id.toString(),
+            headerTintColor: theme.text,
+            headerStyle: { backgroundColor: theme.accent },
         });
         updateNavRight();
 
@@ -76,7 +80,7 @@ export default function PurchaseDetailsScreen({ navigation, route }) {
 
                     {/* Show delete button */}
                     <TouchableOpacity onPress={handleDeleteButton} style={{ paddingRight: 20 }}>
-                        <MaterialIcons name="delete" size={24} color="#ef4444" />
+                        <MaterialIcons name="delete" size={24} color={theme.danger} />
                     </TouchableOpacity>
                 </View>
             ),
@@ -352,7 +356,7 @@ export default function PurchaseDetailsScreen({ navigation, route }) {
     const keyExtractor = useCallback((item, index) => index.toString(), []);
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
             {/** Order Payment*/}
             <PurchaseOrderPayment customer={customer} order={order} />
 
@@ -376,6 +380,7 @@ export default function PurchaseDetailsScreen({ navigation, route }) {
                     )}
                     pagingEnabled={true}
                     keyExtractor={keyExtractor}
+                    theme={theme}
                 />
             ) : (
                 <></>
@@ -387,6 +392,7 @@ export default function PurchaseDetailsScreen({ navigation, route }) {
                     onPress={sellNewItem}
                     value={typing}
                     placeholder={t('order.type_to_sell')}
+                    theme={theme}
                 />
             </KeyboardAvoidingView>
         </View >
