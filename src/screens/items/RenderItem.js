@@ -100,8 +100,8 @@ const styles = {
     paddingHorizontal: 1,
     marginHorizontal: 7,
     borderBottomWidth: 0.5,
-    borderBottomColor: '#cbd5e0',
-    padding: 10,
+    paddingHorizontal: 5,
+    paddingVertical: 10,
   },
   avatar: {
     borderRadius: 20,

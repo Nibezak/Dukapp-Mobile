@@ -53,12 +53,7 @@ export default function RecentOrder({ item, parentRefresher }) {
             }}
             key={order.id}
             activeOpacity={0.8}
-            onPress={() =>
-                navigation.navigate('Order Receipt', {
-                    order: order,
-                    customer: customer,
-                })
-            }
+            onPress={handleNavigation}
         >
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 2 }}>
                 <Text
