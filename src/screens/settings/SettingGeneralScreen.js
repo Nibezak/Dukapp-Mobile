@@ -18,9 +18,17 @@ import { useRef } from 'react';
 import { TextInput } from 'react-native';
 import * as Analytics from 'expo-firebase-analytics';
 import { onAuthStateChanged } from '@firebase/auth';
-import { auth } from '../../../firebase';
+import { auth, storage } from '../../../firebase';
 import { ThemeContext } from '../../../App';
 import { StatusBar } from 'expo-status-bar';
+import * as FileSystem from 'expo-file-system';
+import {
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+  uploadString,
+  uploadBytes,
+} from 'firebase/storage';
 
 export default function GeneralSettingsScreen() {
   const { logout } = useContext(AuthContext);
@@ -130,8 +138,90 @@ export default function GeneralSettingsScreen() {
         handleDatabaseReset();
         break;
       case 'backup_application':
-        BackupService.backupEntireApp();
-        ToastAndroid.show(t('setting.application_backup_is_done'), ToastAndroid.SHORT);
+        const storageRef = ref(storage, `backups/dukapp001.db`);
+        console.log(FileSystem.documentDirectory + 'SQLite/dukApp001.db');
+        // const db = new Blob(
+        //   [JSON.stringify(FileSystem.documentDirectory + 'SQLite/dukApp001.db')],
+        //   { type: 'application/octet-stream' }
+        // );
+        await FileSystem.copyAsync({
+          from: FileSystem.documentDirectory + 'SQLite/dukApp001.db',
+          to: FileSystem.cacheDirectory + 'dukapp001.db',
+        });
+        console.log(FileSystem.cacheDirectory + 'dukapp001.db');
+        const fileBlob = await FileSystem.readAsStringAsync(
+          FileSystem.cacheDirectory + 'dukapp001.db',
+          {
+            encoding: FileSystem.EncodingType.Base64,
+          }
+        );
+        // console.log(fileBlob);
+        // uploadBytes(storageRef, fileBlob, {
+        //   contentType: 'application/octet-stream',
+        // })
+        //   .then((snapshot) => {
+        //     console.log(snapshot);
+        //     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        //     console.log('Upload is ' + progress + '% done');
+        //     switch (snapshot.state) {
+        //       case 'paused':
+        //         console.log('Upload is paused');
+        //         break;
+        //       case 'running':
+        //         console.log('Upload is running');
+        //         break;
+        //     }
+        //   })
+        //   .catch((err) => console.log(err));
+        uploadString(storageRef, fileBlob, 'base64', {
+          contentType: 'application/octet-stream',
+        })
+          .then((snapshot) => {
+            console.log(snapshot);
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+              case 'paused':
+                console.log('Upload is paused');
+                break;
+              case 'running':
+                console.log('Upload is running');
+                break;
+            }
+          })
+          .catch((err) => console.log(err));
+
+        // const uploadTask = uploadBytesResumable(storageRef, fileBlob, {
+        //   contentType: 'application/octet-stream',
+        // });
+
+        // uploadTask.on('state_changed', (snapshot) => {
+        //   const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        //   console.log('Upload is ' + progress + '% done');
+        //   switch (snapshot.state) {
+        //     case 'paused':
+        //       console.log('Upload is paused');
+        //       break;
+        //     case 'running':
+        //       console.log('Upload is running');
+        //       break;
+        //   }
+        // });
+        // getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        //   console.log('File available at', downloadURL);
+        // });
+        // storage.app.
+        // .ref('backup')
+        // .child('backups/')
+        // .pu(FileSystem.documentDirectory + 'SQLite/dukApp001.db')
+        // .then((snapshot) => {
+        //   console.log('Uploaded a blob or file!');
+        // })
+        // .catch((error) => {
+        //   console.log(error);
+        // });
+        // BackupService.backupEntireApp();
+        // ToastAndroid.show(t('setting.application_backup_is_done'), ToastAndroid.SHORT);
 
         break;
       case 'logout':

@@ -1,5 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
+import { useContext } from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
+import { ThemeContext } from '../../../App';
 
 /**
  * Render individual Report Items
@@ -9,6 +11,7 @@ import { Text, View, TouchableOpacity } from 'react-native';
  */
 export function RenderReportItem({ value, title, titleColor, route }) {
   const navigation = useNavigation();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <View style={styles.card}>
@@ -20,7 +23,7 @@ export function RenderReportItem({ value, title, titleColor, route }) {
         </View>
 
         <View style={styles.rowText}>
-          <Text style={styles.value}>{value}</Text>
+          <Text style={[styles.value, { color: theme.text, opacity: 0.7 }]}>{value}</Text>
         </View>
       </TouchableOpacity>
     </View>
@@ -32,12 +35,12 @@ const styles = {
     padding: 20,
   },
   container: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     borderBottomWidth: 1,
-    borderBottomColor: "#cbd5e0",
+    borderBottomColor: '#cbd5e0',
   },
   rowText: {
     marginBottom: 30,
-  }
+  },
 };
