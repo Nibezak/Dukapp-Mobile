@@ -87,8 +87,8 @@ export default function OrderPaymentScreen({ navigation, route }) {
           // onChangeText={setAmount}
           underlineColorAndroid="transparent"
           keyboardType="numeric"
-          editable={false}
-          selectTextOnFocus={false}
+          editable={true}
+          selectTextOnFocus={true}
         />
       </View>
       <View style={[styles.row, { borderBottomWidth: 0 }]}>

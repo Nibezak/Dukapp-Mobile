@@ -36,7 +36,7 @@ export default function SideBar() {
     { icon: HomeIcon, title: 'Home', route: 'HomeScreen' },
     // { icon: SupplierIcon, title: 'Suppliers', route: 'Supplier List' },
     { icon: ReceiptsIcon, title: 'Receipts', route: 'Sale Receipt' },
-    { icon: BankIcon, title: 'Transactions', route: 'SMS Transactions' },
+    // { icon: BankIcon, title: 'Transactions', route: 'SMS Transactions' },
     { icon: ReportInsightsIcon, title: 'Report Insights', route: 'Insights' },
   ];
 
@@ -60,15 +60,23 @@ export default function SideBar() {
   }
 
   // share a link to other friends
-
   const onShare = async () => {
     try {
+      const imageUrl = Image.resolveAssetSource(require('./../../assets/icon.png')).uri;
       Analytics.logEvent('share', {
         shop: businessName,
         method: 'share',
       });
       await Share.share({
-        message: 'https://t.co/aGEv789qZB',
+        title: 'Download Dukapp :)',
+        message: '😄 we invite you to download dukapp it is a simple, secure, reliable management and insights tool to grow your business 💯.🔥 shorturl.at/swyL0 🔥',
+        url: imageUrl,
+        // specify the type of the image
+        type: 'image/png',
+        // include the image in the share content
+        // you can also use local image URI
+        // e.g., `Image.resolveAssetSource(require('./image.png')).uri`
+        files: [imageUrl]
       });
     } catch (error) {
       console.log(error.message);

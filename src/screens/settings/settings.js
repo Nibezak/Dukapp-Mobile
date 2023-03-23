@@ -231,12 +231,37 @@ export const generalSettings = [
     options: [],
   },
   {
-    title: 'Support us dukapp',
-    description: 'support the dukapp community and invest',
+    title: 'Support Dukapp',
+    description: 'Support our social medias',
     icon: 'people',
-    key: 'receipt',
-    value: 'receipt',
-    options: [],
+    key: 'socialmedia',
+    value: 'socialmedia',
+    color: '#10B981',
+    options: [
+      {
+        title: 'Twitter',
+        description: 'Follow us on Twitter',
+        key: 'Twitter',
+        value: 'Twitter',
+        action: 'handlesocialmedia',
+      },
+      {
+        title: 'Instagram',
+        description: 'Follow us on Instagram',
+        key: 'Instagram',
+        value: 'Instagram',
+        action: 'handlesocialmedia',
+      },
+      {
+        title: 'LinkedIn',
+        description: 'Follow us on LinkedIn',
+        key: 'LinkedIn',
+        value: 'LinkedIn',
+        action: 'handleLinkedIn',
+      },
+
+
+    ],
   },
   {
     title: 'Log Out',

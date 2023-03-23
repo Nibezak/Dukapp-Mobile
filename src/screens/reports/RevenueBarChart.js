@@ -105,7 +105,7 @@ export default function RevenueBarChart({ startDate, endDate }) {
             // sty
             formatTopBarValue: (value) => formatNumber(value),
             fillShadowGradientToOpacity: 0.1,
-            fillShadowGradientFromOpacity: 0.6,
+            fillShadowGradientFromOpacity: 0.9,
             backgroundGradientFrom: theme.accent,
             backgroundGradientTo: theme.accent,
             barRadius: 10,

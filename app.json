@@ -13,7 +13,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -29,13 +31,9 @@
         "backgroundColor": "#ffffff",
         "image": "./assets/splash.png",
         "dark": {
-          "backgroundColor": "#000000",
-          "image": "./assets/splash-dark.png"}
-      }
-    },
-    "extra": {
-      "eas": {
-        "projectId": "150312ca-40f9-4699-a6c2-8cdeb26fe3dc"
+          "backgroundColor": "#1E293B",
+          "image": "./assets/splash-dark.png"
+        }
       }
     },
     "web": {
@@ -44,6 +42,11 @@
           "apiKey": "AIzaSyCGNvybWqIYK3ZE3vdQ1czy9daiNnO3qCw",
           "measurementId": "G-P3T1PSEVH4"
         }
+      }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a216b05b-a36c-45a2-971b-6f3d6c164d06"
       }
     }
   }

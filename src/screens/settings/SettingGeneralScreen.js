@@ -45,13 +45,13 @@ export default function GeneralSettingsScreen() {
       const task = InteractionManager.runAfterInteractions(() => {
         // Theme task
 
+        theme
       });
     }, [])
   );
 
   useEffect(() => {
     tracker();
-    theme
     // setting up the header
     navigation.setOptions({
       headerTitle: 'Settings',

@@ -2,7 +2,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/core';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useContext } from 'react';
-import { Text, FlatList, TouchableOpacity, View, StyleSheet, InteractionManager } from 'react-native';
+import { Text, FlatList, TouchableOpacity, View, StyleSheet, InteractionManager, ToastAndroid } from 'react-native';
 import { ThemeContext } from '../../../App';
 import BackupService from '../../services/BackupService';
 import ItemService from '../../services/ItemService';
@@ -17,7 +17,7 @@ export default function SettingOPtionsScreen({ navigation, route }) {
       const task = InteractionManager.runAfterInteractions(() => {
         // Theme task
 
-        theme
+
       });
     }, [])
   );

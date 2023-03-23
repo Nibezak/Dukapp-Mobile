@@ -68,10 +68,10 @@ export default function RenderItem({ item, index, onPress }) {
                 {
                   paddingHorizontal: 10,
                   paddingVertical: 1,
-                  backgroundColor: isLowStock && !isService ? '#fef9c3' : '#f0fdf4',
+                  backgroundColor: isLowStock && !isService ? '#fef9c3' : '#BBF7D0',
                   margin: 5,
                   borderRadius: 30,
-                  color: isLowStock && !isService ? '#854d0e' : '#15803d',
+                  color: isLowStock && !isService ? '#854d0e' : '#14532D',
                 },
               ]}
             >
@@ -116,6 +116,7 @@ const styles = {
   details: {
     alignSelf: 'flex-end',
     fontSize: 14,
+    fontWeight: "400",
     paddingVertical: 3,
     marginHorizontal: 7,
   },

@@ -64,7 +64,7 @@ export default function RecentOrder({ item, parentRefresher }) {
                 <Text
                     style={{ paddingHorizontal: 5, paddingVertical: 2, borderRadius: 30, color: theme.text }}
                 >
-                    {dayjs(date).format('h:mm A')}
+                    {orderDate}
                 </Text>
             </View>
             <View style={{ flexDirection: "row", justifyContent: "center", paddingVertical: 10 }}>
