@@ -27,6 +27,8 @@ export default function PhoneNumberScreen({ navigation }) {
    * @todo, implement the verification backend in the context
    * sendSmsVerification
    */
+
+
   async function handleSignUp() {
 
     setIsLoading(true);

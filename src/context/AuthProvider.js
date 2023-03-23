@@ -4,7 +4,7 @@ import axiosConfig from '../helpers/axiosConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { generalSettings } from '../screens/settings/settings';
 import { verifyOTP } from '../api/VerifyPhone';
-import { getSetting } from '../models/AsyncStorage';
+import { getSetting, setSetting } from '../models/AsyncStorage';
 import { migrateDatabase } from '../helpers/Database';
 
 export const AuthContext = createContext();
@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currency, setCurrency] = useState('');
-
+  const [phone, setPhone] = useState('');
   useEffect(() => {
     // Get data from the storage
     SecureStore.getItemAsync('user').then((storedUser) => {
@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }) => {
 
     // Get currency
     getSetting('app_default_currency').then(setCurrency);
+
   }, []);
 
   return (
@@ -50,7 +51,7 @@ export const AuthProvider = ({ children }) => {
                 phone: phone,
                 // avatar: response.data.results[0].picture.thumbnail,
               };
-
+              setSetting('contact_phone', phone);
               setUser(userResponse);
               setError(null);
 

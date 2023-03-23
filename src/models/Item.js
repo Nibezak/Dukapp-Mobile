@@ -1,3 +1,4 @@
+import { getSetting } from './AsyncStorage';
 import BaseModel from './Model';
 
 class Item extends BaseModel {
@@ -98,6 +99,7 @@ class Item extends BaseModel {
       this.getTableName() +
       `(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
+              shop_msisdn TEXT DEFAULT '${getSetting('contact_phone')}',
               name TEXT UNIQUE,
               description TEXT NULL,
               category TEXT NULL,

@@ -1,4 +1,5 @@
 import { unixTimeStamp } from '../helpers/Dates';
+import { getSetting } from './AsyncStorage';
 import Model from './Model';
 
 class Order extends Model {
@@ -50,6 +51,7 @@ class Order extends Model {
       this.getTableName() +
       `(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
+              shop_msisdn TEXT DEFAULT '${getSetting('contact_phone')}',
               order_type TEXT, 
               order_key TEXT,
               created_via TEXT NULL,

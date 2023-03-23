@@ -1,7 +1,4 @@
 import AxiosConfig from '../helpers/axiosConfig';
-import 'firebase/firestore';
-import { auth, db } from '../../firebase';
-import { arrayUnion, doc, updateDoc } from 'firebase/firestore';
 /**
  Upload local store to the server
  *
@@ -10,7 +7,7 @@ import { arrayUnion, doc, updateDoc } from 'firebase/firestore';
  * @returns promise
  */
 export async function uploadData(dataType, payload) {
-  return AxiosConfig.post('backup/' + dataType, payload)
+  return AxiosConfig.post('backup/real-time' + dataType, payload)
     .then((response) => {
       console.log(response)
       return response;

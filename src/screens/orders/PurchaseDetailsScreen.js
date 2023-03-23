@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
         height: windowHeight / 3,
         position: 'absolute',
         bottom: 40,
-        backgroundColor: '#fff',
+        backgroundColor: 'transparent',
     },
     row: {
         flexDirection: 'row',

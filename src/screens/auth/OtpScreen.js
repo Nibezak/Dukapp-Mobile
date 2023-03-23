@@ -8,7 +8,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { ThemeContext } from '../../../App';
 
 export default function OtpScreen({ route, navigation }) {
-  const { phoneNumber, email, password } = route.params;
+  const { phoneNumber } = route.params;
 
   const [invalidCode, setInvalidCode] = useState(false);
   const { login, isLoading } = useContext(AuthContext);

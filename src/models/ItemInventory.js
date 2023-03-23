@@ -1,3 +1,4 @@
+import { getSetting } from './AsyncStorage';
 import Model from './Model';
 
 class ItemInventory extends Model {
@@ -33,6 +34,7 @@ class ItemInventory extends Model {
       this.getTableName() +
       `(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            shop_msisdn TEXT DEFAULT '${getSetting('contact_phone')}',
             item_id int(11) NOT NULL,
             comment text NOT NULL,
             quantity decimal(15,3) NOT NULL DEFAULT '0.000',

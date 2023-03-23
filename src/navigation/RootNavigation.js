@@ -73,9 +73,9 @@ function AuthStackNavigator() {
       initialRouteName="PhoneNumber"
       screenOptions={{ headerShown: false, headerBackTitleVisible: false }}
     >
-      <Stack.Screen name="Guest Home" component={GuestHomeScreen} />
-      <Stack.Screen name="PhoneNumber" component={PhoneNumberScreen} />
-      <Stack.Screen name="Otp" component={OtpScreen} />
+      <Stack.Screen name="Guest Home" component={GuestHomeScreen} options={{ presentation: 'modal' }} />
+      <Stack.Screen name="PhoneNumber" component={PhoneNumberScreen} options={{ presentation: 'modal' }} />
+      <Stack.Screen name="Otp" component={OtpScreen} options={{ presentation: 'modal' }} />
     </Stack.Navigator>
   );
 }

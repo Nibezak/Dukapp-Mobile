@@ -84,7 +84,7 @@ export const generalSettings = [
   },
   {
     title: 'Contact',
-    description: 'Phone, Address...',
+    description: 'Address, Email...',
     icon: 'contact-page',
     key: 'contact',
     value: 'contact',
