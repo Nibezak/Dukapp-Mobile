@@ -24,7 +24,6 @@ import ZigzagView from 'react-native-zigzag-view';
 import { getSetting } from '../../models/AsyncStorage';
 import ViewShot from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
-import * as Print from 'expo-print';
 import CheckButton from '../../components/CheckButton';
 import * as Analytics from 'expo-firebase-analytics';
 import { ThemeContext } from '../../../App';
@@ -88,10 +87,6 @@ export default function OrderDetailsScreen({ navigation, route }) {
       headerTintColor: theme.text,
       headerRight: () => (
         <View style={{ flexDirection: 'row' }}>
-          <TouchableOpacity onPress={printReceipt} style={{ paddingRight: 20 }}>
-            <MaterialIcons name="print" size={24} color="gray" />
-          </TouchableOpacity>
-
           {/* Capture ScreenShot */}
           <TouchableOpacity
             onPress={() => {
@@ -136,13 +131,6 @@ export default function OrderDetailsScreen({ navigation, route }) {
   /**
    * Method to destroy the order from the database
    */
-  async function printReceipt() {
-    // On iOS/android prints the given html. On web prints the HTML from the current page.
-    await Print.printAsync({
-      html,
-    });
-  }
-
   /**
    * Get Customer By Id
    */
@@ -193,192 +181,9 @@ export default function OrderDetailsScreen({ navigation, route }) {
     ItemService.getItems().then(setItems);
   }
 
-  function renderInvoiceItemsHtml() {
-    return order.line_items.map((item, index) => {
-      return `<tr class="item">
-                      <td colspan="2">${item.name}</td>
-                      <td>x ${item.quantity}</td>
-                      <td>${money(item.total)}</td>
-                  </tr>`;
-    });
-  }
 
   const dayjs = require('dayjs');
   const date = payment.date_paid;
-
-  const html = `
-  <html>
-    <head>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
-    </head>
-    <style>
-    .invoice-box {
-      max-width: 800px;
-      margin: auto;
-      padding: 30px;
-      border: 1px solid #eee;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-      font-size: 16px;
-      line-height: 24px;
-      font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
-      color: #555;
-    }
-    
-    .invoice-box table {
-      width: 100%;
-      line-height: inherit;
-      text-align: left;
-    }
-    
-    .invoice-box table td {
-      padding: 5px;
-      vertical-align: top;
-    }
-    
-    .invoice-box table tr td:nth-child(n + 2) {
-      text-align: right;
-    }
-    
-    .invoice-box table tr.top table td {
-      padding-bottom: 20px;
-    }
-    
-    .invoice-box table tr.top table td.title {
-      font-size: 45px;
-      line-height: 45px;
-      color: #333;
-    }
-    
-    .invoice-box table tr.information table td {
-      padding-bottom: 40px;
-    }
-    
-    .invoice-box table tr.heading td {
-      background: #eee;
-      border-bottom: 1px solid #ddd;
-      font-weight: bold;
-    }
-    
-    .invoice-box table tr.details td {
-      padding-bottom: 20px;
-    }
-    
-    .invoice-box table tr.item td {
-      border-bottom: 1px solid #eee;
-    }
-    
-    .invoice-box table tr.item.last td {
-      border-bottom: none;
-    }
-    
-    .invoice-box table tr.item input {
-      padding-left: 5px;
-    }
-    
-    .invoice-box table tr.item td:first-child input {
-      margin-left: -5px;
-      width: 100%;
-    }
-    
-    .invoice-box table tr.total td:nth-child(2) {
-      border-top: 2px solid #eee;
-      font-weight: bold;
-    }
-    
-    .invoice-box input[type="number"] {
-      width: 60px;
-    }
-    
-    @media only screen and (max-width: 600px) {
-      .invoice-box table tr.top table td {
-        width: 100%;
-        display: block;
-        text-align: center;
-      }
-    
-      .invoice-box table tr.information table td {
-        width: 100%;
-        display: block;
-        text-align: center;
-      }
-    }
-    
-    /** RTL **/
-    .rtl {
-      direction: rtl;
-      font-family: Tahoma, "Helvetica Neue", "Helvetica", Helvetica, Arial,
-        sans-serif;
-    }
-    
-    .rtl table {
-      text-align: right;
-    }
-    
-    .rtl table tr td:nth-child(2) {
-      text-align: left;
-    }
-    
-    </style>
-    <body style="text-align: center;">
-    <div class="invoice-box">
-    <table cellpadding="0" cellspacing="0">
-      <tr class="top">
-        <td colspan="4">
-          <table>
-
-      </tr>
-  
-      <tr class="information">
-        <td colspan="4">
-          <table>
-            <tr>
-              <td>
-                ${businessName}.<br> ${address}<br> 
-                ${tin}<br>
-              Customer:   ${customer.names}
-              
-              <td>
-                Invoice #: ${payment.transaction_id}<br> Created: ${order.created_at}<br> Time: ${
-    order.created_at
-  }
-              </td>
-            </tr>
-          </table>
-        </td>
-              </td>
-  
-              <td>
-                ${phone}<br> ${person}<br> ${email}
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-  
-      <tr class="heading">
-        <td colspan="3">Payment Method</td>
-        <td>${payment.title} #</td>
-      </tr>
-  
-      <tr class="details">
-        <td colspan="3">#${order.transaction_id}</td>
-        <td style="color: #47a67f; font-weight: semibold; font-size: large">${order.status}</td>
-
-      <tr class="heading">
-        <td colspan="2">Item</td>
-        <td>Quantity</td>
-        <td>Price</td>
-      </tr>
-      ${renderInvoiceItemsHtml()}
-      <tr class="total">
-        <td colspan="3"></td>
-        <td style="font-weight: bold"> Total: ${number(order.total)}</td>
-      </tr>
-    </table>
-  </div>
-    </body>
-  </html>
-  `;
 
   const ReceiptItems = useCallback(({ item }) => {
     return <ReceiptOrderItems item={item} />;
