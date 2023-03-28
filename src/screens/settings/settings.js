@@ -26,8 +26,8 @@ export const generalSettings = [
         type: 'select',
         options: [
           { key: 'en', title: 'English' },
+          { key: 'rw', title: 'Kinyarwanda' },
           // { key: "fr", title: "French" },
-          // { key: "rw", title: "Kinyarwanda" },
           // { key: "sw", title: "Kiswahili" },
         ],
       },
@@ -259,8 +259,6 @@ export const generalSettings = [
         value: 'LinkedIn',
         action: 'handleLinkedIn',
       },
-
-
     ],
   },
   {

@@ -135,7 +135,11 @@ export default function CreateItemScreen({ navigation, route }) {
                     placeholder={t('item.name_placeholder')}
                   />
                 </View>
-                {errors.name && <Text style={{ color: 'red', marginLeft: 15 }}>{errors.name}</Text>}
+                {errors.name && (
+                  <Text style={{ color: 'red', marginLeft: 15 }}>
+                    {t(`itemValidations.${errors.name}`)}
+                  </Text>
+                )}
                 <View style={styles.row}>
                   <FieldText
                     title={t('item.description')}
@@ -147,7 +151,9 @@ export default function CreateItemScreen({ navigation, route }) {
                   />
                 </View>
                 {errors.description && (
-                  <Text style={{ color: 'red', marginLeft: 15 }}>{errors.description}</Text>
+                  <Text style={{ color: 'red', marginLeft: 15 }}>
+                    {t(`itemValidations.${errors.description}`)}
+                  </Text>
                 )}
                 <View style={styles.row}>
                   <FieldText
@@ -160,7 +166,9 @@ export default function CreateItemScreen({ navigation, route }) {
                   />
                 </View>
                 {errors.category && (
-                  <Text style={{ color: 'red', marginLeft: 15 }}>{errors.category}</Text>
+                  <Text style={{ color: 'red', marginLeft: 15 }}>
+                    {t(`itemValidations.${errors.category}`)}
+                  </Text>
                 )}
 
                 {/** Only display this section if this is not a service */}
@@ -180,7 +188,9 @@ export default function CreateItemScreen({ navigation, route }) {
                       />
                     </View>
                     {errors.reOrderLevel && (
-                      <Text style={{ color: 'red', marginLeft: 15 }}>{errors.reOrderLevel}</Text>
+                      <Text style={{ color: 'red', marginLeft: 15 }}>
+                        {t(`itemValidations.${errors.reOrderLevel}`)}
+                      </Text>
                     )}
 
                     <View style={styles.row}>
@@ -196,7 +206,9 @@ export default function CreateItemScreen({ navigation, route }) {
                     </View>
 
                     {errors.quantity && (
-                      <Text style={{ color: 'red', marginLeft: 15 }}>{errors.quantity}</Text>
+                      <Text style={{ color: 'red', marginLeft: 15 }}>
+                        {t(`itemValidations.${errors.quantity}`)}
+                      </Text>
                     )}
 
                     <View style={styles.row}>
@@ -211,7 +223,9 @@ export default function CreateItemScreen({ navigation, route }) {
                       />
                     </View>
                     {errors.unitPrice && (
-                      <Text style={{ color: 'red', marginLeft: 15 }}>{errors.unitPrice}</Text>
+                      <Text style={{ color: 'red', marginLeft: 15 }}>
+                        {t(`itemValidations.${errors.unitPrice}`)}
+                      </Text>
                     )}
                   </>
                 )}
@@ -228,7 +242,9 @@ export default function CreateItemScreen({ navigation, route }) {
                   />
                 </View>
                 {errors.salePrice && (
-                  <Text style={{ color: 'red', marginLeft: 15 }}>{errors.salePrice}</Text>
+                  <Text style={{ color: 'red', marginLeft: 15 }}>
+                    {t(`itemValidations.${errors.salePrice}`)}
+                  </Text>
                 )}
 
                 <View style={styles.row}>

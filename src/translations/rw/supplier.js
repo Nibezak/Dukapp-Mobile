@@ -1,0 +1,20 @@
+export default {
+  supplier: "Supplier",
+  suppliers: "Suppliers",
+  suppliers_description: "Manager Partners",
+  name: "Supplier Name",
+  tin: "Tax Identification Number",
+  tin_placeholder: "100772282",
+  note: "Describe supplier",
+
+  company_name: "Company Name",
+  company_name_placeholder: "Bralirwa",
+  phone: "Phone",
+  phone_placeholder: "250788000000",
+  email: "Email",
+  email_placeholder: "johndoe@test.com",
+  tax_identification_number: "TIN",
+  tax_identification_number_placeholder: "10072323",
+  address: "Address",
+  address_placeholder: "KK45, Gikondo, Kicukiro, Kigali",
+};

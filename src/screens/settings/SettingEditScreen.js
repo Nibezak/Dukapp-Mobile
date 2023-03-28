@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, StyleSheet, TextInput, FlatList, Text, TouchableOpacity, InteractionManager } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  InteractionManager,
+} from 'react-native';
 import ItemService from '../../services/ItemService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { t } from 'i18n-js';
@@ -7,6 +15,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 // import ButikeButton from '../../components/Button';
 import { setSetting } from '../../models/AsyncStorage';
 import { Theme } from '../../helpers/theme';
+import i18n from 'i18n-js';
 import { useContext } from 'react';
 import { ThemeContext } from '../../../App';
 import { useFocusEffect } from '@react-navigation/core';
@@ -22,7 +31,7 @@ export default function SettingEditScreen({ navigation, route }) {
       const task = InteractionManager.runAfterInteractions(() => {
         // Theme task
 
-        theme
+        theme;
       });
     }, [])
   );
@@ -73,7 +82,11 @@ export default function SettingEditScreen({ navigation, route }) {
    * @param {string} value
    */
   async function updateSetting(value) {
+    console.log(value, 'Value');
     setSetting(setting.key, value);
+    if (setting.key === 'app_language') {
+      i18n.locale = value;
+    }
     if (value === 'dark' || value === 'light') {
       setTheme(Theme[value]);
       setSetting('theme', value);

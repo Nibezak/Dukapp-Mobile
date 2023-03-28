@@ -36,7 +36,7 @@ export default function OtpScreen({ route, navigation }) {
           style={styles.appName}
         />
         <Text style={[styles.prompt, { color: theme.text, fontWeight: 'bold' }]}>
-          Enter the code we sent you
+          {t('auth.otp_title')}
         </Text>
         <Text style={[styles.message, { color: theme.text, opacity: 0.7 }]}>
           {t('auth.Your_phone_will_be_used_to_protect_your_account_each_time_you_log_in', {
@@ -65,7 +65,7 @@ export default function OtpScreen({ route, navigation }) {
           ]}
           codeInputHighlightStyle={{ borderColor: theme.text }}
           onCodeFilled={handleOtpVerification}
-        // placeholderCharacter="_"
+          // placeholderCharacter="_"
         />
         {invalidCode && (
           <Text style={[styles.error, { color: theme.danger }]}>{t('auth.incorrect_code')}</Text>

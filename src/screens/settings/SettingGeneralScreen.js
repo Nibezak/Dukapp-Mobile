@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { View, Text, ToastAndroid, StyleSheet, FlatList, TouchableOpacity, InteractionManager } from 'react-native';
+import {
+  View,
+  Text,
+  ToastAndroid,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  InteractionManager,
+} from 'react-native';
 import { AntDesign, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { t } from 'i18n-js';
 import { AuthContext } from '../../context/AuthProvider';
@@ -45,7 +53,7 @@ export default function GeneralSettingsScreen() {
       const task = InteractionManager.runAfterInteractions(() => {
         // Theme task
 
-        theme
+        theme;
       });
     }, [])
   );
@@ -326,7 +334,6 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     padding: 15,
-
   },
   avatar: {
     borderRadius: 20,
