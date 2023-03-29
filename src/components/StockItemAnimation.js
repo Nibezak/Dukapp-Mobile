@@ -14,9 +14,11 @@ export function StockItemAnimation(props) {
           source={require('../../assets/WelcomeAnimation/welcomeStock.png')}
           style={[styles.image, { width, resizeMode: 'contain' }]}
         />
-        <Text style={[styles.title, { color: theme.primary }]}>Start by creating a Stock</Text>
+        <Text style={[styles.title, { color: theme.primary }]}>
+          {t('welcome.screen_header_stock')}
+        </Text>
         <Text style={[styles.description, { color: theme.text, opacity: 0.7 }]}>
-          manage products in your stock, calculate income and revenue for you , and create receipts
+          {t('welcome.screen_description')}
         </Text>
         <View>
           <ButtonFilled onPress={() => navigation.navigate('New Item')} color={theme.primary}>

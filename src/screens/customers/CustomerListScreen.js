@@ -59,7 +59,7 @@ export default function CustomerListScreen({ navigation }) {
 
   function setHeaderRight() {
     navigation.setOptions({
-      headerTitle: 'Customers',
+      headerTitle: 'Abakiriya',
       headerTitleAlign: 'center',
       headerTitleStyle: {
         color: theme.text,

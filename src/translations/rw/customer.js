@@ -11,4 +11,7 @@ export default {
 
   // Acions
   new_customer: 'Shyiramo umukiriya',
+  welcome_screen_header: 'Gumana abakiriya bawe',
+  welcome_screen_description: "Gumana n'abakiriya bawe ubibitse mu ikaye yawe",
+  welcome_screen_add_customer: 'Shyiramo umukiriya',
 };

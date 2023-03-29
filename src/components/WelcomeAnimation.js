@@ -16,9 +16,9 @@ export function WelcomeAnimation() {
           source={require('../../assets/WelcomeAnimation/welcome.png')}
           style={[styles.image, { width, resizeMode: 'contain' }]}
         />
-        <Text style={styles.title}>Quick and easy Data management</Text>
+        <Text style={styles.title}>{t('welcome.screen_header')}</Text>
         <Text style={[styles.description, { color: theme.text }]}>
-          manage products in your stock, calculate income and revenue for you , and create receipts
+          {t('welcome.screen_description')}
         </Text>
         <View>
           <ButtonFilled

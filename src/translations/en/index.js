@@ -11,6 +11,11 @@ import auth from './auth';
 import receipt from './receipt';
 import welcome from './welcome';
 import itemValidations from './itemValidations';
+import customerValidation from './customerValidation';
+import loginValidation from './loginValidation';
+import onBoardValidation from './onBoardValidation';
+import registerValidation from './registerValidation';
+import screens from './screens';
 
 export default {
   auth,
@@ -26,4 +31,9 @@ export default {
   supplier,
   welcome,
   itemValidations,
+  customerValidation,
+  loginValidation,
+  onBoardValidation,
+  registerValidation,
+  screens,
 };

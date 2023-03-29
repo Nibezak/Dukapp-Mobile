@@ -10,7 +10,7 @@ export default {
 
   // Order screen
   add_customer: '🧑🏽 Umukiriya',
-  add_payment: '💳 Kwihsyura',
+  add_payment: '💳 Kwishyura',
   type_to_sell: 'Andikamo ugurishe',
   change_order_type: 'Hindura bibe %{order_type}',
   items: '%{count} ibigurishwa',
