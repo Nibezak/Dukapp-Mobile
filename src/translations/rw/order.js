@@ -22,4 +22,5 @@ export default {
   order_type_purchase: 'Ibyaguzwe',
   change_to_order_type: 'Hindura bibe %{order_type}',
   amount: 'Igiciro(%{currency})',
+  quick_sale: 'Gurisha byihuse',
 };

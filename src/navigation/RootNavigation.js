@@ -62,6 +62,7 @@ import PurchaseOrderScreen from '../screens/orders/PurchaseOrderScreen';
 import PurchaseDetailsScreen from '../screens/orders/PurchaseDetailsScreen';
 import { TransactionsScreen } from '../screens/account/TransactionsScreen';
 import { ThemeContext } from '../../App';
+import { t } from 'i18n-js';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -192,7 +193,7 @@ function NavTab() {
         component={OrderScreen}
         name="Order Sale"
         options={{
-          title: 'Orders',
+          title: `${t('screens.orders')}`,
           tabBarLabel: '',
           tabBarActiveTintColor: '#47a67f',
           tabBarIcon: ({ color, size }) => (
@@ -205,7 +206,7 @@ function NavTab() {
         name="Clients"
         component={CustomerListScreen}
         options={{
-          title: 'Abakiriya',
+          title: `${t('screens.customers')}`,
           tabBarLabel: '',
           tabBarActiveTintColor: '#47a67f',
           tabBarIcon: ({ color, size }) => <Ionicons name="person" size={24} color={color} />,
@@ -279,7 +280,7 @@ export function NavStack() {
       />
       {/** Items*/}
       <Stack.Screen
-        name="New Item"
+        name={`${t('screens.newItem')}`}
         component={ItemCreateScreen}
         options={{
           ...TransitionPresets.ModalTransition,
@@ -288,7 +289,7 @@ export function NavStack() {
         }}
       />
       <Stack.Screen
-        name="Edit Item"
+        name={`${t('screens.editItem')}`}
         component={ItemEditScreen}
         options={{ presentation: 'modal' }}
       />
@@ -330,7 +331,7 @@ export function NavStack() {
       />
       {/** Customer*/}
       <Stack.Screen
-        name="New Customer"
+        name={`${t('screens.newCustomer')}`}
         component={CustomerCreateScreen}
         options={{
           ...TransitionPresets.ModalTransition,

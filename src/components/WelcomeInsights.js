@@ -16,9 +16,11 @@ export function WelcomeInsights() {
           source={require('../../assets/WelcomeAnimation/WelcomeInsights.png')}
           style={[styles.image, { width, resizeMode: 'contain' }]}
         />
-        <Text style={[styles.title, { color: theme.primary }]}>Records and Insights</Text>
+        <Text style={[styles.title, { color: theme.primary }]}>
+          {t('report.report_screen_title')}
+        </Text>
         <Text style={[styles.description, { color: theme.text, opacity: 0.7 }]}>
-          Go back in history to see how you did on other dates as well
+          {t('report.report_screen_subtitle')}
         </Text>
         <View>
           <ButtonFilled
@@ -30,7 +32,7 @@ export function WelcomeInsights() {
             color={theme.primary}
             labelColor={theme.text}
           >
-            {t('welcome.place_an_order') + ' FIRST'}
+            {t('welcome.place_order_first')}
           </ButtonFilled>
         </View>
       </View>

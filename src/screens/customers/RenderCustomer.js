@@ -13,7 +13,7 @@ export default function RenderCustomer({ item, index, onPress }) {
   // View
   if (item.id === 'add_customer') {
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('New Customer')}>
+      <TouchableOpacity onPress={() => navigation.navigate('screens.newCustomer')}>
         {/** Give options to add a new item */}
         <View
           style={[

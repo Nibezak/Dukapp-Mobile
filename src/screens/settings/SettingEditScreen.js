@@ -38,7 +38,7 @@ export default function SettingEditScreen({ navigation, route }) {
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: setting.title,
+      headerTitle: `${t(`${setting.title}`)}`,
       headerTintColor: theme.text,
       headerStyle: { backgroundColor: theme.accent },
     });

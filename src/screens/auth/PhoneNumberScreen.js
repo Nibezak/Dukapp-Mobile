@@ -1,12 +1,5 @@
 import React, { useState, useRef, useContext } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { t } from 'i18n-js';
 import ButtonFilled from '../../components/ButtonFilled';
 import PhoneInput from 'react-native-phone-number-input';
@@ -15,9 +8,13 @@ import { sendOTP } from '../../api/VerifyPhone';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ThemeContext } from '../../../App';
 import { StatusBar } from 'expo-status-bar';
+import { Formik } from 'formik';
+import loginValidation from '../../helpers/validation/loginValidation';
 
 export default function PhoneNumberScreen({ navigation }) {
   const [value, setValue] = useState('');
+  const [phoneError, setPhoneError] = useState(false);
+  const [phoneNumberTypeError, setPhoneNumberTypeError] = useState(false);
   const [formattedValue, setFormattedValue] = useState('');
   const phoneInput = useRef(null);
   const { error, isLoading, setIsLoading } = useContext(AuthContext);
@@ -28,9 +25,8 @@ export default function PhoneNumberScreen({ navigation }) {
    * sendSmsVerification
    */
 
-
-  async function handleSignUp() {
-
+  async function handleSignUp(data) {
+    console.log(data);
     setIsLoading(true);
     // check if the user exist in our system
     sendOTP(formattedValue).then(() => {
@@ -38,8 +34,7 @@ export default function PhoneNumberScreen({ navigation }) {
         phoneNumber: formattedValue,
       });
       setIsLoading(false);
-    })
-
+    });
   }
 
   return (
@@ -47,75 +42,88 @@ export default function PhoneNumberScreen({ navigation }) {
       <StatusBar style={theme.statusbar} />
       <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
         <View style={styles.wrapper}>
-          <View style={styles.welcome}>
-            <Image
-              source={
-                theme.theme === 'light'
-                  ? require('./../../../assets/snack-icon.png')
-                  : require('./../../../assets/snack-icon-dark.png')
-              }
-              style={styles.appName}
-            />
-            <Text style={[styles.pitch, { color: theme.text, opacity: 0.7 }]}>
-              {t('auth.welcome_to_dukapp_app')}
-            </Text>
-            <TouchableOpacity
-              style={{ marginHorizontal: 30 }}
-              onPress={() => navigation.navigate('Login')}
-            >
-              <Text style={[styles.verifyPhone, { color: theme.text, opacity: 0.7 }]}>
-                {t('auth.verify_your_phone')}
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{ paddingTop: 10 }}>
-            <PhoneInput
-              ref={phoneInput}
-              defaultValue={value}
-              defaultCode="RW"
-              layout="second"
-              onChangeText={(text) => {
-                setValue(text);
-              }}
-              onChangeFormattedText={(text) => {
-                setFormattedValue(text);
-              }}
-              countryPickerProps={{ withAlphaFilter: true }}
-              withShadow
-              containerStyle={{ backgroundColor: "#CBD5E1", borderRadius: 100 }}
-              textContainerStyle={{ backgroundColor: "#E2E8F0", borderRadius: 100 }}
-              autoFocus
-              autoFormat={true}
-              initialCountry="rw"
-            />
-          </View>
-          <Text style={[styles.carrierCharges, { color: theme.text, opacity: 0.7 }]}>
-            {t('auth.carrier_charge_may_apply')}
-          </Text>
-
-          {error && <Text style={{ color: theme.danger }}>{error}</Text>}
-          {isLoading && (
-            <ActivityIndicator style={{ marginTop: 8 }} size="small" color={theme.primary} />
-          )}
-
-          <TouchableOpacity
-            onPress={async () => {
-              // Checking if the link is supported for links with custom URL scheme.
-              const supported = await Linking.canOpenURL('https://butike.app');
+          <Formik
+            initialValues={{
+              phone: '',
             }}
+            validationSchema={loginValidation}
+            onSubmit={(values) => {
+              handleSignUp(values);
+            }}
+          >
+            {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
+              <>
+                <View style={styles.welcome}>
+                  <Image
+                    source={
+                      theme.theme === 'light'
+                        ? require('./../../../assets/snack-icon.png')
+                        : require('./../../../assets/snack-icon-dark.png')
+                    }
+                    style={styles.appName}
+                  />
+                  <Text style={[styles.pitch, { color: theme.text, opacity: 0.7 }]}>
+                    {t('auth.welcome_to_dukapp_app')}
+                  </Text>
+                  <TouchableOpacity
+                    style={{ marginHorizontal: 30 }}
+                    onPress={() => navigation.navigate('Login')}
+                  >
+                    <Text style={[styles.verifyPhone, { color: theme.text, opacity: 0.7 }]}>
+                      {t('auth.verify_your_phone')}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={{ paddingTop: 10 }}>
+                  <PhoneInput
+                    ref={phoneInput}
+                    value={values.phone}
+                    defaultCode="RW"
+                    layout="second"
+                    textInputProps={{
+                      onBlur: handleBlur('phone'),
+                    }}
+                    onChangeText={handleChange('phone')}
+                    onChangeFormattedText={(text) => {
+                      setFormattedValue(text);
+                    }}
+                    countryPickerProps={{ withAlphaFilter: true }}
+                    withShadow
+                    containerStyle={{ backgroundColor: '#CBD5E1', borderRadius: 100 }}
+                    textContainerStyle={{ backgroundColor: '#E2E8F0', borderRadius: 100 }}
+                    autoFocus
+                    autoFormat={true}
+                    initialCountry="rw"
+                  />
+                  {errors.phone && (
+                    <Text style={styles.error}>{t(`loginValidation.${errors.phone}`)}</Text>
+                  )}
+                </View>
+                <Text style={[styles.carrierCharges, { color: theme.text, opacity: 0.7 }]}>
+                  {t('auth.carrier_charge_may_apply')}
+                </Text>
 
-          >
-            <Text style={[styles.termsLink, { color: theme.text, opacity: 0.7 }]}>
-              {t('common.terms_and_condition')}
-            </Text>
-          </TouchableOpacity>
-          <ButtonFilled
-            onPress={handleSignUp}
-            color={theme.accent}
-            labelColor={theme.text}
-          >
-            {t('auth.accept_tc_and_continue')}
-          </ButtonFilled>
+                {error && <Text style={{ color: theme.danger }}>{error}</Text>}
+                {isLoading && (
+                  <ActivityIndicator style={{ marginTop: 8 }} size="small" color={theme.primary} />
+                )}
+
+                <TouchableOpacity
+                  onPress={async () => {
+                    // Checking if the link is supported for links with custom URL scheme.
+                    const supported = await Linking.canOpenURL('https://butike.app');
+                  }}
+                >
+                  <Text style={[styles.termsLink, { color: theme.text, opacity: 0.7 }]}>
+                    {t('common.terms_and_condition')}
+                  </Text>
+                </TouchableOpacity>
+                <ButtonFilled onPress={handleSubmit} color={theme.accent} labelColor={theme.text}>
+                  {t('auth.accept_tc_and_continue')}
+                </ButtonFilled>
+              </>
+            )}
+          </Formik>
         </View>
       </ScrollView>
     </>
@@ -204,5 +212,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 30,
     textDecorationLine: 'underline',
+  },
+  error: {
+    fontSize: 14,
+    color: 'red',
+    textAlign: 'center',
   },
 });

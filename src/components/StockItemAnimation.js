@@ -21,7 +21,10 @@ export function StockItemAnimation(props) {
           {t('welcome.screen_description')}
         </Text>
         <View>
-          <ButtonFilled onPress={() => navigation.navigate('New Item')} color={theme.primary}>
+          <ButtonFilled
+            onPress={() => navigation.navigate(`${t('screens.newItem')}`)}
+            color={theme.primary}
+          >
             {t('welcome.create_item_in_stock')}
           </ButtonFilled>
         </View>

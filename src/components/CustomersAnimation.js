@@ -24,7 +24,7 @@ export function CustomersAnimation() {
         </Text>
         <View>
           <ButtonFilled
-            onPress={() => navigation.navigate('New Customer')}
+            onPress={() => navigation.navigate(`${t('screens.newCustomer')}`)}
             color={theme.primary}
             labelColor={theme.text}
           >

@@ -12,6 +12,7 @@ import * as Analytics from 'expo-firebase-analytics';
 import { onAuthStateChanged } from '@firebase/auth';
 import { auth } from '../../../firebase';
 import { ThemeContext } from '../../../App';
+import { t } from 'i18n-js';
 
 export default function CustomerListScreen({ navigation }) {
   const [customers, setCustomers] = useState([]);
@@ -59,7 +60,7 @@ export default function CustomerListScreen({ navigation }) {
 
   function setHeaderRight() {
     navigation.setOptions({
-      headerTitle: 'Abakiriya',
+      headerTitle: `${t('screens.customers')}`,
       headerTitleAlign: 'center',
       headerTitleStyle: {
         color: theme.text,
@@ -134,7 +135,7 @@ export default function CustomerListScreen({ navigation }) {
             keyExtractor={keyExtractor}
             maxToRenderPerBatch={6}
           />
-          <FloatingButton onPress={() => navigation.navigate('New Customer')}>
+          <FloatingButton onPress={() => navigation.navigate(`${t('screens.newCustomer')}`)}>
             <MaterialIcons name="person-add-alt" size={32} />
           </FloatingButton>
         </>

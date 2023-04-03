@@ -21,7 +21,7 @@ export default function RenderItem({ item, index, onPress }) {
   //  Change layout for the add action
   if (item.id === 'add') {
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('New Item')}>
+      <TouchableOpacity onPress={() => navigation.navigate(`${t('screens.newItem')}`)}>
         {/** Give options to add a new item */}
         <View
           style={[

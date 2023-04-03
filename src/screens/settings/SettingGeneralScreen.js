@@ -62,7 +62,7 @@ export default function GeneralSettingsScreen() {
     tracker();
     // setting up the header
     navigation.setOptions({
-      headerTitle: 'Settings',
+      headerTitle: `${t('screens.settings')}`,
       headerTitleAlign: 'center',
       headerTintColor: theme.text,
       headerStyle: { backgroundColor: theme.accent },
@@ -263,14 +263,14 @@ export default function GeneralSettingsScreen() {
             />
             <View style={styles.rowText}>
               <Text style={[styles.title, { color: item.color ? item?.color : theme.text }]}>
-                {item.title}
+                {t(`${item.title}`)}
               </Text>
 
               {
                 /** Display Description if available */
                 item.description ? (
                   <Text style={[styles.description, { color: theme.text, opacity: 0.7 }]}>
-                    {item.description}
+                    {t(`${item.description}`)}
                   </Text>
                 ) : (
                   <></>

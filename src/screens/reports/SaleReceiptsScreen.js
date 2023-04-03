@@ -15,6 +15,7 @@ import RenderReceipt from '../orders/RenderReceipt';
 import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { ThemeContext } from '../../../App';
+import { t } from 'i18n-js';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -52,6 +53,7 @@ export default function SaleReceiptsScreen({ navigation, route }) {
    */
   function setHeader() {
     navigation.setOptions({
+      headerTitle: `${t('screens.receipts')}`,
       headerTitleAlign: 'center',
       headerStyle: {
         backgroundColor: theme.accent,

@@ -71,38 +71,36 @@ export default function LowStockScreen({ navigation }) {
     }
 
     const renderItem = useCallback(({ item }) => (
-        <RenderLowStock
-            item={item}
-            index={item.id}
-            key={item.id}
-            onPress={() =>
-                navigation.navigate("Edit Item", {
-                    item: item,
-                })
-            }
-        />
+      <RenderLowStock
+        item={item}
+        index={item.id}
+        key={item.id}
+        onPress={() =>
+          navigation.navigate(`${t('screens.editItem')}`, {
+            item: item,
+          })
+        }
+      />
     ));
 
     const keyExtractor = useCallback((item) => item.id.toString(), []);
 
     return (
-        <View style={styles.container}>
-            {items.length > 0 ? (
-                <>
-                    <FlatList
-                        data={items}
-                        renderItem={renderItem}
-                        keyExtractor={keyExtractor}
-                        maxToRenderPerBatch={6}
-                    />
-                    <FloatingButton onPress={() => navigation.navigate("New Item")} />
-                </>
-            ) : (
-                <StockItemAnimation />
-            )}
-
-
-        </View>
+      <View style={styles.container}>
+        {items.length > 0 ? (
+          <>
+            <FlatList
+              data={items}
+              renderItem={renderItem}
+              keyExtractor={keyExtractor}
+              maxToRenderPerBatch={6}
+            />
+            <FloatingButton onPress={() => navigation.navigate(`${t('screens.newItem')}`)} />
+          </>
+        ) : (
+          <StockItemAnimation />
+        )}
+      </View>
     );
 }
 
