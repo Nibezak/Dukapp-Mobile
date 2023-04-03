@@ -97,6 +97,7 @@ export default function SummaryReportScreen() {
 
   function setHeader() {
     navigation.setOptions({
+      headerTitle: `${t('screens.reportInsights')}`,
       headerTitleAlign: 'center',
       headerTintColor: theme.text,
       headerStyle: {

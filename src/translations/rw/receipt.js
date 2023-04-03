@@ -8,6 +8,6 @@ export default {
   item_name: "IZINA RY'IKIGURISHWA",
   amount: 'IGICIRO(%{currency}) ',
   total: 'IGITERANYO ',
-  receipt_screen_title: 'Receipts',
-  receipt_screen_subtitle: 'Find Customer Receipts in a single Library',
+  receipt_screen_title: 'Inyemezabuguzi',
+  receipt_screen_subtitle: 'Sanga inyemezabuguzi zabakiriya ahantu hamwe',
 };

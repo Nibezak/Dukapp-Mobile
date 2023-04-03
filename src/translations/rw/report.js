@@ -32,6 +32,6 @@ export default {
   year_to_date_profit: "Inyungu y'umwaka ku munsi",
   year_to_date_sales: "Ibyagurishijwe by'umwaka ku munsi",
 
-  report_screen_title: 'Records and Insights',
-  report_screen_subtitle: 'Go back in history to see how you did on other dates as well',
+  report_screen_title: 'Inyandiko nubushishozi',
+  report_screen_subtitle: 'Subira mu mateka urebe uko wakoze ku yandi matariki',
 };
