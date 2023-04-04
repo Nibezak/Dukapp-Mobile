@@ -83,7 +83,9 @@ export default function CustomerCreateScreen({ navigation, route }) {
                 />
               </View>
               {touched.names && errors.names && (
-                <Text style={{ color: 'red', marginLeft: 20 }}>{errors.names}</Text>
+                <Text style={{ color: 'red', marginLeft: 20 }}>
+                  {t(`customerValidation.${errors.names}`)}
+                </Text>
               )}
               <View style={styles.row}>
                 <FieldText
@@ -97,7 +99,9 @@ export default function CustomerCreateScreen({ navigation, route }) {
                 />
               </View>
               {touched.phone && errors.phone && (
-                <Text style={{ color: 'red', marginLeft: 20 }}>{errors.phone}</Text>
+                <Text style={{ color: 'red', marginLeft: 20 }}>
+                  {t(`customerValidation.${errors.phone}`)}
+                </Text>
               )}
               <View style={styles.row}>
                 <FieldText
@@ -111,7 +115,9 @@ export default function CustomerCreateScreen({ navigation, route }) {
                 />
               </View>
               {touched.email && errors.email && (
-                <Text style={{ color: 'red', marginLeft: 20 }}>{errors.email}</Text>
+                <Text style={{ color: 'red', marginLeft: 20 }}>
+                  {t(`customerValidation.${errors.email}`)}
+                </Text>
               )}
               <View style={styles.row}>
                 <FieldText
@@ -124,7 +130,9 @@ export default function CustomerCreateScreen({ navigation, route }) {
                 />
               </View>
               {touched.address && errors.address && (
-                <Text style={{ color: 'red', marginLeft: 20 }}>{errors.address}</Text>
+                <Text style={{ color: 'red', marginLeft: 20 }}>
+                  {t(`customerValidation.${errors.address}`)}
+                </Text>
               )}
               <View style={styles.row}>
                 <FieldText

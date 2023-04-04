@@ -1,0 +1,20 @@
+export default {
+  supplier: 'Ugemura',
+  suppliers: 'Abagemura',
+  suppliers_description: 'Manager Partners',
+  name: "Izina ry'ugemura",
+  tin: 'Tax Identification Number',
+  tin_placeholder: '100772282',
+  note: "Ibyisumbuye k'ugemura",
+
+  company_name: "Izina ry'iduka",
+  company_name_placeholder: 'Bralirwa',
+  phone: 'Phone',
+  phone_placeholder: '250788000000',
+  email: 'Imeyiri',
+  email_placeholder: 'yohanadonata@gmail.com',
+  tax_identification_number: 'TIN',
+  tax_identification_number_placeholder: '10072323',
+  address: 'Aderesi',
+  address_placeholder: 'KK45, Gikondo, Kicukiro, Kigali',
+};

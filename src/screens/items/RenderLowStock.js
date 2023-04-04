@@ -18,39 +18,34 @@ export default function RenderLowStock({ item, index, onPress }) {
     //  Change layout for the add action
     if (item.id === "add") {
         return (
-            <TouchableOpacity onPress={() => navigation.navigate("New Item")}>
-                {/** Give options to add a new item */}
-                <View
-                    style={[
-                        styles.row,
-                        {
-                            padding: 10,
-                            backgroundColor: "#f0fdf4",
-                            alignContent: "center",
-                            alignItems: "center",
-                        },
-                    ]}
-                >
-                    <MaterialIcons
-                        name="add"
-                        size={34}
-                        color="#15803d"
-                        style={[styles.avatar]}
-                    />
+          <TouchableOpacity onPress={() => navigation.navigate(`${t('screens.newItem')}`)}>
+            {/** Give options to add a new item */}
+            <View
+              style={[
+                styles.row,
+                {
+                  padding: 10,
+                  backgroundColor: '#f0fdf4',
+                  alignContent: 'center',
+                  alignItems: 'center',
+                },
+              ]}
+            >
+              <MaterialIcons name="add" size={34} color="#15803d" style={[styles.avatar]} />
 
-                    <Text
-                        style={{
-                            fontSize: 18,
-                            alignSelf: "center",
-                            textAlign: "center",
-                            fontWeight: "700",
-                            color: "#15803d",
-                        }}
-                    >
-                        {t("item.new_item")}
-                    </Text>
-                </View>
-            </TouchableOpacity>
+              <Text
+                style={{
+                  fontSize: 18,
+                  alignSelf: 'center',
+                  textAlign: 'center',
+                  fontWeight: '700',
+                  color: '#15803d',
+                }}
+              >
+                {t('item.new_item')}
+              </Text>
+            </View>
+          </TouchableOpacity>
         );
     }
 

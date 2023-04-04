@@ -31,4 +31,7 @@ export default {
   month_to_date_sales: 'Month To Date Sales',
   year_to_date_profit: 'Year To Date Profit',
   year_to_date_sales: 'Year To Date Sales',
+
+  report_screen_title: 'Records and Insights',
+  report_screen_subtitle: 'Go back in history to see how you did on other dates as well',
 };

@@ -16,17 +16,19 @@ export function CustomersAnimation() {
           source={require('../../assets/WelcomeAnimation/WelcomeCustomers.png')}
           style={[styles.image, { width, resizeMode: 'contain' }]}
         />
-        <Text style={[styles.title, { color: theme.primary }]}>Keep your Customers</Text>
+        <Text style={[styles.title, { color: theme.primary }]}>
+          {t('customer.welcome_screen_header')}
+        </Text>
         <Text style={[styles.description, { color: theme.text, opacity: 0.7 }]}>
-          Stay in Touch with your customers by keeping them in your notebook
+          {t('customer.welcome_screen_description')}
         </Text>
         <View>
           <ButtonFilled
-            onPress={() => navigation.navigate('New Customer')}
+            onPress={() => navigation.navigate(`${t('screens.newCustomer')}`)}
             color={theme.primary}
             labelColor={theme.text}
           >
-            Create a Customer
+            {t('customer.welcome_screen_add_customer')}
           </ButtonFilled>
         </View>
       </View>

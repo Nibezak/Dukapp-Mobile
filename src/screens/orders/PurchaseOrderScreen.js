@@ -19,6 +19,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import RenderPurchase from './RenderPurchase';
 import { ThemeContext } from '../../../App';
+import { t } from 'i18n-js';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -106,7 +107,7 @@ export default function PurchaseOrderScreen({ navigation, route }) {
    */
   async function sellNewItem() {
     // 1. Redirect to add new item Screen
-    navigation.navigate('New Item', {
+    navigation.navigate(`${t('screens.newItem')}`, {
       item_name: typing,
       action_type: 'add_product_and_sale',
       order_type: orderType,
@@ -221,7 +222,7 @@ export default function PurchaseOrderScreen({ navigation, route }) {
      */
     // 1. Add a Customer
     if (type === 'add_customer') {
-      navigation.navigate('New Customer', {
+      navigation.navigate(`${t('screens.newCustomer')}`, {
         order: lastOrder,
       });
     }
@@ -240,7 +241,7 @@ export default function PurchaseOrderScreen({ navigation, route }) {
       index={item.id}
       key={item.id}
       onPress={() =>
-        navigation.navigate('Edit Item', {
+        navigation.navigate(`${t('screens.editItem')}`, {
           item: item,
         })
       }

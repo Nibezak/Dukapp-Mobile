@@ -17,12 +17,13 @@ export function ReceiptAnimation() {
           source={require('../../assets/WelcomeAnimation/welcomeReceipt.png')}
           style={[styles.image, { width, resizeMode: 'contain' }]}
         />
-        <Text style={styles.title}>Records Receipts </Text>
-        <Text style={styles.description}>
-          Find Customer Receipts in a single Library
-        </Text>
+        <Text style={styles.title}>{t('receipt.receipt_screen_title')}</Text>
+        <Text style={styles.description}>{t('receipt.receipt_screen_subtitle')}</Text>
         <View>
-          <ButtonFilled onPress={() => navigation.navigate('New Item')} color={'#47a67f'}>
+          <ButtonFilled
+            onPress={() => navigation.navigate(`${t('screens.newItem')}`)}
+            color={'#47a67f'}
+          >
             {t('welcome.create_item_in_stock')}
           </ButtonFilled>
         </View>

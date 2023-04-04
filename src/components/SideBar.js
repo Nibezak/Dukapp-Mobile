@@ -13,6 +13,7 @@ import * as Analytics from 'expo-firebase-analytics';
 import { getSetting } from '../models/AsyncStorage';
 import { useNavigation } from '@react-navigation/native';
 import { ThemeContext } from '../../App';
+import { t } from 'i18n-js';
 
 export default function SideBar() {
   const { theme } = useContext(ThemeContext);
@@ -33,11 +34,11 @@ export default function SideBar() {
   const [businessName, setBusinessName] = useState(null);
   const [currency, setCurrency] = useState(null);
   const listArrayItem = [
-    { icon: HomeIcon, title: 'Home', route: 'HomeScreen' },
+    { icon: HomeIcon, title: `${t('screens.home')}`, route: 'HomeScreen' },
     // { icon: SupplierIcon, title: 'Suppliers', route: 'Supplier List' },
-    { icon: ReceiptsIcon, title: 'Receipts', route: 'Sale Receipt' },
+    { icon: ReceiptsIcon, title: `${t('screens.receipts')}`, route: 'Sale Receipt' },
     // { icon: BankIcon, title: 'Transactions', route: 'SMS Transactions' },
-    { icon: ReportInsightsIcon, title: 'Report Insights', route: 'Insights' },
+    { icon: ReportInsightsIcon, title: `${t('screens.reportInsights')}`, route: 'Insights' },
   ];
 
   const bottomListItems = [{ icon: ShareIcon, title: 'Tell a Friend' }];
@@ -69,14 +70,15 @@ export default function SideBar() {
       });
       await Share.share({
         title: 'Download Dukapp :)',
-        message: '😄 we invite you to download dukapp it is a simple, secure, reliable management and insights tool to grow your business 💯.🔥 shorturl.at/swyL0 🔥',
+        message:
+          '😄 we invite you to download dukapp it is a simple, secure, reliable management and insights tool to grow your business 💯.🔥 shorturl.at/swyL0 🔥',
         url: imageUrl,
         // specify the type of the image
         type: 'image/png',
         // include the image in the share content
         // you can also use local image URI
         // e.g., `Image.resolveAssetSource(require('./image.png')).uri`
-        files: [imageUrl]
+        files: [imageUrl],
       });
     } catch (error) {
       console.log(error.message);

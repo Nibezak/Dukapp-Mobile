@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { View, Text, ToastAndroid, StyleSheet, FlatList, TouchableOpacity, InteractionManager } from 'react-native';
+import {
+  View,
+  Text,
+  ToastAndroid,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  InteractionManager,
+} from 'react-native';
 import { AntDesign, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { t } from 'i18n-js';
 import { AuthContext } from '../../context/AuthProvider';
@@ -45,7 +53,7 @@ export default function GeneralSettingsScreen() {
       const task = InteractionManager.runAfterInteractions(() => {
         // Theme task
 
-        theme
+        theme;
       });
     }, [])
   );
@@ -54,7 +62,7 @@ export default function GeneralSettingsScreen() {
     tracker();
     // setting up the header
     navigation.setOptions({
-      headerTitle: 'Settings',
+      headerTitle: `${t('screens.settings')}`,
       headerTitleAlign: 'center',
       headerTintColor: theme.text,
       headerStyle: { backgroundColor: theme.accent },
@@ -255,14 +263,14 @@ export default function GeneralSettingsScreen() {
             />
             <View style={styles.rowText}>
               <Text style={[styles.title, { color: item.color ? item?.color : theme.text }]}>
-                {item.title}
+                {t(`${item.title}`)}
               </Text>
 
               {
                 /** Display Description if available */
                 item.description ? (
                   <Text style={[styles.description, { color: theme.text, opacity: 0.7 }]}>
-                    {item.description}
+                    {t(`${item.description}`)}
                   </Text>
                 ) : (
                   <></>
@@ -326,7 +334,6 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     padding: 15,
-
   },
   avatar: {
     borderRadius: 20,

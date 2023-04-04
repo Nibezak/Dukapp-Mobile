@@ -161,11 +161,11 @@ export default function PurchaseDetailsScreen({ navigation, route }) {
      */
     async function sellNewItem() {
         // 1. Redirect to add new item Screen
-        navigation.navigate('New Item', {
-            item_name: typing,
-            order_id: order.id,
-            action_type: 'add_product_and_sale',
-            order_type: orderType,
+        navigation.navigate(`${t('screens.newItem')}`, {
+          item_name: typing,
+          order_id: order.id,
+          action_type: 'add_product_and_sale',
+          order_type: orderType,
         });
     }
 

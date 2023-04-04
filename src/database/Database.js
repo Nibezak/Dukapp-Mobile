@@ -1,6 +1,5 @@
 import * as SQLite from 'expo-sqlite';
 import { Platform } from 'react-native';
-import * as Sentry from 'sentry-expo';
 
 class Database {
   constructor() {
@@ -82,7 +81,6 @@ class Database {
           },
           (t, error) => {
             console.log(error);
-            Sentry.Native.captureException(error);
             resolve(error);
           }
         );

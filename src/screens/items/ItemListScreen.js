@@ -103,7 +103,7 @@ export default function ItemListScreen({ navigation }) {
       index={item.id}
       key={item.id}
       onPress={() =>
-        navigation.navigate('Edit Item', {
+        navigation.navigate(`${t('screens.editItem')}`, {
           item: item,
         })
       }
@@ -141,7 +141,7 @@ export default function ItemListScreen({ navigation }) {
             keyExtractor={keyExtractor}
             maxToRenderPerBatch={6}
           />
-          <FloatingButton onPress={() => navigation.navigate('New Item')} />
+          <FloatingButton onPress={() => navigation.navigate(`${t('screens.newItem')}`)} />
         </>
       ) : (
         <StockItemAnimation theme={theme} />

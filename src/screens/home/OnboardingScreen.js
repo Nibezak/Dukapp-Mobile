@@ -26,8 +26,10 @@ import { t } from 'i18n-js';
 import { ThemeContext } from '../../../App';
 
 export function OnboardingScreen() {
-  const [currencyValue, setCurrencyValue] = useState('RWF');
-  const [paymentValue, setPaymentValue] = useState('cash');
+  const [currencyValue, setCurrencyValue] = useState('');
+  const [paymentValue, setPaymentValue] = useState('');
+  const [currencyError, setCurrencyError] = useState(false);
+  const [paymentValueError, setPaymentValueError] = useState(false);
   const navigation = useNavigation();
   const [showLoading, setShowLoading] = useState(true);
   const { theme } = useContext(ThemeContext);
@@ -76,6 +78,14 @@ export function OnboardingScreen() {
     });
   }
   async function handleSavingSettings(data) {
+    if (currencyValue == '') {
+      setCurrencyError(true);
+      return;
+    }
+    if (paymentValue == '') {
+      setPaymentValueError(true);
+      return;
+    }
     const { name, address, email, businessName, tin } = data;
     AsyncStorage.setItem('@business_name', businessName);
     AsyncStorage.setItem('@contact_address', address);
@@ -110,23 +120,22 @@ export function OnboardingScreen() {
         <OnboardFlow
           pages={[
             {
-              title: 'Welcome',
-              subtitle: 'Thank you for choosing to work with Dukapp, Just a few more steps to go',
+              title: `${t('onBoard.welcome')}`,
+              subtitle: `${t('onBoard.thank_you_for_choosing')}`,
               imageUri: Image.resolveAssetSource(
                 require('./../../../assets/WelcomeAnimation/welcomejoyride.png')
               ).uri,
             },
             {
-              title: 'Safe and Secure',
-              subtitle:
-                'Your account is Safe and Secure from any outsiders, ... however , you can not logout unless you uninstall the application',
+              title: `${t('onBoard.safe_and_secure')}`,
+              subtitle: `${t('onBoard.safe_and_securesafe_and_secure')}`,
               imageUri: Image.resolveAssetSource(
                 require('./../../../assets/WelcomeAnimation/welcomesecurestep.png')
               ).uri,
             },
             {
-              title: 'One Final Step to Complete',
-              subtitle: 'Set up your profile details on the next page, and you are good to go.',
+              title: `${t('onBoard.one_final_step')}`,
+              subtitle: `${t('onBoard.your_profile')}`,
               imageUri: Image.resolveAssetSource(
                 require('./../../../assets/WelcomeAnimation/welcomelaststep.png')
               ).uri,
@@ -138,8 +147,8 @@ export function OnboardingScreen() {
 
       <View style={styles.container}>
         <ScrollView>
-          <Text style={styles.title}>Set up your profile</Text>
-          <Text style={styles.subtitle}>Create a profile to manage your shop even faster</Text>
+          <Text style={styles.title}>{t('onBoard.set_up_your_profile')}</Text>
+          <Text style={styles.subtitle}>{t('onBoard.create_profile_manage_shop')}</Text>
           <Formik
             initialValues={{
               name: '',
@@ -162,7 +171,9 @@ export function OnboardingScreen() {
                   onChangeText={handleChange('name')}
                   onBlur={handleBlur('name')}
                 />
-                {errors.name && <Text style={styles.error}>{errors.name}</Text>}
+                {errors.name && (
+                  <Text style={styles.error}>{t(`onBoardValidation.${errors.name}`)}</Text>
+                )}
                 <TextInput
                   style={styles.input}
                   placeholder="Email"
@@ -170,7 +181,9 @@ export function OnboardingScreen() {
                   onChangeText={handleChange('email')}
                   onBlur={handleBlur('email')}
                 />
-                {errors.email && <Text style={styles.error}>{errors.email}</Text>}
+                {errors.email && (
+                  <Text style={styles.error}>{t(`onBoardValidation.${errors.email}`)}</Text>
+                )}
                 <TextInput
                   style={styles.input}
                   placeholder="Business name"
@@ -178,29 +191,38 @@ export function OnboardingScreen() {
                   onChangeText={handleChange('businessName')}
                   onBlur={handleBlur('businessName')}
                 />
-                {errors.businessName && <Text style={styles.error}>{errors.businessName}</Text>}
+                {errors.businessName && (
+                  <Text style={styles.error}>{t(`onBoardValidation.${errors.businessName}`)}</Text>
+                )}
                 <TextInput
                   style={styles.input}
                   placeholder="Address (optional)"
                   value={values.address}
                   onChangeText={handleChange('address')}
                 />
-                {errors.address && <Text style={styles.error}>{errors.address}</Text>}
+                {errors.address && (
+                  <Text style={styles.error}>{t(`onBoardValidation.${errors.address}`)}</Text>
+                )}
                 <TextInput
                   style={styles.input}
                   placeholder="TIN (optional)"
                   value={values.tin}
                   onChangeText={handleChange('tin')}
                 />
-                {errors.tin && <Text style={styles.error}>{errors.tin}</Text>}
+                {errors.tin && (
+                  <Text style={styles.error}>{t(`onBoardValidation.${errors.tin}`)}</Text>
+                )}
                 <View style={styles.subview}>
-                  <Text style={styles.subheading2}>Default currency</Text>
+                  <Text style={styles.subheading2}>{t('onBoard.default_currency')}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                   <RadioForm
                     radio_props={currencyOptions}
                     initial={'RWF'}
-                    onPress={(value) => setCurrencyValue(value)}
+                    onPress={(value) => {
+                      setCurrencyError(false);
+                      setCurrencyValue(value);
+                    }}
                     buttonColor="black"
                     labelColor="black"
                     selectedButtonColor="#11E05B"
@@ -209,15 +231,20 @@ export function OnboardingScreen() {
                     formHorizontal
                   />
                 </View>
-
+                {currencyError && (
+                  <Text style={styles.errorText}>{t(`onBoardValidation.currency`)}</Text>
+                )}
                 <View style={styles.subview}>
-                  <Text style={styles.subheading2}>Default payment method</Text>
+                  <Text style={styles.subheading2}>{t('onBoard.default_payment_method')}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                   <RadioForm
                     radio_props={paymentOptions}
                     initial={'Cash'}
-                    onPress={(value) => setPaymentValue(value)}
+                    onPress={(value) => {
+                      setPaymentValueError(false);
+                      setPaymentValue(value);
+                    }}
                     buttonColor="black"
                     labelColor="black"
                     selectedButtonColor="#11E05B"
@@ -226,9 +253,14 @@ export function OnboardingScreen() {
                     formHorizontal
                   />
                 </View>
+                {paymentValueError && (
+                  <Text style={styles.errorText}>{t(`onBoardValidation.payment`)}</Text>
+                )}
                 <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                   <TouchableOpacity style={styles.done} onPress={handleSubmit}>
-                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 20 }}>Start</Text>
+                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 20 }}>
+                      {t('onBoard.start')}
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </>
@@ -298,5 +330,9 @@ const styles = StyleSheet.create({
   },
   error: {
     color: '#ef4444',
+  },
+  errorText: {
+    color: '#ef4444',
+    textAlign: 'center',
   },
 });

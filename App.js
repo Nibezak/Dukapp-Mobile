@@ -27,7 +27,10 @@ i18n.translations = {
 // Set the locale once at the beginning of your app.
 i18n.locale = 'en';
 
-getSetting('app_language').then((lang) => (i18n.locale = lang));
+getSetting('app_language').then((lang) => {
+  console.log('lang', lang);
+  i18n.locale = lang;
+});
 
 // When a value is missing from a language it'll fallback to another language with the key present.
 i18n.fallbacks = true;

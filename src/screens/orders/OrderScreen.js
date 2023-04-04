@@ -23,6 +23,7 @@ import * as Analytics from 'expo-firebase-analytics';
 import { onAuthStateChanged } from '@firebase/auth';
 import { auth } from '../../../firebase';
 import { ThemeContext } from '../../../App';
+import { t } from 'i18n-js';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -84,6 +85,7 @@ export default function OrderScreen({ navigation, route }) {
 
   function setHeader() {
     navigation.setOptions({
+      headerTitle: `${t('screens.orders')}`,
       headerTitleAlign: 'center',
       headerTintColor: theme.text,
       headerStyle: { backgroundColor: theme.accent },
@@ -123,7 +125,7 @@ export default function OrderScreen({ navigation, route }) {
    */
   async function sellNewItem() {
     // 1. Redirect to add new item Screen
-    navigation.navigate('New Item', {
+    navigation.navigate(`${t('screens.newItem')}`, {
       item_name: typing,
       action_type: 'add_product_and_sale',
       order_type: orderType,
@@ -143,8 +145,8 @@ export default function OrderScreen({ navigation, route }) {
       Alert.alert(
         'The Stock of : ' + item.name + ' is insuffient #',
         'The remaining quantity is : ' +
-        item.quantity +
-        ' Please Add more stock to be able to sell',
+          item.quantity +
+          ' Please Add more stock to be able to sell',
         [
           {
             text: 'Cancel',
@@ -258,7 +260,7 @@ export default function OrderScreen({ navigation, route }) {
      */
     // 1. Add a Customer
     if (type === 'add_customer') {
-      navigation.navigate('New Customer', {
+      navigation.navigate(`${t('screens.newCustomer')}`, {
         order: lastOrder,
       });
     }
@@ -277,7 +279,7 @@ export default function OrderScreen({ navigation, route }) {
       index={item.id}
       key={item.id}
       onPress={() =>
-        navigation.navigate('Edit Item', {
+        navigation.navigate(`${t('screens.editItem')}`, {
           item: item,
         })
       }
@@ -356,7 +358,7 @@ export default function OrderScreen({ navigation, route }) {
           onChangeText={handleTypingSuggestions}
           onPress={sellNewItem}
           value={typing}
-          placeholder={'Quick sale'}
+          placeholder={`${t(`order.quick_sale`)}`}
           theme={theme}
         />
       </KeyboardAvoidingView>
@@ -380,8 +382,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     elevation: 15,
     marginBottom: 5,
-    paddingBottom: 5
-
+    paddingBottom: 5,
   },
   row: {
     flexDirection: 'row',

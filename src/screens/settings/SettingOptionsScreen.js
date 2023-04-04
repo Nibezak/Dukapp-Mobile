@@ -2,10 +2,19 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/core';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useContext } from 'react';
-import { Text, FlatList, TouchableOpacity, View, StyleSheet, InteractionManager, ToastAndroid } from 'react-native';
+import {
+  Text,
+  FlatList,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  InteractionManager,
+  ToastAndroid,
+} from 'react-native';
 import { ThemeContext } from '../../../App';
 import BackupService from '../../services/BackupService';
 import ItemService from '../../services/ItemService';
+import { t } from 'i18n-js';
 
 export default function SettingOPtionsScreen({ navigation, route }) {
   const { setting } = route.params;
@@ -16,16 +25,13 @@ export default function SettingOPtionsScreen({ navigation, route }) {
     useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
         // Theme task
-
-
       });
     }, [])
   );
 
-
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: setting.title,
+      headerTitle: `${t(`${setting.title}`)}`,
       headerTintColor: theme.text,
       headerStyle: {
         backgroundColor: theme.accent,
@@ -89,7 +95,7 @@ export default function SettingOPtionsScreen({ navigation, route }) {
         <View style={[styles.row]}>
           <View style={styles.rowText}>
             <Text style={[styles.title, { color: item.color ? item.color : theme.text }]}>
-              {item.title}
+              {t(`${item.title}`)}
             </Text>
             {
               /** Display Description if available */
@@ -100,7 +106,7 @@ export default function SettingOPtionsScreen({ navigation, route }) {
                     { color: item.color ? item.color : theme.text, opacity: 0.7 },
                   ]}
                 >
-                  {item.description}
+                  {t(`${item.description}`)}
                 </Text>
               ) : (
                 <></>

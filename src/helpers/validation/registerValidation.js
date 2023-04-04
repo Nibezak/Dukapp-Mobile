@@ -1,16 +1,16 @@
 import * as yup from 'yup';
 const registerValidationSchema = yup.object().shape({
-  phone: yup.number().typeError('Phone must be a number').required('Phone number is required'),
+  phone: yup.number().typeError('phoneNumberType').required('phoneNumberRequired'),
   password: yup
     .string()
-    .required('Password is required')
-    .min(8, 'Password must be at least 8 characters')
-    .max(20, 'Password must be at least less than 20 characters')
+    .required('passwordRequired')
+    .min(8, 'passwordMin')
+    .max(20, 'passwordMax')
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-      'Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special case character'
+      'passwordMatch'
     ),
-  confirmPassword: yup.string().oneOf([yup.ref('password'), undefined], 'Passwords must match'),
+  confirmPassword: yup.string().oneOf([yup.ref('password'), undefined], 'passwordNotMatch'),
 });
 
 export default registerValidationSchema;
