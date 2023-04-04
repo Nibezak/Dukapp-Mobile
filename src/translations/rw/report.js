@@ -4,11 +4,18 @@ export default {
   reports_description: "Ubushishozi bw'ububiko",
 
   // Daily Summary
-  daily_summary: "Incamake y'umunsi",
+
+  daily_summary: "Incamake",
   today_profit: 'Inyungu',
-  today_sales: 'Ibyagurishijwe',
+  today_sales: 'ibyaguzwe',
   items_in_stock: 'Ububiko',
   low_stock_items: 'Ububiko buke',
+  on_credit: 'ku nguzanyo',
+
+  // dating 
+
+  start_date: 'kuva kuwa ',
+  end_date: 'Kugeza kuwa',
 
   daily_profit: "Inyungu y'icyumweru buri munsi",
   weekly_summary: "Inyungu y'icyumweru",

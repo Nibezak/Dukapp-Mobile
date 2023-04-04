@@ -7,4 +7,6 @@ export default {
   home: 'Home',
   receipts: 'Receipts',
   reportInsights: 'Report Insights',
+  share: 'Tell a Friend',
+
 };

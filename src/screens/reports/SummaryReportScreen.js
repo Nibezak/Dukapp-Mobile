@@ -43,9 +43,9 @@ export default function SummaryReportScreen() {
   const [profit, setProfit] = useState(0);
   const [onCredit, setOnCredit] = useState(0);
   const [revenueSummaries, setRevenueSummaries] = useState([
-    { color: '#14b8a6', title: 'Sales', value: sales, route: 'Insights' },
-    { color: '#4ade80', title: 'Profit', value: profit, route: 'Insights' },
-    { color: '#f1c40f', title: 'On Credit', value: onCredit, route: 'Insights' },
+    { color: '#14b8a6', title: `${t('report.today_sales')}`, value: sales, route: 'Insights' },
+    { color: '#4ade80', title: `${t('report.today_profit')}`, value: profit, route: 'Insights' },
+    { color: '#f1c40f', title: `${t('report.on_credit')}`, value: onCredit, route: 'Insights' },
   ]);
 
   // Payment method summaries
@@ -227,7 +227,7 @@ export default function SummaryReportScreen() {
                 style={[styles.dateSelector, { backgroundColor: theme.accent }]}
               >
                 <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                  <Text style={{ color: theme.text, fontSize: 12 }}>Start Date</Text>
+                  <Text style={{ color: theme.text, fontSize: 12 }}>{t('report.start_date')}</Text>
                 </View>
                 <Text style={[styles.title, { color: theme.text, opacity: 0.7 }]}>
                   {startDate.toString()}
@@ -242,7 +242,7 @@ export default function SummaryReportScreen() {
                 style={[styles.dateSelector, { backgroundColor: theme.accent }]}
               >
                 <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                  <Text style={{ color: theme.text, fontSize: 12 }}>End Date</Text>
+                  <Text style={{ color: theme.text, fontSize: 12 }}>{t('report.end_date')}</Text>
                 </View>
                 <Text style={[styles.title, { color: theme.text, opacity: 0.7 }]}>
                   {endDate.toString()}
@@ -300,7 +300,7 @@ export default function SummaryReportScreen() {
                   <View
                     style={{ flexDirection: 'row', justifyContent: 'center', paddingVertical: 10 }}
                   >
-                    <Text style={{ color: theme.text, fontWeight: 'bold' }}>Summary</Text>
+                    <Text style={{ color: theme.text, fontWeight: 'bold' }}>{t('report.daily_summary')}</Text>
                   </View>
                   <View style={styles.row}>
                     {revenueSummaries.map((item, index) => (

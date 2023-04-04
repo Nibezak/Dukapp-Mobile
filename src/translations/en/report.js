@@ -4,11 +4,17 @@ export default {
   reports_description: 'Store Insights',
 
   // Daily Summary
-  daily_summary: 'Daily Summary',
+  daily_summary: 'Summary',
   today_profit: 'Profit',
   today_sales: 'Sales',
   items_in_stock: 'Stock',
   low_stock_items: 'Low Stock',
+  on_credit: 'On Credit',
+
+  // dating 
+
+  start_date: 'Start Date',
+  end_date: 'End Date',
 
   daily_profit: 'Weekly Daily Profit',
   weekly_summary: 'Weekly Summary',

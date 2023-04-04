@@ -41,7 +41,7 @@ export default function SideBar() {
     { icon: ReportInsightsIcon, title: `${t('screens.reportInsights')}`, route: 'Insights' },
   ];
 
-  const bottomListItems = [{ icon: ShareIcon, title: 'Tell a Friend' }];
+  const bottomListItems = [{ icon: ShareIcon, title: `${t('screens.share')}` }];
 
   const navigation = useNavigation();
 

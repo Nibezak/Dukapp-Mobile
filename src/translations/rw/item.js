@@ -25,7 +25,7 @@ export default {
   costs: 'Ibiciro ',
   service: 'Serivise ',
   in_stock: 'Ibiri mu bubiko: ',
-  sales_at: 'Ibyagurishiwe ',
+  sales_at: 'Igiciro ',
   new_item: 'Ikigurishwa gishya',
   low_stock: 'Ibiri mu bubiko ni bike',
   stock_available: 'Biri mububiko',

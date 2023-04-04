@@ -7,5 +7,6 @@ export default {
   editItem: 'Hindura',
   home: 'Ahabanza',
   receipts: 'Inyemezabwishyu',
-  reportInsights: 'Raporo Ubushishozi',
+  reportInsights: 'Raporo Zawe',
+  share: 'Sangiza Program',
 };
