@@ -378,16 +378,27 @@ export function NavStack() {
  * App Root Navigation
  */
 export default function RootNavigation() {
+  const [isLoading, setIsLoading] = useState(true);
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
     // Check if the user is logged in or not
     // Check Secure store for the user object/token
     setTimeout(() => {
+      setIsLoading(false);
     }, 1000);
   }, [user]);
 
+  // Show loading indicator as we wait for the secure storage to
   // be read for use.
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color="#4a5568" />
+      </View>
+    );
+  }
+
   // For us to reach here, it means that the secure storage has been successfully
   // loaded, accessible and can be used. If the user exists, we consider the user
   // to have logged in, otherwise the user has to be presented the screen for
