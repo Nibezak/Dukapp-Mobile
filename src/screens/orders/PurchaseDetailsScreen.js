@@ -22,6 +22,7 @@ import InputSend from '../../components/InputSend';
 import { MaterialIcons } from '@expo/vector-icons';
 import Order from '../../models/Order';
 import PurchaseOrderPayment from './PurchaseOrderPayment';
+import { Theme } from '../../helpers/theme';
 
 // Retrieve user windows height
 const windowHeight = Dimensions.get('window').height;
@@ -162,10 +163,10 @@ export default function PurchaseDetailsScreen({ navigation, route }) {
     async function sellNewItem() {
         // 1. Redirect to add new item Screen
         navigation.navigate(`${t('screens.newItem')}`, {
-          item_name: typing,
-          order_id: order.id,
-          action_type: 'add_product_and_sale',
-          order_type: orderType,
+            item_name: typing,
+            order_id: order.id,
+            action_type: 'add_product_and_sale',
+            order_type: orderType,
         });
     }
 
@@ -412,7 +413,8 @@ const styles = StyleSheet.create({
         height: windowHeight / 3,
         position: 'absolute',
         bottom: 40,
-        backgroundColor: 'transparent',
+        backgroundColor: Theme.accent,
+
     },
     row: {
         flexDirection: 'row',

@@ -7,6 +7,8 @@ export default {
   orders_description: "Ibiguzi n'ibigurishwa",
   orders_sales: 'Ibyagurishijwe',
   orders_purchases: 'Ibyaguzwe',
+  payment_method: 'Uburyo bwo Kwishura',
+
 
   // Order screen
   add_customer: '🧑🏽 Umukiriya',

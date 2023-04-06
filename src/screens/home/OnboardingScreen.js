@@ -24,6 +24,7 @@ import OrderItem from '../../models/OrderItem';
 import Supplier from '../../models/Supplier';
 import { t } from 'i18n-js';
 import { ThemeContext } from '../../../App';
+import { Theme } from '../../helpers/theme';
 
 export function OnboardingScreen() {
   const [currencyValue, setCurrencyValue] = useState('');
@@ -109,8 +110,15 @@ export function OnboardingScreen() {
   }
   if (showLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator style={{ margin: 8 }} size="small" color="gray" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: theme.background,
+        }}
+      >
+        <ActivityIndicator style={{ margin: 8 }} size="large" color={theme.primary} />
       </View>
     );
   }

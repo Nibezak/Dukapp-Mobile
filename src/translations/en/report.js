@@ -10,6 +10,9 @@ export default {
   items_in_stock: 'Stock',
   low_stock_items: 'Low Stock',
   on_credit: 'On Credit',
+  by_cash: 'By Cash',
+  by_Mobile: 'By Mobile',
+  total: 'Total',
 
   // dating 
 

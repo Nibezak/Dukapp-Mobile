@@ -10,7 +10,10 @@ export default {
   today_sales: 'ibyaguzwe',
   items_in_stock: 'Ububiko',
   low_stock_items: 'Ububiko buke',
-  on_credit: 'ku nguzanyo',
+  on_credit: 'Ku nguzanyo',
+  by_cash: 'Kuri Cash',
+  by_Mobile: 'Kuri Mobile',
+  total: 'Byose Hamwe',
 
   // dating 
 

@@ -27,6 +27,7 @@ import Item from '../../models/Item';
 import { isFirstDayOfMonth } from 'date-fns';
 import NextButton from '../../components/NextButton';
 import { ThemeContext } from '../../../App';
+import { Theme } from '../../helpers/theme';
 
 // Retrieve user windows height
 const windowHeight = Dimensions.get('window').height;
@@ -185,8 +186,8 @@ export default function OrderDetailsScreen({ navigation, route }) {
           return Alert.alert(
             'The Stock of : ' + stockItem.name + ' is insuffient #',
             'The remaining quantity is : ' +
-              stockItem.quantity +
-              ' Please Add more stock to be able to sell',
+            stockItem.quantity +
+            ' Please Add more stock to be able to sell',
             [
               {
                 text: 'Cancel',
@@ -327,8 +328,8 @@ export default function OrderDetailsScreen({ navigation, route }) {
       Alert.alert(
         'The Stock of ' + item.name + ' is insuffient #',
         'The remaining quantity is : ' +
-          item.quantity +
-          ' Please Add more stock to be able to sell',
+        item.quantity +
+        ' Please Add more stock to be able to sell',
         [
           {
             text: 'Cancel',
@@ -523,7 +524,8 @@ const styles = StyleSheet.create({
     height: windowHeight / 3,
     position: 'absolute',
     bottom: 40,
-    backgroundColor: '#fff',
+    backgroundColor: Theme.accent,
+    elevation: 5,
   },
   row: {
     flexDirection: 'row',

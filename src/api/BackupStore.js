@@ -17,3 +17,8 @@ export async function uploadData(dataType, payload) {
     });
 }
 
+export async function realTimeBackup(queryString, queryParameter) {
+
+  console.log(queryString, queryParameter);
+
+}

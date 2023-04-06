@@ -53,9 +53,9 @@ export default function SummaryReportScreen() {
   const [byMobile, setByMobile] = useState(0);
   const [byCredit, setByCredit] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState([
-    { color: '#718096', title: 'By Cash', value: byCash, route: 'Stock' },
-    { color: '#718096', title: 'By Mobile', value: byMobile, route: 'Insights' },
-    { color: '#718096', title: 'Total ', value: byCredit, route: 'Insights' },
+    { color: '#718096', title: `${t('report.by_cash')}`, value: byCash, route: 'Stock' },
+    { color: '#718096', title: `${t('report.by_mobile')}`, value: byMobile, route: 'Insights' },
+    { color: '#718096', title: `${t('report.total')}`, value: byCredit, route: 'Insights' },
   ]);
 
   // Stock Summaries

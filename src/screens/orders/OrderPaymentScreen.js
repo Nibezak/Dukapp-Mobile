@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, Picker, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import OrderService from '../../services/OrderService';
-import Button from '../../components/Button';
 import FieldText from '../../components/FieldText';
 import InputSelect from '../../components/InputSelect';
 import { getSetting } from '../../models/AsyncStorage';
 import { t } from 'i18n-js';
-import InputText from '../../components/FieldText';
 import { unixHourStamp, unixMinuteStamp, unixTimeStamp } from '../../helpers/Dates';
 import { ThemeContext } from '../../../App';
 import ButtonFilled from '../../components/ButtonFilled';
@@ -73,7 +71,7 @@ export default function OrderPaymentScreen({ navigation, route }) {
         <InputSelect
           testID={'payment-option-selection'}
           mode={'dropdown'}
-          title={'Payment Method'}
+          title={t('order.payment_method')}
           selectedValue={method}
           style={{ height: 150, width: 150 }}
           onValueChange={(itemValue, itemIndex) => handleSetMethod(itemValue, itemIndex)}
@@ -83,11 +81,11 @@ export default function OrderPaymentScreen({ navigation, route }) {
       <View style={styles.row}>
         <FieldText
           defaultValue={order.total.toString()}
-          title={'the about amount in ' + currency + ' Currency'}
+          title={'the amount in ' + currency + ' Currency'}
           // onChangeText={setAmount}
           underlineColorAndroid="transparent"
           keyboardType="numeric"
-          editable={true}
+          editable={false}
           selectTextOnFocus={true}
         />
       </View>

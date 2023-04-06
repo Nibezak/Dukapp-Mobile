@@ -380,6 +380,8 @@ export function NavStack() {
 export default function RootNavigation() {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useContext(AuthContext);
+  const { theme } = useContext(ThemeContext);
+
 
   useEffect(() => {
     // Check if the user is logged in or not
@@ -393,8 +395,15 @@ export default function RootNavigation() {
   // be read for use.
   if (isLoading) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size="large" color="#4a5568" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: theme.background,
+        }}
+      >
+        <ActivityIndicator style={{ margin: 8 }} size="large" color={theme.primary} />
       </View>
     );
   }
