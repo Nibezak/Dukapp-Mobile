@@ -129,12 +129,14 @@ export default function CustomerListScreen({ navigation }) {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {customers.length > 0 ? (
         <>
-          <FlatList
-            data={customers}
-            renderItem={renderItem}
-            keyExtractor={keyExtractor}
-            maxToRenderPerBatch={6}
-          />
+          <View style={{ marginBottom: 40 }}>
+            <FlatList
+              data={customers}
+              renderItem={renderItem}
+              keyExtractor={keyExtractor}
+              maxToRenderPerBatch={6}
+            />
+          </View>
           <FloatingButton onPress={() => navigation.navigate(`${t('screens.newCustomer')}`)}>
             <MaterialIcons name="person-add-alt" size={32} />
           </FloatingButton>

@@ -9,6 +9,15 @@ export default function RenderCustomer({ item, index, onPress }) {
   const navigation = useNavigation();
   const { theme } = useContext(ThemeContext);
 
+  const maxLength = 10; // set the maximum number of lines
+  const text = '<Text style={[styles.email, { color: theme.text }]}>{item.email}</Text>'; // the text to trim
+  const lines = text.split('\n'); // split the text into lines
+  const displayText = lines.slice(0, maxLength).join('\n') + (lines.length > maxLength ? '\n...' : '');
+
+  console.log(displayText);
+  // Output:
+  // <Text style={[styles.email, { color: theme.text }]}>{item.email}</Text>...
+
   // If item is for adding a customer, then return a different
   // View
   if (item.id === 'add_customer') {
@@ -46,7 +55,7 @@ export default function RenderCustomer({ item, index, onPress }) {
 
   return (
     <TouchableOpacity onPress={onPress}>
-      <View style={styles.row}>
+      < View style={styles.row} >
         <MaterialIcons name="person" style={styles.avatar} size={32} color={theme.colorIcon} />
 
         <View style={styles.rowText}>
@@ -59,8 +68,8 @@ export default function RenderCustomer({ item, index, onPress }) {
         <Text>
           <MaterialIcons name="chevron-right" size={32} color={theme.colorIcon} />
         </Text>
-      </View>
-    </TouchableOpacity>
+      </View >
+    </TouchableOpacity >
   );
 }
 

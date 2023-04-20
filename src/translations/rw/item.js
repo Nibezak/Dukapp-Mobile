@@ -24,7 +24,7 @@ export default {
   // Common
   costs: 'Ibiciro ',
   service: 'Serivise ',
-  in_stock: 'Ibiri mu bubiko: ',
+  in_stock: 'Ububiko : ',
   sales_at: 'Igiciro ',
   new_item: 'Ikigurishwa gishya',
   low_stock: 'Ibiri mu bubiko ni bike',
