@@ -43,13 +43,15 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         color: '#4a5568',
+        padding: 10,
+        borderRadius: 10,
     },
     itemName: {
-        fontSize: 15,
+        fontSize: 12,
         color: '#4a5568',
     },
     itemAmount: {
-        fontSize: 15,
+        fontSize: 12,
         textDecorationStyle: 'solid',
         color: '#4a5568',
     },

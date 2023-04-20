@@ -290,7 +290,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
 
                 <View style={styles.footer}>
                   <Text style={styles.totalLabel}> {t('receipt.total')}</Text>
-                  <Text style={styles.totalAmount}>{number(order.total)}</Text>
+                  <Text style={styles.totalAmount}>{number(order.total) + ' ' + { currency: currency }}</Text>
                 </View>
               </View>
             </ZigzagView>
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
   },
   itemNameHeader: {
     marginTop: 8,
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
     flexDirection: 'row',
     color: '#4a5568',

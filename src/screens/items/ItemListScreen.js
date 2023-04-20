@@ -103,7 +103,7 @@ export default function ItemListScreen({ navigation }) {
       index={item.id}
       key={item.id}
       onPress={() =>
-        navigation.navigate(`${t('screens.editItem')}`, {
+        navigation.navigate(`Edit Item`, {
           item: item,
         })
       }

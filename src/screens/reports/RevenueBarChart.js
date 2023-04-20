@@ -89,7 +89,36 @@ export default function RevenueBarChart({ startDate, endDate }) {
           formatYLabel={(value) => formatNumber(value)}
           bezier
         /> */}
-        <BarChart
+        <LineChart
+          style={{
+            margin: 8,
+            borderRadius: 10,
+            elevation: 5,
+          }}
+          data={barData}
+          width={screenWidth}
+          height={280}
+          chartConfig={{
+            formatTopBarValue: (value) => formatNumber(value),
+            fillShadowGradientToOpacity: 0.1,
+            fillShadowGradientFromOpacity: 0.5,
+            backgroundGradientFrom: theme.accent,
+            backgroundGradientTo: theme.accent,
+            decimalPlaces: 0,
+            color: (opacity = 0) => `rgba(16, 180, 128, ${opacity})`,
+            propsForBackgroundLines: {
+              strokeDasharray: '10',
+            },
+            propsForLabels: {
+              fontSize: 10,
+              fill: theme.text,
+            },
+          }}
+          formatYLabel={(value) => formatNumber(value)}
+          bezier
+        />
+
+        {/* <BarChart
           data={barData}
           width={Dimensions.get('window').width - 16}
           // hidePointsAtIndex={[0]}
@@ -126,7 +155,7 @@ export default function RevenueBarChart({ startDate, endDate }) {
             elevation: 5,
 
           }}
-        />
+        /> */}
       </View>
     </>
   );

@@ -1,7 +1,6 @@
 // import { realTimeBackup } from '../api/BackupStore';
 import { camelToSnakeCase } from '../helpers/Strings';
 import Database from './../database/Database';
-import { getSetting } from './AsyncStorage';
 
 export default class Model {
   constructor() {
@@ -410,9 +409,12 @@ export default class Model {
   async save() {
     // Run against db
     return this.db.statement(this.queryString, this.queryParameters).then((res) => {
-      console.log(getSetting('contact_phone'));
+      console.log('==== BACKUP STARTS HERE ====')
       // Upon saving, update online server in realtime
-      realTimeBackup(this.queryString, this.queryParameters);
+      console.warn(this.queryString, this.queryParameters);
+
+      console.log('===== END OF BACKUP ===')
+
       return res;
     });
   }

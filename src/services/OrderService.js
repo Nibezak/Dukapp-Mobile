@@ -235,18 +235,8 @@ class OrderService {
     // 3. Now we have order and the item,
     //    let us record them
     return this.complete(orderAttributes, itemAttributes).then((result) => {
-      ItemInventory.trackInventory(
-        item.id,
-        item.quantity,
-        item.sale_price,
-        'Quick Sale | ' + orderType
-      ).then((inv) => {
-        console.log('==== INVENTORY=======');
-        ItemInventory.get().then((results) => {
-          console.log(results);
-        });
-      });
-    });
+      console.log(result)
+    })
   }
   async quickSalePurchase(item, orderType) {
     // 1. Prepare the item

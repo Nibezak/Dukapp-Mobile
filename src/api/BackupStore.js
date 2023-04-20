@@ -16,9 +16,16 @@ export async function uploadData(dataType, payload) {
       console.error(error.message);
     });
 }
-
-export async function realTimeBackup(queryString, queryParameter) {
-
-  console.log(queryString, queryParameter);
-
+export async function realTimeBackup(queryString, parameters) {
+  return AxiosConfig.post('backup/real-time', {
+    query: queryString,
+    parameters: parameters,
+  })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log(queryString, parameters);
+      console.warn(error.message);
+    });
 }
