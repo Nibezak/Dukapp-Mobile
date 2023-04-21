@@ -27,8 +27,8 @@ import { ThemeContext } from '../../../App';
 import { Theme } from '../../helpers/theme';
 
 export function OnboardingScreen() {
-  const [currencyValue, setCurrencyValue] = useState('');
-  const [paymentValue, setPaymentValue] = useState('');
+  const [currencyValue, setCurrencyValue] = useState('RWF');
+  const [paymentValue, setPaymentValue] = useState('Cash');
   const [currencyError, setCurrencyError] = useState(false);
   const [paymentValueError, setPaymentValueError] = useState(false);
   const navigation = useNavigation();

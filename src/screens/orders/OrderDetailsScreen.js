@@ -181,22 +181,22 @@ export default function OrderDetailsScreen({ navigation, route }) {
     if (action === 'sale-more') {
       /** 1. Get the this item stock */
       return Item.find(orderItem.itemId).then((stockItem) => {
-        /** 2. If the stock is lesser than what we are adding, then don't allow it to proceed */
-        if (stockItem.quantity <= 0) {
-          return Alert.alert(
-            'The Stock of : ' + stockItem.name + ' is insuffient #',
-            'The remaining quantity is : ' +
-            stockItem.quantity +
-            ' Please Add more stock to be able to sell',
-            [
-              {
-                text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'CANCEL',
-              },
-            ]
-          );
-        }
+        // /** 2. If the stock is lesser than what we are adding, then don't allow it to proceed */
+        // if (stockItem.quantity <= 0) {
+        //   return Alert.alert(
+        //     'The Stock of : ' + stockItem.name + ' is insuffient #',
+        //     'The remaining quantity is : ' +
+        //     stockItem.quantity +
+        //     ' Please Add more stock to be able to sell',
+        //     [
+        //       {
+        //         text: 'Cancel',
+        //         onPress: () => console.log('Cancel Pressed'),
+        //         style: 'CANCEL',
+        //       },
+        //     ]
+        //   );
+        // }
 
         /** We have enough stock, let's update */
         return updateOrderLineItemQuantity(orderItem, action);
@@ -324,22 +324,22 @@ export default function OrderDetailsScreen({ navigation, route }) {
    */
   async function addItemFromSuggestion(item) {
     /** Prevent having negative balance by checking if the item has enough*/
-    if (item.quantity <= 0) {
-      Alert.alert(
-        'The Stock of ' + item.name + ' is insuffient #',
-        'The remaining quantity is : ' +
-        item.quantity +
-        ' Please Add more stock to be able to sell',
-        [
-          {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'CANCEL',
-          },
-        ]
-      );
-      return;
-    }
+    // if (item.quantity <= 0) {
+    //   Alert.alert(
+    //     'The Stock of ' + item.name + ' is insuffient #',
+    //     'The remaining quantity is : ' +
+    //     item.quantity +
+    //     ' Please Add more stock to be able to sell',
+    //     [
+    //       {
+    //         text: 'Cancel',
+    //         onPress: () => console.log('Cancel Pressed'),
+    //         style: 'CANCEL',
+    //       },
+    //     ]
+    //   );
+    //   return;
+    // }
 
     // 1. If item exists, then increase it's quantity
     // Instead of adding it as a new product

@@ -141,7 +141,7 @@ export default function ItemListScreen({ navigation }) {
             keyExtractor={keyExtractor}
             maxToRenderPerBatch={6}
           />
-          <FloatingButton onPress={() => navigation.navigate(`${t('screens.newItem')}`)} />
+          <FloatingButton onPress={() => navigation.navigate('New Item')} />
         </>
       ) : (
         <StockItemAnimation theme={theme} />
