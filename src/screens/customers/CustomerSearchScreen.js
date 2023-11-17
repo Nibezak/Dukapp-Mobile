@@ -1,25 +1,22 @@
-import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  StyleSheet,
-  InteractionManager,
-  TouchableOpacity,
-  FlatList,
-} from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
-import { MaterialIcons } from "@expo/vector-icons";
-import FloatingButton from "../../components/FloatingButton";
-import CustomerService from "../../services/CustomerService";
-import RenderCustomer from "./RenderCustomer";
-import Header from "../../components/Header";
-import InputText from "../../components/InputText";
-import { t } from "i18n-js";
-import OrderService from "../../services/OrderService";
+import React, { useState, useEffect, useCallback, useContext } from 'react';
+import { View, StyleSheet, InteractionManager, TouchableOpacity, FlatList } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
+import FloatingButton from '../../components/FloatingButton';
+import CustomerService from '../../services/CustomerService';
+import RenderCustomer from './RenderCustomer';
+import Header from '../../components/Header';
+import InputText from '../../components/InputText';
+import { t } from 'i18n-js';
+import OrderService from '../../services/OrderService';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { ThemeContext } from '../../../App';
 
 export default function CustomerSearchScreen({ navigation, route }) {
   const [customers, setCustomers] = useState([]);
   const [searchTerm, setSearchTerm] = useState();
   const [customersBuffer, setCustomersBuffer] = useState([]);
+  const { theme } = useContext(ThemeContext);
 
   useFocusEffect(
     useCallback(() => {
@@ -38,12 +35,12 @@ export default function CustomerSearchScreen({ navigation, route }) {
     CustomerService.getCustomers().then((dbCustomers) => {
       const customersFromDB = [
         {
-          id: "add_customer",
-          names: "add_customer",
-          phone: "add_customer",
-          email: "add_customer",
-          address: "add_customer",
-          note: "add_customer",
+          id: 'add_customer',
+          names: 'add_customer',
+          phone: 'add_customer',
+          email: 'add_customer',
+          address: 'add_customer',
+          note: 'add_customer',
         },
         ...dbCustomers,
       ];
@@ -87,7 +84,7 @@ export default function CustomerSearchScreen({ navigation, route }) {
     }
 
     //
-    navigation.navigate("Edit Customer", {
+    navigation.navigate('Edit Customer', {
       customer: customer,
     });
   }
@@ -107,40 +104,43 @@ export default function CustomerSearchScreen({ navigation, route }) {
   const keyExtractor = useCallback((item) => item.id.toString(), []);
 
   return (
-    <View style={styles.container}>
-      <Header>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{ paddingLeft: 10, marginTop: 10, marginRight: 20 }}
-        >
-          <MaterialIcons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <KeyboardAwareScrollView>
+        <Header>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={{ paddingLeft: 10, marginTop: 10, marginRight: 20 }}
+          >
+            <MaterialIcons name="arrow-back" size={24} color={theme.text} />
+          </TouchableOpacity>
 
-        <InputText
-          value={searchTerm}
-          autoFocus={true}
-          onChangeText={handleSearch}
-          placeholder={t("common.search_placeholder")}
-          style={{ borderBottomWidth: 0, color: "#f2f2f2" }}
-          placeholderTextColor={"#f2f2f2"}
+          <InputText
+            value={searchTerm}
+            autoFocus={true}
+            onChangeText={handleSearch}
+            placeholder={t('common.search_placeholder')}
+            style={{ borderBottomWidth: 0, color: '#f2f2f2' }}
+            placeholderTextColor={'#f2f2f2'}
+          />
+
+          <TouchableOpacity
+            style={{ paddingRight: 10, marginTop: 10 }}
+            onPress={() => {
+              setSearchTerm('');
+              handleSearch('');
+            }}
+          >
+            <MaterialIcons name="close" size={24} color="#fff" />
+          </TouchableOpacity>
+        </Header>
+        <FlatList
+          style={{ marginTop: 20 }}
+          data={customers}
+          renderItem={renderCustomer}
+          keyExtractor={keyExtractor}
+          maxToRenderPerBatch={6}
         />
-
-        <TouchableOpacity
-          style={{ paddingRight: 10, marginTop: 10 }}
-          onPress={() => {
-            setSearchTerm("");
-            handleSearch("");
-          }}
-        >
-          <MaterialIcons name="close" size={24} color="#fff" />
-        </TouchableOpacity>
-      </Header>
-      <FlatList
-        data={customers}
-        renderItem={renderCustomer}
-        keyExtractor={keyExtractor}
-        maxToRenderPerBatch={6}
-      />
+      </KeyboardAwareScrollView>
     </View>
   );
 }

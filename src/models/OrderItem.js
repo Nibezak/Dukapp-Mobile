@@ -1,3 +1,4 @@
+import { getSetting } from "./AsyncStorage";
 import Model from "./Model";
 
 class OrderItem extends Model {
@@ -12,9 +13,10 @@ class OrderItem extends Model {
   async createTable() {
     return this.db.statement(
       `CREATE TABLE IF NOT EXISTS ` +
-        this.getTableName() +
-        `(
+      this.getTableName() +
+      `(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
+              shop_msisdn TEXT DEFAULT '${getSetting('contact_phone')}',
               name TEXT,
               item_id INTEGER NOT NULL,
               order_id INTEGER NOT NULL,

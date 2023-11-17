@@ -13,7 +13,7 @@ export default function RightNavSearch(props) {
   return (
     <View style={styles.rightNav}>
       <SearchButton onPress={props.onPressSearch} style={styles.searchButton} />
-      <MoreVerticalButton onPress={props.onPressSettings} />
+      {/* <MoreVerticalButton onPress={props.onPressSettings} /> */}
     </View>
   );
 }

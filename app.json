@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "dukaapp-simplified",
-    "slug": "snack-c326076a-9a56-4fa4-8005-17e24edf1228",
+    "name": "Dukapp",
+    "slug": "DukAppSimplified",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,18 +20,33 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.dukapp.app",
+      "googleServicesFile": "./google-services.json",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.kamaroly.snackc326076a9a564fa4800517e24edf1228"
+      "splash": {
+        "backgroundColor": "#ffffff",
+        "image": "./assets/splash.png",
+        "dark": {
+          "backgroundColor": "#1E293B",
+          "image": "./assets/splash-dark.png"
+        }
+      }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "config": {
+        "firebase": {
+          "apiKey": "AIzaSyCGNvybWqIYK3ZE3vdQ1czy9daiNnO3qCw",
+          "measurementId": "G-P3T1PSEVH4"
+        }
+      }
     },
     "extra": {
       "eas": {
-        "projectId": "23bc0181-4fb3-4991-a7da-c8cfe135fb26"
+        "projectId": "a216b05b-a36c-45a2-971b-6f3d6c164d06"
       }
     }
   }

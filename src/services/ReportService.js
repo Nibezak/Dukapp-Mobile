@@ -1,18 +1,11 @@
-import Database from "../database/Database";
-import {
-  lastXDaysDate,
-  lastXDaysNames,
-  lastXDaysNamesForChart,
-  today,
-} from "../helpers/Dates";
-
+import Database from '../database/Database';
+import { lastXDaysDate, lastXDaysNames, lastXDaysNamesForChart, today } from '../helpers/Dates';
 
 /**
- * Service to make reports 
+ * Service to make reports
  */
 class ReportService {
-
-  sales(setRevenue, startDate, endDate) {
+  async sales(setRevenue, startDate, endDate) {
     Database.execute(
       `SELECT
           SUM(order_items.total) sales
@@ -21,16 +14,17 @@ class ReportService {
               orders.order_type = ? AND 
               (substr(orders.created_at, 0, 11) BETWEEN ? AND ?);
         `,
-      ["sale", startDate, endDate],
-      (result) => setRevenue(result[0].sales)
+      ['sale', startDate, endDate],
+      (result) => {
+        setRevenue(result[0].sales);
+      }
     );
   }
 
   /**
    * Get sum of today's profit
    */
-   profit(setProfit, startDate, endDate) {
-
+  profit(setProfit, startDate, endDate) {
     Database.execute(
       `SELECT
           SUM(order_items.total) - sum(order_items.quantity * order_items.unit_cost_price) profits
@@ -39,7 +33,7 @@ class ReportService {
               orders.order_type = ? AND 
               (substr(orders.created_at, 0, 11) BETWEEN ? AND ?);
         `,
-      ["sale",  startDate, endDate],
+      ['sale', startDate, endDate],
       (result) => {
         setProfit(result[0].profits);
       }
@@ -47,14 +41,16 @@ class ReportService {
   }
 
   /**
-   * 
-   * @param {callback} setSales 
-   * @param {start date} startDate 
-   * @param {end date} endDate 
-   * @param {payment method} method 
+   *
+   * @param {callback} setSales
+   * @param {start date} startDate
+   * @param {end date} endDate
+   * @param {payment method} method
    */
-  salesByPayment(setSales, startDate, endDate, method = "credit"){
-    
+  salesByPayment(setSales, startDate, endDate, method = 'credit') {
+    /** If others is passed as method e */
+    method = method == 'All' ? '' : method;
+
     Database.execute(
       `SELECT
           SUM(order_items.total) sales
@@ -62,9 +58,11 @@ class ReportService {
         WHERE orders.id = order_items.order_id AND 
               orders.order_type = ? AND 
               (substr(orders.created_at, 0, 11) BETWEEN ? AND ?) AND
-              LOWER(orders.payments) LIKE '%`+ method + `%';
+              LOWER(orders.payments) LIKE '%` +
+      method +
+      `%';
         `,
-      ["sale", startDate, endDate],
+      ['sale', startDate, endDate],
       (result) => setSales(result[0].sales)
     );
   }
@@ -75,19 +73,24 @@ class ReportService {
   inStockItems(setStockItems) {
     Database.execute(
       `SELECT
+          id,
+          name,
           count(1) in_stock
         FROM items
         WHERE quantity > reorder_level 
         `,
       [],
-      (result) => setStockItems(result[0].in_stock)
+      (result) => {
+        setStockItems(result[0].in_stock);
+        console.log(result)
+      }
     );
   }
 
   /**
    * Get Low Stock items count
    */
-   lowStockItems(setLowStockItem) {
+  lowStockItems(setLowStockItem) {
     Database.execute(
       `SELECT
           count(1) low_stock
@@ -100,55 +103,59 @@ class ReportService {
   }
 
   /**
-   * 
-   * @param {callback} setStock 
-   * @param {string} startDate 
-   * @param {string} endDate 
+   *
+   * @param {callback} setStock
+   * @param {string} startDate
+   * @param {string} endDate
    * @todo TO FIX FORMULAR LATER
    */
-  fastMovingStock(setStock, startDate, endDate){
+  fastMovingStock(setStock, startDate, endDate) {
     Database.execute(
       `SELECT
-          count(distinct items.id) slow_moving_items
-        FROM items LEFT JOIN order_items 
-            ON items.id = order_items.item_id 
-        WHERE 
-          (substr(created_at, 0, 11) BETWEEN ? AND ?)
-          GROUP BY items.id
-          HAVING SUM(order_items.quantity) >= 3
-        `,
+        name,
+        sum(quantity) fast_moving_items   
+      FROM order_items
+      WHERE (substr(order_items.created_at, 0, 11) BETWEEN ? AND ?)
+      GROUP BY name
+      HAVING SUM(quantity) > 1;
+      `,
       [startDate, endDate],
-      (result) => setStock(result[0].fast_moving_items)
+      (result) => {
+        setStock(result.length);
+        return result.length;
+      }
     );
   }
 
-    /**
-     * @param {callback} setStock 
-     * @param {string} startDate 
-     * @param {string} endDate 
-     * @todo TO FIX FORMULAR LATER
-     */
-     slowMovingStock(setStock, startDate, endDate){
-      Database.execute(
-        `SELECT
-            count(distinct items.id) slow_moving_items
-          FROM items LEFT JOIN order_items 
-               ON items.id = order_items.item_id 
-          WHERE 
-            (substr(created_at, 0, 11) BETWEEN ? AND ?)
-            GROUP BY items.id
-            HAVING SUM(order_items.quantity) <= 1
-          `,
-        [startDate, endDate],
-        (result) => setStock(result[0].slow_moving_items)
-      );
-    }
+  /**
+   * @param {callback} setStock
+   * @param {string} startDate
+   * @param {string} endDate
+   * @todo TO FIX FORMULAR LATER
+   */
+  slowMovingStock(setStock, startDate, endDate) {
+    Database.execute(
+      `SELECT
+          name,
+          sum(quantity) slow_moving_items   
+        FROM order_items
+        WHERE (substr(order_items.created_at, 0, 11) BETWEEN ? AND ?)
+        GROUP BY name
+        HAVING SUM(quantity) <= 1;
+      `,
+      [startDate, endDate],
+      (result) => {
+        setStock(result.length);
+        return result.length;
+      }
+    );
+  }
 
   /**
    * Get last 7 days profits
    * @param {callback} setProfit
    */
-   lastSevenDaysProfit(setProfit, reportDays = 7, orderType = "sale") {
+  lastSevenDaysProfit(setProfit, reportDays = 7, orderType = 'sale') {
     Database.execute(
       `SELECT
               SUBSTR(orders.created_at, 0, 11) day,
@@ -170,8 +177,8 @@ class ReportService {
         for (var i = 0; i < results.length; i++) {
           // Get short day name
           const shortDay = new Date(results[i].day)
-            .toLocaleString("en-us", {
-              weekday: "long",
+            .toLocaleString('en-us', {
+              weekday: 'long',
             })
             .substr(0, 3);
 
@@ -188,6 +195,32 @@ class ReportService {
         });
       }
     );
+  }
+
+  /**
+   * Get sales order by payment
+   *
+   * @param {string} paymentMethod
+   */
+  async getSaleOrdersByPayment(paymentMethod) {
+    {
+      /** If others is passed as method e */
+      return Database.execute(
+        `SELECT
+            *
+          FROM orders
+          WHERE orders.order_type = ? AND 
+                LOWER(orders.payments) LIKE '%` +
+        paymentMethod +
+        `%';
+          `,
+        ['sale'],
+
+        (results) => {
+          return console.log(results);
+        }
+      );
+    }
   }
 }
 

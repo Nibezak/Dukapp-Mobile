@@ -1,9 +1,16 @@
-import Item from "../models/Item";
-import Order from "../models/Order";
-import OrderItem from "../models/OrderItem";
-import { unixTimeStamp } from "../helpers/Dates";
-import Database from "../database/Database";
-import { getSetting } from "../models/AsyncStorage";
+import Item from '../models/Item';
+import Order from '../models/Order';
+import OrderItem from '../models/OrderItem';
+import {
+  unixTimeStamp,
+  unixHourStamp,
+  unixMinuteStamp,
+  unixSecondsStamp,
+  unixYearStamp,
+} from '../helpers/Dates';
+import Database from '../database/Database';
+import { getSetting } from '../models/AsyncStorage';
+import ItemInventory from '../models/ItemInventory';
 /**
  * Class to handle order management
  *
@@ -36,28 +43,16 @@ class OrderService {
    * Get orders and their items as stored
    * in the database
    */
-  async ordersWithItems(
-    setOrders,
-    orderType = "sale",
-    orderId = null,
-    limit = 100
-  ) {
+  async ordersWithItems(setOrders, orderType = 'sale', orderId = null, limit = 100) {
     let orders = [];
 
     // Get orders first
     switch (orderId) {
       case null:
-        orders = await Order.refresh()
-          .where("order_type", orderType)
-          .desc()
-          .limit(limit)
-          .get();
+        orders = await Order.refresh().where('order_type', orderType).desc().limit(limit).get();
         break;
       default:
-        orders = await Order.refresh()
-          .where("order_type", orderType)
-          .where("id", orderId)
-          .get();
+        orders = await Order.refresh().where('order_type', orderType).where('id', orderId).get();
         break;
     }
 
@@ -66,10 +61,10 @@ class OrderService {
     for (var order of orders) {
       // 3. Get Line Items per order
       order.line_items = [];
-      
+
       // Get Items per order
       await OrderItem.refresh()
-        .where("order_id", order.id)
+        .where('order_id', order.id)
         .get()
         .then((retrieved_line_items) => {
           // 4. Add line items
@@ -104,7 +99,7 @@ class OrderService {
    * Get order Items
    */
   async getOrderItems(orderId, setOrderItems) {
-    OrderItem.refresh().where("order_id", orderId).get().then(setOrderItems);
+    OrderItem.refresh().where('order_id', orderId).get().then(setOrderItems);
   }
 
   /**
@@ -140,11 +135,7 @@ class OrderService {
     return OrderItem.create(itemAttributes)
       .then((result) => {
         // 2. Adjust item stock
-        this.adjustStock(
-          itemAttributes.item_id,
-          itemAttributes.quantity,
-          orderType
-        );
+        this.adjustStock(itemAttributes.item_id, itemAttributes.quantity, orderType);
 
         return {
           order_item_id: result.insertId,
@@ -152,9 +143,7 @@ class OrderService {
         };
       })
       .catch(function (error) {
-        console.log(
-          "There has been a problem with your fetch operation: " + error.message
-        );
+        console.log('There has been a problem with your fetch operation: ' + error.message);
         // ADD THIS THROW error
         throw error;
       });
@@ -164,14 +153,14 @@ class OrderService {
    * get Order by Id
    */
   async getOrderById(orderId) {
-    return Order.refresh().where("id", orderId).get();
+    return Order.refresh().where('id', orderId).get();
   }
 
   /**
    * Add a customer to an existing order
    */
   async addCustomerToOrder(orderId, customerOrSupplierId) {
-    return Order.refresh().where("id", orderId).update({
+    return Order.refresh().where('id', orderId).update({
       customer_supplier_id: customerOrSupplierId,
     });
   }
@@ -181,8 +170,13 @@ class OrderService {
    */
   async addPaymentToOrder(orderId, payments = []) {
     return Order.refresh()
-      .where("id", orderId)
+      .where('id', orderId)
       .update({ payments: JSON.stringify(payments) });
+  }
+  async addComplete(orderId) {
+    return Order.refresh().where('id', orderId).update({
+      status: 'completed'
+    })
   }
 
   /**
@@ -209,16 +203,16 @@ class OrderService {
       orderTotal = item.total;
     });
 
-    const currency = await getSetting("app_default_currency");
-    const defaultPaymentMethod = await getSetting("app_default_payment_method");
+    const currency = await getSetting('app_default_currency');
+    const defaultPaymentMethod = await getSetting('app_default_payment_method');
 
     // 2. Prepare the order
     const orderAttributes = {
       order_type: orderType.toLowerCase(),
-      order_key: "S" + unixTimeStamp(),
-      created_via: "android-mobile-app",
-      version: "1.0.0",
-      status: "completed",
+      order_key: 'S' + unixTimeStamp(),
+      created_via: 'android-mobile-app',
+      version: '1.0.0',
+      status: 'pending',
       discount_total: 0,
       discount_tax: 0,
       total: orderTotal,
@@ -230,10 +224,65 @@ class OrderService {
         {
           method: defaultPaymentMethod,
           title: defaultPaymentMethod,
-          transaction_id: "P" + unixTimeStamp(),
+          transaction_id: 'P' + unixTimeStamp(),
           amount: orderTotal,
           currency: currency,
-          date_paid: unixTimeStamp(),
+          date_paid: ` ${unixHourStamp()}:${unixMinuteStamp()}`,
+        },
+      ]),
+    };
+
+    // 3. Now we have order and the item,
+    //    let us record them
+    return this.complete(orderAttributes, itemAttributes).then((result) => {
+      console.log(result)
+    })
+  }
+  async quickSalePurchase(item, orderType) {
+    // 1. Prepare the item
+    const itemAttributes = [
+      {
+        item_id: item.id,
+        name: item.name,
+        description: item.description,
+        quantity: 1,
+        unit_cost_price: item.cost_price,
+        unit_sales_price: item.sale_price,
+        total: item.cost_price,
+      },
+    ];
+
+    // Get order total
+    let orderTotal = 0;
+    itemAttributes.forEach((item) => {
+      orderTotal = item.total;
+    });
+
+    const currency = await getSetting('app_default_currency');
+    const defaultPaymentMethod = await getSetting('app_default_payment_method');
+
+    // 2. Prepare the order
+    const orderAttributes = {
+      order_type: orderType.toLowerCase(),
+      order_key: 'S' + unixTimeStamp(),
+      created_via: 'android-mobile-app',
+      version: '1.0.0',
+      status: 'pending',
+      discount_total: 0,
+      discount_tax: 0,
+      total: orderTotal,
+      total_tax: 0,
+      prices_include_tax: 0,
+      customer_supplier_id: 0,
+      customer_supplier_note: 0,
+      payments: JSON.stringify([
+        {
+          method: defaultPaymentMethod,
+          title: defaultPaymentMethod,
+          transaction_id: 'P' + unixTimeStamp(),
+          amount: orderTotal,
+          currency: currency,
+          date_paid: ` ${unixHourStamp()}:${unixMinuteStamp()}`,
         },
       ]),
     };
@@ -242,13 +291,12 @@ class OrderService {
     //    let us record them
     return this.complete(orderAttributes, itemAttributes);
   }
-
   /**
    * Update order Item Total Manually
    */
   async setItemTotalManually(item, customItemTotal) {
     return OrderItem.refresh()
-      .where("id", item.id)
+      .where('id', item.id)
       .update({ total: parseFloat(customItemTotal) })
       .then((results) => {
         // Recalculate order total
@@ -270,7 +318,7 @@ class OrderService {
    */
   async setItemQuantityManually(item, customerItemQuantity) {
     return OrderItem.refresh()
-      .where("id", item.id)
+      .where('id', item.id)
       .update({ total: parseFloat(customerItemQuantity) });
   }
 
@@ -296,7 +344,6 @@ class OrderService {
       // 1. Reduce Stock for sale
       //    Increase stock for purchase
       this.adjustStock(item, newOrder.quantity, newOrder.order_type);
-
       return result;
     });
   }
@@ -306,17 +353,17 @@ class OrderService {
    * Tracked
    */
   async adjustStock(itemId, quantity, orderType) {
-    const stockItem = Item.refresh().where("id", itemId);
+    const stockItem = Item.refresh().where('id', itemId);
 
     switch (orderType.toLowerCase()) {
-      case "sale":
-      case "sale-more":
-      case "purchase-less":
+      case 'sale':
+      case 'sale-more':
+      case 'purchase-less':
         stockItem.reduceQuantity(quantity);
         break;
-      case "purchase":
-      case "purchase-more":
-      case "sale-less":
+      case 'purchase':
+      case 'purchase-more':
+      case 'sale-less':
         stockItem.increaseQuantity(quantity);
         break;
     }
@@ -336,28 +383,90 @@ class OrderService {
 
     // Update quantity based on the order change
     switch (actionType.toLowerCase()) {
-      case "sale-more":
-      case "purchase-more":
+      case 'sale-more':
+      case 'purchase-more':
         orderLineItem.quantity = orderLineItem.quantity + 1;
         break;
-      case "sale-less":
-      case "purchase-less":
+      case 'sale-less':
+      case 'purchase-less':
         orderLineItem.quantity = orderLineItem.quantity - 1;
         break;
     }
 
     // You cannot sell negative quantity, Remove order
-    if (actionType.endsWith("less") && orderItem.quantity < 1) {
-      OrderItem.refresh().where("id", orderLineItem.id).delete();
+    if (actionType.endsWith('less') && orderItem.quantity < 1) {
+      OrderItem.refresh().where('id', orderLineItem.id).delete();
     } else {
       // Persist changes in DB
-      orderLineItem.total =
-        orderLineItem.unit_sales_price * orderLineItem.quantity;
-      OrderItem.refresh().where("id", orderLineItem.id).update(orderLineItem);
+      orderLineItem.total = orderLineItem.unit_sales_price * orderLineItem.quantity;
+      OrderItem.refresh().where('id', orderLineItem.id).update(orderLineItem);
     }
 
     // Update inventory items
-    return this.adjustStock(orderLineItem.item_id, quantity, actionType);
+    return this.adjustStock(orderLineItem.item_id, quantity, actionType).then((results) => {
+      /** Track the item inventory
+       * @TODO ensure inventory are being recorded
+       */
+      ItemInventory.trackInventory(
+        orderItem.item_id,
+        quantity,
+        orderItem.total,
+        'Order sales | ' + actionType
+      ).then((inventory) => {
+        console.log('==== INVENTORY=======');
+        console.log(inventory);
+
+        console.log(ItemInventory.get());
+      });
+
+      return results;
+    });
+  }
+
+  async updateOrderPurchaseItem(orderItem, actionType, quantity = 1) {
+    // Calculate changes
+    let orderLineItem = orderItem;
+
+    // Update quantity based on the order change
+    switch (actionType.toLowerCase()) {
+      case 'sale-more':
+      case 'purchase-more':
+        orderLineItem.quantity = orderLineItem.quantity + 1;
+        break;
+      case 'sale-less':
+      case 'purchase-less':
+        orderLineItem.quantity = orderLineItem.quantity - 1;
+        break;
+    }
+
+    // You cannot sell negative quantity, Remove order
+    if (actionType.endsWith('less') && orderItem.quantity < 1) {
+      OrderItem.refresh().where('id', orderLineItem.id).delete();
+    } else {
+      // Persist changes in DB
+      orderLineItem.total = orderLineItem.unit_cost_price * orderLineItem.quantity;
+      OrderItem.refresh().where('id', orderLineItem.id).update(orderLineItem);
+    }
+
+    // Update inventory items
+    return this.adjustStock(orderLineItem.item_id, quantity, actionType).then((results) => {
+      /** Track the item inventory
+       * @TODO ensure inventory are being recorded
+       */
+      ItemInventory.trackInventory(
+        orderItem.item_id,
+        quantity,
+        orderItem.total,
+        'Order sales | ' + actionType
+      ).then((inv) => {
+        console.log('==== INVENTORY=======');
+
+        console.log(inv);
+        console.log(ItemInventory.get());
+      });
+
+      return results;
+    });
   }
 }
 

@@ -1,4 +1,4 @@
 export default {
-  home: "Murugo",
-  settings: "Indemamujyo",
+  home: 'Ahabanza',
+  settings: 'Amagenamiterere',
 };

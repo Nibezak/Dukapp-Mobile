@@ -1,61 +1,136 @@
-import React, { useEffect, useState, useContext } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import ZigzagView from "react-native-zigzag-view";
-import { MaterialIcons } from "@expo/vector-icons";
-import { t } from "i18n-js";
-import { AuthContext } from "../../context/AuthProvider";
-import { number } from "../../helpers/Numbers";
-import CustomerService from "../../services/CustomerService";
-import { getSetting } from "../../models/AsyncStorage";
+import React, { useState, useEffect, useCallback, useRef, useContext } from 'react';
+import {
+  View,
+  TouchableOpacity,
+  InteractionManager,
+  StyleSheet,
+  FlatList,
+  Dimensions,
+  ToastAndroid,
+  ScrollView,
+  Image,
+  Text,
+  Alert,
+} from 'react-native';
+import { t } from 'i18n-js';
+import CustomerService from '../../services/CustomerService';
+import { useFocusEffect } from '@react-navigation/native';
+import { money, number } from '../../helpers/Numbers';
+import OrderService from '../../services/OrderService';
+import ItemService from '../../services/ItemService';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import ReceiptOrderItems from './ReceiptOrderItems';
+import ZigzagView from 'react-native-zigzag-view';
+import { getSetting } from '../../models/AsyncStorage';
+import ViewShot from 'react-native-view-shot';
+import * as Sharing from 'expo-sharing';
+import CheckButton from '../../components/CheckButton';
+import * as Analytics from 'expo-firebase-analytics';
+import { ThemeContext } from '../../../App';
 
-export default function ReceiptScreen({ navigation, route }) {
-  const { user } = useContext(AuthContext);
-  const order = route.params.order;
-  const payment = order.payments[0];
-  const [customer, setCustomer] = useState(route.params?.customer);
-  const [address, setAddress] = useState(null);
-  const [phone, setPhone] = useState(null);
-  const [businessName, setBusinessName] = useState(null);
+// Retrieve user windows height
+const windowHeight = Dimensions.get('window').height;
+
+export default function OrderDetailsScreen({ navigation, route }) {
+  const [order, setOrder] = useState(route.params.order);
+  const ref = useRef();
+  const payment = order?.payments[0];
+  const [orderType, setOrderType] = useState(order.order_type);
+  const [customer, setCustomer] = useState({ names: 'Guest ' });
+  const [items, setItems] = useState([]);
+  const [address, setAddress] = useState([]);
+  const [businessName, setBusinessName] = useState([]);
+  const [phone, setPhone] = useState([]);
+  const [email, setEmail] = useState([]);
+  const [tin, setTin] = useState([]);
+  const [person, setPerson] = useState([]);
   const [currency, setCurrency] = useState(null);
+  const { theme } = useContext(ThemeContext);
 
+  useFocusEffect(
+    useCallback(() => {
+      const task = InteractionManager.runAfterInteractions(() => {
+        // Expensive task
+        refreshOrder();
+      });
+    }, [])
+  );
   useEffect(() => {
-    // update nav
+    // Update the order detail nav
     navigation.setOptions({
-      headerTitle: "",
+      headerTitle:
+        orderType.substr(0, 4).charAt(0).toUpperCase() + ' #' + route.params.order.id.toString(),
+    });
+    updateNavRight();
+
+    // Get Items for suggestions
+    getItems();
+
+    //  Get order Customer
+    getOrderCustomer();
+
+    //Fetch app settings
+    retrieveSetting();
+    // Fetch order from the database
+
+    refreshOrder();
+  }, []);
+
+  /**
+   * Method to update the top right navitation
+   */
+  function updateNavRight() {
+    navigation.setOptions({
+      headerStyle: {
+        backgroundColor: theme.accent,
+      },
+      headerTintColor: theme.text,
       headerRight: () => (
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: 'row' }}>
+          {/* Capture ScreenShot */}
           <TouchableOpacity
-            onPress={() => alert("Printing To Be Activated")}
+            onPress={() => {
+              ref.current.capture().then((uri) => {
+                console.log('capture receipt uri ', uri);
+                setImageUri(uri);
+              });
+            }}
             style={{ paddingRight: 20 }}
           >
-            <MaterialIcons name="print" size={24} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => alert("Sharing To Be Activated")}
-            style={{ paddingRight: 20 }}
-          >
-            <MaterialIcons name="share" size={24} />
+            <MaterialCommunityIcons
+              name="fit-to-screen"
+              size={24}
+              color="#47a67f"
+              onPress={captureAndShareReceipt}
+              onLongPress={() =>
+                ToastAndroid.show('Share receipt on other platforms', ToastAndroid.SHORT)
+              }
+            />
           </TouchableOpacity>
         </View>
       ),
     });
-
-    // Fetch Customer
-    getOrderCustomer();
-
-    retrieveSetting();
-  }, []);
-
-  /**
-   * Retrieve Settings
-   */
-  function retrieveSetting() {
-    getSetting("business_name").then(setBusinessName);
-    getSetting("contact_address").then(setAddress);
-    getSetting("contact_phone").then(setPhone);
-    getSetting("app_default_currency").then(setCurrency);
   }
 
+  /**
+   * Handle Delete button, but start by confirming with the user
+   * of the application before proceeding
+   */
+
+  function captureAndShareReceipt() {
+    ref.current.capture().then((uri) => {
+      // capture the screenshot
+      console.log('file uri ', uri);
+      //after capturing , send the screeenshot
+
+      Sharing.shareAsync('file://' + uri);
+    }),
+      (error) => console.error('Oops, snapshot failed', error);
+  }
+
+  /**
+   * Method to destroy the order from the database
+   */
   /**
    * Get Customer By Id
    */
@@ -69,192 +144,275 @@ export default function ReceiptScreen({ navigation, route }) {
     // Find Customer for this order and attach to the order
     CustomerService.find(order.customer_supplier_id)
       .then((result) => {
-        setCustomer(result[0]);
+        if (result.length > 0) {
+          setCustomer(result[0]);
+        }
       })
       .catch((error) => {
         throw error;
       });
   }
+  //retrive app settings
+
+  async function retrieveSetting() {
+    getSetting('business_name').then(setBusinessName);
+    getSetting('contact_address').then(setAddress);
+    getSetting('contact_phone').then(setPhone);
+    getSetting('app_default_currency').then(setCurrency);
+    getSetting('TIN').then(setTin);
+    getSetting('contact_person').then(setPerson);
+    getSetting('contact_email').then(setEmail);
+  }
+
+  /**
+   * Get orders
+   */
+  async function refreshOrder() {
+    OrderService.ordersWithItems(setOrder, orderType, order.id).then((result) => {
+      // 1. Update the customer
+      getOrderCustomer();
+    });
+  }
+
+  /**
+   * Get Orders from DB
+   */
+  async function getItems() {
+    ItemService.getItems().then(setItems);
+  }
+
+
+  const dayjs = require('dayjs');
+  const date = payment.date_paid;
+
+  const ReceiptItems = useCallback(({ item }) => {
+    return <ReceiptOrderItems item={item} />;
+  }, []);
+
+  async function handleCheckout() {
+    if (order.status === 'pending') {
+      Alert.alert(
+        'Are you sure you want to checkout ? ',
+        'This action is irreversible. Once you check out , you may not check back in!',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'CANCEL',
+          },
+          { text: 'Checkout', onPress: () => checkout() },
+        ]
+      );
+    } else {
+      navigation.goBack();
+    }
+  }
+  async function checkout() {
+    Analytics.logEvent('checkout', {
+      shop: businessName,
+      method: 'checkout',
+    });
+    OrderService.addComplete(order.id).then(() => {
+      navigation.navigate('Order Sale').then(() => {
+        ToastAndroid.show('Checkout complete', ToastAndroid.SHORT);
+      });
+    });
+  }
+  const keyExtractor = useCallback((item, index) => index.toString(), []);
 
   return (
-    <View>
-      <ZigzagView
-        contentContainerStyle={{
-          padding: 20,
-        }}
-      >
-        {/** RECEIPT HEADER */}
-        <View style={styles.shopDetailsContainer}>
-          <Text style={styles.shopName}>{businessName}</Text>
-          <Text style={styles.shopAddress}>{address}</Text>
-          <Text style={styles.shopAddress}>
-            {t("receipt.telephone")}
-            {phone}
-          </Text>
-        </View>
+    <View style={[styles.container]}>
+      <ScrollView>
+        <View>
+          <ViewShot
+            options={{
+              fileName: `S0D-${order.id} Invoice statement`,
+              format: 'png',
+              quality: 1.0,
+            }}
+            style={{ backgroundColor: '#f1f1f1' }}
+            ref={ref}
+          >
+            <ZigzagView>
+              <Image
+                source={require('./../../../assets/snack-icon.png')}
+                style={{ width: 120, height: 100, marginHorizontal: 30 }}
+              />
+              {/** RECEIPT HEADER */}
 
-        {/** ORDER DETAILS */}
-        <View style={styles.orderDetails}>
-          <Text style={styles.receiptNumber}>{order.id}</Text>
-        </View>
+              <View style={styles.shopDetailsContainer}>
+                <Text style={styles.shopName}>{businessName}</Text>
+                <Text style={styles.shopAddress}>{address}</Text>
+                <Text style={styles.shopAddress}>{phone}</Text>
 
-        {/** CUSTOMER DETAILS */}
-        <View style={styles.customerContainer}>
-          <Text style={styles.customerText}>
-            {order.order_type === "sale"
-              ? t("receipt.customer")
-              : t("receipt.supplier")}
-            {customer.names}
-          </Text>
-        </View>
+                <Text style={styles.shopAddress}>{email}</Text>
+              </View>
 
-        {/** PAYMENT DETAILS */}
-        <View style={styles.paymentsContainer}>
-          <Text style={styles.paymentTitle}>
-            {t("receipt.payment")}
-            {payment.title}
-          </Text>
-        </View>
-        <View style={styles.paymentsContainer}>
-          <Text style={styles.paymentTitle}>
-            {t("receipt.date")}
-            {order.created_at}
-          </Text>
-        </View>
+              {/** ORDER DETAILS */}
+              <View style={styles.orderContainer}>
+                <View style={styles.orderDetails}>
+                  <Text style={styles.receiptNumber}># {payment.transaction_id}</Text>
+                </View>
 
-        {/** ORDER LINE ITEMS */}
-        <View style={styles.itemContainer}>
-          {/** HEADERS */}
-          <View style={styles.itemHeader}>
-            <Text style={styles.itemNameHeader}> {t("receipt.item_name")}</Text>
-            <Text style={styles.itemAmountHeader}>
-              {t("receipt.amount", { currency: currency })}
-            </Text>
-          </View>
+                <View style={styles.customerContainer}>
+                  <Text style={styles.customerText}>
+                    {order.order_type === 'sale' ? t('receipt.customer') : t('receipt.supplier')}
+                    {customer.names}
+                  </Text>
+                </View>
 
-          {/** ITEM LINES */}
-          {order.line_items.map((item, index) => (
-            <View key={index} style={styles.itemRow}>
-              <Text style={styles.itemName}>
-                {item.name}
-                {" x "} {item.quantity}
-              </Text>
-              <Text style={styles.itemAmount}>{number(item.total)}</Text>
-            </View>
-          ))}
+                <View style={styles.paymentsContainer}>
+                  <Text style={styles.paymentTitle}>
+                    {t('receipt.payment')}
+                    {payment.title}
+                  </Text>
+                </View>
+                <View style={styles.paymentsContainer}>
+                  <Text style={styles.paymentTitle}>
+                    {t('receipt.date')}
+                    {order.created_at}
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.itemContainer}>
+                {/** HEADERS */}
+                <View style={styles.itemHeader}>
+                  <Text style={styles.itemNameHeader}> {t('receipt.item_name')}</Text>
+                  <Text style={styles.itemAmountHeader}>
+                    {t('receipt.amount', { currency: currency })}
+                  </Text>
+                </View>
+                <FlatList
+                  data={order.line_items}
+                  renderItem={ReceiptItems}
+                  keyExtractor={keyExtractor}
+                />
 
-          {/** FOOTER */}
-          <View style={styles.footer}>
-            <Text style={styles.totalLabel}> {t("receipt.total")}</Text>
-            <Text style={styles.totalAmount}>{number(order.total)}</Text>
-          </View>
+                <View style={styles.footer}>
+                  <Text style={styles.totalLabel}> {t('receipt.total')}</Text>
+                  <Text style={styles.totalAmount}>{number(order.total)}</Text>
+                </View>
+              </View>
+            </ZigzagView>
+          </ViewShot>
         </View>
-      </ZigzagView>
+      </ScrollView>
+      <View>
+        <CheckButton onPress={handleCheckout} />
+      </View>
     </View>
   );
 }
 
+/**
+ * Styles for the
+ */
 const styles = StyleSheet.create({
-  shopDetailsContainer: {},
+  container: {
+    flex: 1,
+  },
+  orderContainer: {
+    paddingHorizontal: 30,
+  },
+  shopDetailsContainer: {
+    marginTop: 20,
+  },
   shopName: {
-    textAlign: "center",
-    fontWeight: "700",
+    textAlign: 'center',
+    fontWeight: '700',
     fontSize: 18,
-    color: "#4a5568",
-  },
-  customerContainer: {
-    flexDirection: "row",
-    marginTop: 5,
-  },
-  customerText: { color: "#4a5568" },
-  date: {
-    textAlign: "center",
-    marginBottom: 10,
-    marginTop: 10,
-    color: "#4a5568",
-  },
-  receiptNumber: {
-    textAlign: "center",
-    fontWeight: "700",
-    fontSize: 20,
-    margin: 20,
-    color: "#4a5568",
-  },
-  paymentsContainer: {
-    flexDirection: "row",
-    marginTop: 5,
-  },
-  paymentTitle: {
-    fontSize: 16,
-    color: "#4a5568",
-  },
-  paymentAmount: {
-    paddingLeft: 10,
-    fontSize: 16,
-    color: "#14532d",
+    color: '#4a5568',
   },
   shopAddress: {
     fontSize: 15,
     padding: 5,
-    textAlign: "center",
-    color: "#4a5568",
+    textAlign: 'center',
+    color: '#4a5568',
+  },
+  itemName: {
+    fontWeight: 'bold',
+    paddingRight: 10,
+    paddingVertical: 10,
+  },
+  itemDescription: {
+    paddingRight: 10,
+  },
+  receiptNumber: {
+    textAlign: 'center',
+    fontWeight: '700',
+    fontSize: 20,
+    margin: 20,
+    color: '#4a5568',
+  },
+  customerContainer: {
+    flexDirection: 'row',
+    marginTop: 5,
+  },
+  customerText: { color: '#4a5568' },
+  date: {
+    textAlign: 'center',
+    marginBottom: 10,
+    marginTop: 10,
+    color: '#4a5568',
+  },
+
+  paymentsContainer: {
+    flexDirection: 'row',
+    marginTop: 5,
+  },
+  paymentTitle: {
+    fontSize: 16,
+    color: '#4a5568',
+  },
+  paymentAmount: {
+    paddingLeft: 10,
+    fontSize: 16,
+    color: '#14532d',
+  },
+  footer: {
+    borderTopWidth: 1,
+    borderTopColor: '#cbd5e0',
+    marginTop: 15,
+    paddingTop: 10,
+    fontSize: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  totalLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#4a5568',
+  },
+  totalAmount: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#4a5568',
   },
   itemContainer: {
     marginTop: 30,
+    padding: 30,
   },
   itemHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    borderBottomColor: "#cbd5e0",
-    borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderBottomColor: '#cbd5e0',
+    borderBottomWidth: 0.3,
+    padding: 5,
+    marginBottom: 3,
   },
   itemNameHeader: {
     marginTop: 8,
     fontSize: 16,
-    fontWeight: "bold",
-    flexDirection: "row",
-    color: "#4a5568",
+    fontWeight: 'bold',
+    flexDirection: 'row',
+    color: '#4a5568',
   },
   itemAmountHeader: {
     marginTop: 8,
     fontSize: 16,
-    fontWeight: "bold",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    color: "#4a5568",
-  },
-  itemRow: {
-    marginTop: 8,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    color: "#4a5568",
-  },
-  itemName: {
-    fontSize: 15,
-    color: "#4a5568",
-  },
-  itemAmount: {
-    fontSize: 15,
-    textDecorationStyle: "solid",
-    color: "#4a5568",
-  },
-  footer: {
-    borderTopWidth: 1,
-    borderTopColor: "#cbd5e0",
-    marginTop: 15,
-    paddingTop: 10,
-    fontSize: 15,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  totalLabel: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#4a5568",
-  },
-  totalAmount: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#4a5568",
+    fontWeight: 'bold',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    color: '#4a5568',
   },
 });

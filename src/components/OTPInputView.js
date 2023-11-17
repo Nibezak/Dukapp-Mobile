@@ -5,7 +5,7 @@ import { AuthContext } from "../context/AuthProvider";
 
 export default function OTPInputView({ phoneNumber }) {
 
-    const { login, isLoading } = useContext(AuthContext);
+    const { register, isLoading } = useContext(AuthContext);
 
     // Set state for the PINS
     const [pinOneValue, setPinOneValue] = useState(null);
@@ -49,8 +49,8 @@ export default function OTPInputView({ phoneNumber }) {
             pinFourValue.toString() +
             pinFiveValue.toString() +
             sixthPin.toString();
-        
-        
+
+
         verifyOTP(phoneNumber, OTPcode);
     }
 

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d0686f26-70fd-4996-9c61-39c52b8ed139" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/google-services.json" beforeDir="false" afterPath="$PROJECT_DIR$/google-services.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/context/AuthProvider.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/context/AuthProvider.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigation/RootNavigation.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigation/RootNavigation.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/home/OnboardingScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/home/OnboardingScreen.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/home/WelcomeScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/home/WelcomeScreen.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/items/RenderItem.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/items/RenderItem.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/orders/ReceiptScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/orders/ReceiptScreen.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/reports/RevenueBarChart.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/reports/RevenueBarChart.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/settings/settings.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/settings/settings.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/README.md" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2MHUMqisbwBg4JYtbMVdGrwuOip" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
+    <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
+    <property name="cidr.known.project.marker" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/android/app" />
+    <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d0686f26-70fd-4996-9c61-39c52b8ed139" name="Changes" comment="" />
+      <created>1677424271792</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1677424271792</updated>
+    </task>
+    <servers />
+  </component>
+</project>

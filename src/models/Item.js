@@ -1,11 +1,26 @@
-import BaseModel from "./Model";
+import { getSetting } from './AsyncStorage';
+import BaseModel from './Model';
 
 class Item extends BaseModel {
   constructor() {
     super();
-    this.tableName = "items";
+    this.tableName = 'items';
   }
 
+  /**
+   * Retrieves and existing item by ID
+   *
+   * @param {integer} itemId
+   * @returns object
+   */
+  async find(itemId) {
+    this.refresh()
+      .where('id', itemId)
+      .get()
+      .then((result) => result[0]);
+
+    return this.save();
+  }
   /**
    * Increase stock for an order
    *
@@ -53,7 +68,7 @@ class Item extends BaseModel {
    */
   async updateOrCreate(item) {
     return await this.refresh()
-      .where("name", item.name)
+      .where('name', item.name)
       .get()
       .then((items) => {
         // If we have items this item exists
@@ -81,9 +96,10 @@ class Item extends BaseModel {
   async createTable() {
     this.db.statement(
       `CREATE TABLE IF NOT EXISTS ` +
-        this.getTableName() +
-        `(
+      this.getTableName() +
+      `(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
+              shop_msisdn TEXT DEFAULT '${getSetting('contact_phone')}',
               name TEXT UNIQUE,
               description TEXT NULL,
               category TEXT NULL,

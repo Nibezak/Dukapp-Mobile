@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, KeyboardAvoidingView } from "react-native";
+import React, { useState } from "react";
+import { View, StyleSheet } from "react-native";
 import { t } from "i18n-js";
-import InputText from "../../components/InputText";
+import FieldText from "../../components/FieldText";
 import Button from "../../components/Button";
 import SupplierService from "../../services/SupplierService";
+import { ScrollView } from "react-native-gesture-handler";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function SupplierEditScreen({ navigation, route }) {
   // Retrieve Customer
@@ -44,80 +46,82 @@ export default function SupplierEditScreen({ navigation, route }) {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.row}>
-        <InputText
-          autoFocus={true}
-          value={companyName}
-          title={t("supplier.comany_name")}
-          onChangeText={setCompanyName}
-          underlineColorAndroid="transparent"
-          placeholder={t("supplier.company_name_placeholder")}
-        />
-      </View>
-      <View style={styles.row}>
-        <InputText
-          value={phone}
-          title={t("supplier.phone")}
-          onChangeText={setPhone}
-          keyboardType={"phone-pad"}
-          underlineColorAndroid="transparent"
-          placeholder={t("supplier.phone_placeholder")}
-        />
-      </View>
-      <View style={styles.row}>
-        <InputText
-          value={email}
-          title={t("supplier.email")}
-          onChangeText={setEmail}
-          keyboardType={"email-address"}
-          underlineColorAndroid="transparent"
-          placeholder={t("supplier.email_placeholder")}
-        />
-      </View>
-      <View style={styles.row}>
-        <InputText
-          value={tin}
-          title={t("supplier.tin")}
-          onChangeText={setTin}
-          underlineColorAndroid="transparent"
-          placeholder={t("supplier.tin_placeholder")}
-        />
-      </View>
-      <View style={styles.row}>
-        <InputText
-          value={address}
-          title={t("supplier.address")}
-          onChangeText={setAddress}
-          underlineColorAndroid="transparent"
-          placeholder={t("supplier.address_placeholder")}
-        />
-      </View>
-      <View style={styles.row}>
-        <InputText
-          value={note}
-          title={t("supplier.note")}
-          numberOfLines={5}
-          onChangeText={setNote}
-          underlineColorAndroid="transparent"
-          placeholder={t("supplier.note_placeholder")}
-          style={{
-            height: 200,
-            textAlignVertical: "top",
-            borderWidth: 0.5,
-            borderColor: "#e2e8f0",
-          }}
-        />
-      </View>
-      <View style={[styles.row, { borderBottomWidth: 0 }]}>
-        <Button onPress={handDeleteSupplier} color={"#dc2626"}>
-          {t("common.delete")}
-        </Button>
-        <Button onPress={handleSaveSupplier} color={"#15803d"}>
-          {t("common.save")}
-        </Button>
-      </View>
-    </View>
+    <KeyboardAwareScrollView>
+      <ScrollView style={styles.container}>
+        <View style={styles.row}>
+          <FieldText
+            autoFocus={true}
+            value={companyName}
+            title={t("supplier.comany_name")}
+            onChangeText={setCompanyName}
+            underlineColorAndroid="transparent"
+            placeholder={t("supplier.company_name_placeholder")}
+          />
+        </View>
+        <View style={styles.row}>
+          <FieldText
+            value={phone}
+            title={t("supplier.phone")}
+            onChangeText={setPhone}
+            keyboardType={"phone-pad"}
+            underlineColorAndroid="transparent"
+            placeholder={t("supplier.phone_placeholder")}
+          />
+        </View>
+        <View style={styles.row}>
+          <FieldText
+            value={email}
+            title={t("supplier.email")}
+            onChangeText={setEmail}
+            keyboardType={"email-address"}
+            underlineColorAndroid="transparent"
+            placeholder={t("supplier.email_placeholder")}
+          />
+        </View>
+        <View style={styles.row}>
+          <FieldText
+            value={tin}
+            title={t("supplier.tin")}
+            onChangeText={setTin}
+            underlineColorAndroid="transparent"
+            placeholder={t("supplier.tin_placeholder")}
+          />
+        </View>
+        <View style={styles.row}>
+          <FieldText
+            value={address}
+            title={t("supplier.address")}
+            onChangeText={setAddress}
+            underlineColorAndroid="transparent"
+            placeholder={t("supplier.address_placeholder")}
+          />
+        </View>
+        <View style={styles.row}>
+          <FieldText
+            value={note}
+            title={t("supplier.note")}
+            numberOfLines={5}
+            onChangeText={setNote}
+            underlineColorAndroid="transparent"
+            placeholder={t("supplier.note_placeholder")}
+            style={{
+              height: 200,
+              textAlignVertical: "top",
+              borderWidth: 0.5,
+              borderColor: "#e2e8f0",
+            }}
+          />
+        </View>
+        <View style={[styles.row, { borderBottomWidth: 0 }]}>
+          <Button onPress={handDeleteSupplier} color={"#f1f1f1"} backgroundColor={'#ef4444'}>
+            {t("common.delete")}
+          </Button>
+          <Button onPress={handleSaveSupplier} color={"#f1f1f1"} backgroundColor={'#47a67f'}>
+            {t("common.save")}
+          </Button>
+        </View>
+      </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
 

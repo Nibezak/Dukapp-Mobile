@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,26 +7,41 @@ import {
   FlatList,
   Keyboard,
   Dimensions,
-} from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
-import { t } from "i18n-js";
-import InputSend from "../../components/InputSend";
-import SuggestionButton from "../../components/SuggestionButton";
-import ItemService from "../../services/ItemService";
-import OrderService from "./../../services/OrderService";
-import RenderOrder from "./RenderOrder";
+  ActivityIndicator,
+} from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import InputSend from '../../components/InputSend';
+import SuggestionButton from '../../components/SuggestionButton';
+import ItemService from '../../services/ItemService';
+import OrderService from './../../services/OrderService';
+import RenderOrder from './RenderOrder';
+import { AntDesign } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Alert } from 'react-native';
+import { ToastAndroid } from 'react-native';
+import * as Analytics from 'expo-firebase-analytics';
+import { onAuthStateChanged } from '@firebase/auth';
+import { auth } from '../../../firebase';
+import { ThemeContext } from '../../../App';
+import { t } from 'i18n-js';
 
 const windowHeight = Dimensions.get('window').height;
 
 // Constants
 export default function OrderScreen({ navigation, route }) {
-  const [typing, setTyping] = useState("");
+  const [typing, setTyping] = useState('');
   const [orders, setOrders] = useState([]);
-  const [orderType, setOrderType] = useState(route.params.order_type);
   const [lastOrder, setLastOrder] = useState({});
   const [suggestions, setSuggestions] = useState([]);
   const [items, setItems] = useState([]);
+  const [showIsLoading, setShowIsLoading] = useState(true);
+  const [orderLoading, setOrderLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const { theme } = useContext(ThemeContext);
 
+  /** Fix the undefined order_type error */
+  const orderType = route.order_type == undefined ? 'sale' : routeParams.order_type;
+  // const orderType = 'sale'
   useFocusEffect(
     useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
@@ -38,20 +53,66 @@ export default function OrderScreen({ navigation, route }) {
   );
 
   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
     getItems();
     refreshOrders();
     resetToDefaultSuggestion();
-  }, [orderType]);
+    setHeader();
+    tracker();
+  }, [orderType, theme]);
 
+  // track screen on google analytics
+  async function tracker() {
+    Analytics.setUserId(user.email);
+    Analytics.logEvent('users', {
+      user: user.email,
+      screen: 'screens',
+      navigation: 'Order Screen',
+    });
+  }
   /**
    * Fetch Orders
    */
   function refreshOrders() {
-    OrderService.ordersWithItems(setOrders, orderType).then((results) => {
-      setLastOrder(results[results.length - 1]);
-    });
+    OrderService.ordersWithItems(setOrders, orderType)
+      .then((results) => {
+        setLastOrder(results[results.length - 1]);
+      })
+      .then(() => setShowIsLoading(false));
   }
 
+  function setHeader() {
+    navigation.setOptions({
+      headerTitle: `${t('screens.orders')}`,
+      headerTitleAlign: 'center',
+      headerTintColor: theme.text,
+      headerStyle: { backgroundColor: theme.accent },
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ paddingHorizontal: 10, marginHorizontal: 10 }}
+        >
+          <AntDesign
+            name="minuscircleo"
+            size={24}
+            color={theme.primary}
+            style={{ fontWeight: 'semibold' }}
+          />
+        </TouchableOpacity>
+      ),
+      headerLeft: () => (
+        <AntDesign
+          name="menuunfold"
+          size={24}
+          color={theme.primary}
+          onPress={() => navigation.openDrawer()}
+          style={{ paddingLeft: 10 }}
+        />
+      ),
+    });
+  }
   /**
    * Get Orders from DB
    */
@@ -64,35 +125,57 @@ export default function OrderScreen({ navigation, route }) {
    */
   async function sellNewItem() {
     // 1. Redirect to add new item Screen
-    navigation.navigate("New Item", {
+    navigation.navigate(`${t('screens.newItem')}`, {
       item_name: typing,
-      action_type: "add_product_and_sale",
+      action_type: 'add_product_and_sale',
       order_type: orderType,
     });
     // 2. Store Item and redirect back to Sale after
 
     // Clear the input text
-    setTyping("");
+    setTyping('');
   }
 
   /**
    * Add product or item from suggestion
    */
   async function saleFromSuggestion(item) {
+    /** Prevent having negative balance */
+    // if (item.quantity <= 0) {
+    //   Alert.alert(
+    //     'The Stock of : ' + item.name + ' is insuffient #',
+    //     'The remaining quantity is : ' +
+    //       item.quantity +
+    //       ' Please Add more stock to be able to sell',
+    //     [
+    //       {
+    //         text: 'Cancel',
+    //         onPress: () => console.log('Cancel Pressed'),
+    //         style: 'CANCEL',
+    //       },
+    //     ]
+    //   );
+    //   return;
+    // }
+
     // 1. Record the order in the database
     OrderService.quickSale(item, orderType)
       .then((results) => {
+        // load the order because sometimes the query is long
+        setOrderLoading(true);
         // 2. Refresh order list
         refreshOrders();
-
+        setOrderLoading(false);
         // 3. Hide Keyboard
         Keyboard.dismiss();
 
         // 4. Clear the input text
-        setTyping("");
+        setTyping('');
 
         // 5. Reset suggestions
         resetToDefaultSuggestion();
+
+        ToastAndroid.show('Order Successfully Made', ToastAndroid.SHORT);
       })
       .catch((error) => {
         throw error;
@@ -128,7 +211,7 @@ export default function OrderScreen({ navigation, route }) {
     newSuggestions = newSuggestions.map((item) => {
       return {
         ...item,
-        suggestionType: "product",
+        suggestionType: 'product',
       };
     });
 
@@ -140,21 +223,16 @@ export default function OrderScreen({ navigation, route }) {
    * Make sales from suggestions
    */
   async function saleSuggestion(suggestion) {
-    const suggestionTypes = [
-      "add_customer",
-      "add_payment",
-      "change_order_type",
-      "product",
-    ];
+    const suggestionTypes = ['add_customer', 'add_payment', 'change_order_type', 'product'];
 
     const type = suggestion.suggestionType;
     // Ensure we can process known types
     if (!suggestionTypes.includes(type)) {
-      throw "Suggestion Type unknown:" + type;
+      throw 'Suggestion Type unknown:' + type;
     }
 
     // 1. Make a quick new sale
-    if (type === "product") {
+    if (type === 'product') {
       await saleFromSuggestion(suggestion);
       return;
     }
@@ -168,7 +246,7 @@ export default function OrderScreen({ navigation, route }) {
     /////////////////////////////////////////////////
 
     if (orders.length < 1) {
-      throw "Please sale before add proceeding";
+      throw 'Please sale before add proceeding';
     }
 
     // 0. Get latest order ID to assign the payment
@@ -181,15 +259,15 @@ export default function OrderScreen({ navigation, route }) {
      * Button the user pressed on the screen
      */
     // 1. Add a Customer
-    if (type === "add_customer") {
-      navigation.navigate("New Customer", {
+    if (type === 'add_customer') {
+      navigation.navigate(`${t('screens.newCustomer')}`, {
         order: lastOrder,
       });
     }
 
     // 2. Add a payment
-    if (type === "add_payment") {
-      navigation.navigate("Add Payment To Order", {
+    if (type === 'add_payment') {
+      navigation.navigate('Add Payment To Order', {
         order: lastOrder,
       });
     }
@@ -201,7 +279,7 @@ export default function OrderScreen({ navigation, route }) {
       index={item.id}
       key={item.id}
       onPress={() =>
-        navigation.navigate("Edit Item", {
+        navigation.navigate(`${t('screens.editItem')}`, {
           item: item,
         })
       }
@@ -210,21 +288,32 @@ export default function OrderScreen({ navigation, route }) {
 
   const renderSuggestion = useCallback(({ item }) => {
     return (
-      <SuggestionButton
-        title={item.name}
-        onPress={() => saleSuggestion(item)}
-      />
+      <SuggestionButton title={item.name} onPress={() => saleSuggestion(item)} theme={theme} />
     );
   }, []);
 
   const keyExtractor = useCallback((item, index) => index.toString(), []);
 
+  if (showIsLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: theme.background,
+        }}
+      >
+        <ActivityIndicator style={{ margin: 8 }} size="small" color={theme.primary} />
+      </View>
+    );
+  }
+
   /**
    * Render to the screen
    */
   return (
-    <View style={[styles.container]} >
-
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Display order summary */}
       <FlatList
         inverted
@@ -233,27 +322,44 @@ export default function OrderScreen({ navigation, route }) {
         renderItem={renderOrder}
         keyExtractor={keyExtractor}
       />
-
+      {orderLoading ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 15,
+            backgroundColor: theme.background,
+          }}
+        >
+          <ActivityIndicator style={{ margin: 8 }} size="small" color={theme.primary} />
+        </View>
+      ) : (
+        <></>
+      )}
       {/**Suggestion to simplify order entry */}
       {/* Only show suggestion when user has entered something to search */}
       {(suggestions.length > 0 && typing.length > 0) > 0 ? (
         <FlatList
-          style={styles.suggestions}
+          style={[styles.suggestions, { backgroundColor: theme.accent }]}
           data={suggestions}
           renderItem={renderSuggestion}
           pagingEnabled={true}
           keyExtractor={keyExtractor}
-        />) : (<></>)}
+        />
+      ) : (
+        <></>
+      )}
 
-      <KeyboardAvoidingView keyboardDismissMode="on-drag"
-        enabled={false} >
-        {/** Type to sell */}
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} enabled>
+        {/**Quick sale */}
         <InputSend
-          style={{ bottom: 140, position: "absolute" }}
+          style={{ bottom: 140, backgroundColor: theme.accent }}
           onChangeText={handleTypingSuggestions}
           onPress={sellNewItem}
           value={typing}
-          placeholder={t("order.type_to_sell")}
+          placeholder={`${t(`order.quick_sale`)}`}
+          theme={theme}
         />
       </KeyboardAvoidingView>
     </View>
@@ -268,36 +374,38 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   suggestions: {
-    width: "95%",
+    width: '95%',
     borderRadius: 3,
-    alignSelf: "center",
-    height: windowHeight / 2.5,
-    position: 'absolute',
-    bottom: 60,
-    backgroundColor: "#fff",
+    alignSelf: 'center',
+    height: windowHeight,
+    position: 'relative',
+    marginTop: 10,
+    elevation: 15,
+    marginBottom: 5,
+    paddingBottom: 5,
   },
   row: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#f7fafc",
+    borderBottomColor: '#f7fafc',
   },
   amount: {
     fontSize: 40,
-    fontWeight: "800",
+    fontWeight: '800',
     paddingRight: 5,
   },
   itemName: {
     paddingRight: 5,
     flexGrow: 1,
     width: 30,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   itemDescription: {
     paddingRight: 10,
   },
   bottom: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
 });

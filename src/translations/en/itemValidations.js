@@ -1,0 +1,15 @@
+export default {
+  itemName: 'Item name is required',
+  itemReorderLevelRequired: 'Reorder level is required',
+  itemReorderLevelType: 'Reorder level must be a number',
+  itemReorderLevel: 'Reorder level must be greater than or equal to 0',
+  itemQuantityRequired: 'Quantity is required',
+  itemQuantityType: 'Quantity must be a number',
+  itemQuantity: 'Quantity must be greater than 0',
+  itemUnitPriceRequired: 'Cost price is required',
+  itemUnitPrice: 'Cost price must be greater than 0',
+  itemSalePriceRequired: 'Sale price is required',
+  itemSalePriceType: 'Sale price must be a number',
+  itemSalePriceMin: 'Sale price must be greater than 0',
+  itemSalePrice: 'Sale price must be greater than or equal to cost price',
+};

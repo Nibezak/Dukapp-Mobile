@@ -1,92 +1,35 @@
-import React, { useEffect } from "react";
-import {
-  SafeAreaView,
-  StyleSheet,
-  Linking,
-  Text,
-  TouchableOpacity,
-} from "react-native";
-import { t } from "i18n-js";
-import ButtonFilled from "../../components/ButtonFilled";
+import { Text, View, StyleSheet } from 'react-native';
+import { OnboardFlow } from 'react-native-onboard';
 
-export default function GuestHomeScreen({ navigation }) {
-  // Ensure database tables are created
-  useEffect(() => {
-    // 1. Migrate database
-    Customer.createTable();
-    Item.createTable();
-    Order.createTable();
-    OrderItem.createTable();
-    Supplier.createTable();
-  }, []);
 
+export default function GuestHomeScreen() {
   return (
-    <SafeAreaView style={styles.wrapper}>
-      <Text style={styles.appName}>{"Butike"}</Text>
-      <Text style={styles.prompt}>{t("auth.welcome_to_butike_app")}</Text>
-      <Text style={styles.message}>
-        {t("auth.welcome_to_butike_app_description")}
-      </Text>
-
-      <TouchableOpacity
-        onPress={async () => {
-          // Checking if the link is supported for links with custom URL scheme.
-          const supported = await Linking.canOpenURL("https://butike.app");
-        }}
-      >
-        <Text style={styles.termsLink}>{t("common.terms_and_condition")}</Text>
-      </TouchableOpacity>
-      <ButtonFilled onPress={() => navigation.navigate("PhoneNumber")}>
-        {t("auth.accept_tc_and_continue")}
-      </ButtonFilled>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <OnboardFlow pages={[
+        {
+          title: 'Welcome to my app',
+          subtitle: 'Connect your bank account now and start saving money.',
+          imageUri: 'https://frigade.com/img/demo.png'
+        },
+        {
+          title: 'Buy cool stuff',
+          subtitle: 'Remember that ice cream you wanted to buy?',
+          imageUri: 'https://illlustrations.co/static/15d8c30e1f77fd78c3b83b9fca9c3a92/day81-ice-cream.png'
+        },
+        {
+          title: 'The right tools',
+          subtitle: 'Our app can do anything. Literally anything. We are that good.',
+          imageUri: 'https://illlustrations.co/static/a547d1bc532ad86a13dd8f47d754f0a1/day77-pocket-knief.png'
+        }
+      ]}
+        type='inline' // Change to either 'fullscreen', 'bottom-sheet', or 'inline'
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  appName: {
-    color: "#4a5568",
-    fontWeight: "700",
-    fontSize: 28,
-    marginBottom: 30,
-  },
-  borderStyleBase: {
-    width: 30,
-    height: 45,
-  },
-  prompt: {
-    fontSize: 20,
-    paddingHorizontal: 30,
-    paddingBottom: 20,
-    textAlign: "center",
-    color: "#2d3748",
-  },
-
-  message: {
-    marginVertical: "50%",
-    fontSize: 14,
-    paddingHorizontal: 30,
-    color: "#4a5568",
-    textAlign: "center",
-  },
-  elevatorPitch: {
-    paddingHorizontal: 30,
-    fontSize: 16,
-    textAlign: "center",
-    color: "#2d3748",
-  },
-
-  termsLink: {
-    fontSize: 14,
-    textDecorationLine: "underline",
-  },
-
-  error: {
-    color: "red",
-  },
+  container: {
+    flex: 1
+  }
 });

@@ -1,9 +1,11 @@
-import Model from "./Model";
+import { unixTimeStamp } from '../helpers/Dates';
+import { getSetting } from './AsyncStorage';
+import Model from './Model';
 
 class Order extends Model {
   constructor() {
     super();
-    this.tableName = "orders";
+    this.tableName = 'orders';
   }
 
   /**
@@ -12,11 +14,11 @@ class Order extends Model {
    */
   defaults() {
     return {
-      order_type: "sale",
-      order_key: "S" + new Date(),
-      created_via: "android-mobile-app",
-      version: "1.0.0",
-      status: "completed",
+      order_type: 'sale',
+      order_key: 'S' + new Date(),
+      created_via: 'android-mobile-app',
+      version: '1.0.0',
+      status: 'pending',
       discount_total: 0,
       discount_tax: 0,
       total: 0,
@@ -26,11 +28,11 @@ class Order extends Model {
       customer_supplier_note: 0,
       payments: [
         {
-          method: "cash",
-          title: "Cash",
-          transaction_id: "P" + new Date(),
+          method: 'cash',
+          title: 'Cash',
+          transaction_id: 'P' + unixTimeStamp(),
           amount: 0,
-          currency: "RWF",
+          currency: 'RWF',
           date_paid: new Date(),
         },
       ],
@@ -46,14 +48,15 @@ class Order extends Model {
   async createTable() {
     return this.db.statement(
       `CREATE TABLE IF NOT EXISTS ` +
-        this.getTableName() +
-        `(
+      this.getTableName() +
+      `(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
+              shop_msisdn TEXT DEFAULT '${getSetting('contact_phone')}',
               order_type TEXT, 
               order_key TEXT,
               created_via TEXT NULL,
               version TEXT NULL,
-              status TEXT NULL,
+              status TEXT DEFAULT 'pending',
               discount_total REAL DEFAULT '0',
               discount_tax REAL DEFAULT '0',
               total REAL,
@@ -81,8 +84,8 @@ class Order extends Model {
   async createTableOld() {
     return this.db.statement(
       `CREATE TABLE IF NOT EXISTS ` +
-        this.getTableName() +
-        `(
+      this.getTableName() +
+      `(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               order_type TEXT,
               item_id TEXT NULL,

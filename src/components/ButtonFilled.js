@@ -43,6 +43,7 @@ const styles = {
     shadowRadius: 6.27,
     elevation: 3,
     flexShrink: 4,
+    marginTop: 20
   },
   buttonText: {
     color: "white",

@@ -8,15 +8,11 @@ export function number(numberToFormat) {
     return 0;
   }
 
-  if (
-    typeof numberToFormat == "undefined" ||
-    isNaN(numberToFormat) ||
-    numberToFormat === null
-  ) {
+  if (typeof numberToFormat == 'undefined' || isNaN(numberToFormat) || numberToFormat === null) {
     return 0;
   }
 
-  return numberToFormat.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+  return numberToFormat.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
 /**
@@ -25,8 +21,8 @@ export function number(numberToFormat) {
  * @param {number} amount
  * @returns
  */
-export function money(amount, currency = "RWF") {
-  return currency + " "+ number(amount);
+export function money(amount, currency = 'RWF') {
+  return currency + ' ' + number(amount);
 }
 
 /**
