@@ -1,4 +1,4 @@
-# BUTIKE MOBILE APP
+# Dukapp Android APP
 
 A mobile app to enhance the book shops capture in their transactions
 
