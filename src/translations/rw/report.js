@@ -5,17 +5,17 @@ export default {
 
   // Daily Summary
 
-  daily_summary: "Incamake",
+  daily_summary: 'Incamake',
   today_profit: 'Inyungu',
   today_sales: 'ibyaguzwe',
   items_in_stock: 'Ububiko',
   low_stock_items: 'Ububiko buke',
   on_credit: 'Ku nguzanyo',
   by_cash: 'Kuri Cash',
-  by_Mobile: 'Kuri Mobile',
+  by_mobile: 'Kuri Mobile',
   total: 'Byose Hamwe',
 
-  // dating 
+  // dating
 
   start_date: 'kuva kuwa ',
   end_date: 'Kugeza kuwa',

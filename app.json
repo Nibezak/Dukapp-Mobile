@@ -13,14 +13,12 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "package": "com.dukapp.app",
+      "package": "com.dukapp.com",
       "googleServicesFile": "./google-services.json",
       "versionCode": 1,
       "adaptiveIcon": {
@@ -42,11 +40,6 @@
           "apiKey": "AIzaSyCGNvybWqIYK3ZE3vdQ1czy9daiNnO3qCw",
           "measurementId": "G-P3T1PSEVH4"
         }
-      }
-    },
-    "extra": {
-      "eas": {
-        "projectId": "a216b05b-a36c-45a2-971b-6f3d6c164d06"
       }
     }
   }

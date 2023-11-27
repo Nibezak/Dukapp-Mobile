@@ -1,11 +1,13 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
-import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-// Before rendering any navigation stack
 import { enableScreens } from 'react-native-screens';
-// Providers
+import { Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
+
 import { AuthContext } from '../context/AuthProvider';
 import SearchButton from '../components/SearchButton';
 import RightNavSearch from '../components/RightNavSearch';
@@ -22,9 +24,10 @@ import { OnboardingScreen } from '../screens/home/OnboardingScreen';
 // Order
 import OrderScreen from '../screens/orders/OrderScreen';
 import ReceiptScreen from '../screens/orders/ReceiptScreen';
-import OrderDetailsSCreen from '../screens/orders/OrderDetailsScreen';
+import OrderDetailsScreen from '../screens/orders/OrderDetailsScreen';
 import OrderPaymentScreen from '../screens/orders/OrderPaymentScreen';
 import SaleReceiptsScreen from '../screens/reports/SaleReceiptsScreen';
+
 // Inventory
 import ItemCreateScreen from '../screens/items/ItemCreateScreen';
 import ItemEditScreen from '../screens/items/ItemEditScreen';
@@ -49,38 +52,45 @@ import SummaryReportScreen from '../screens/reports/SummaryReportScreen';
 import SettingGeneralScreen from '../screens/settings/SettingGeneralScreen';
 import SettingEditScreen from '../screens/settings/SettingEditScreen';
 import SettingOptionsScreen from '../screens/settings/SettingOptionsScreen';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { Feather, FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 import SideBar from '../components/SideBar';
 import LowStockScreen from '../screens/items/LowStockScreen';
-// import { FastGoingScreen } from '../screens/reports/FastGoingScreen';
-// import { ByMobileScreen } from '../screens/reports/ByMobileScreen';
-// import { InStockScreen } from '../screens/reports/InStockScreen';
 import PurchaseOrderScreen from '../screens/orders/PurchaseOrderScreen';
 import PurchaseDetailsScreen from '../screens/orders/PurchaseDetailsScreen';
 import { TransactionsScreen } from '../screens/account/TransactionsScreen';
 import { ThemeContext } from '../../App';
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const OrderType = 'sale';
+
 function AuthStackNavigator() {
   enableScreens();
+
   return (
     <Stack.Navigator
-      initialRouteName="PhoneNumber"
+      initialRouteName="GuestHome"
       screenOptions={{ headerShown: false, headerBackTitleVisible: false }}
     >
-      <Stack.Screen name="Guest Home" component={GuestHomeScreen} options={{ presentation: 'modal' }} />
-      <Stack.Screen name="PhoneNumber" component={PhoneNumberScreen} options={{ presentation: 'modal' }} />
+      <Stack.Screen
+        name="GuestHome"
+        component={GuestHomeScreen}
+        options={{ presentation: 'modal' }}
+      />
+      <Stack.Screen
+        name="PhoneNumber"
+        component={PhoneNumberScreen}
+        options={{ presentation: 'modal' }}
+      />
       <Stack.Screen name="Otp" component={OtpScreen} options={{ presentation: 'modal' }} />
     </Stack.Navigator>
   );
 }
+
 function NavDrawer() {
   enableScreens();
+
   return (
     <Drawer.Navigator
       drawerContent={(props) => <SideBar {...props} />}
@@ -90,52 +100,33 @@ function NavDrawer() {
       <Drawer.Screen
         name="InitialSettings"
         component={OnboardingScreen}
-        options={{
-          title: 'Initial Setting',
-        }}
+        options={{ title: 'Initial Setting' }}
       />
-
-      <Drawer.Screen
-        name="home"
-        component={NavStack}
-        options={{
-          title: 'home',
-        }}
-      />
-
+      <Drawer.Screen name="home" component={NavStack} options={{ title: 'Home' }} />
       <Drawer.Screen
         name="Customers"
         component={CustomerListScreen}
-        options={{
-          headerShown: true,
-        }}
+        options={{ headerShown: true }}
       />
-
       <Drawer.Screen
         name="Suppliers"
         component={SupplierListScreen}
-        options={{
-          headerShown: true,
-        }}
+        options={{ headerShown: true }}
       />
       <Drawer.Screen
         name="Insights"
         component={SummaryReportScreen}
-        options={{
-          headerShown: true,
-        }}
+        options={{ headerShown: true }}
       />
-      {/* Sale Receipt */}
       <Drawer.Screen
-        name="Sale Receipt "
+        name="Sale Receipt"
         component={SaleReceiptsScreen}
-        options={{
-          headerShown: true,
-        }}
+        options={{ headerShown: true }}
       />
     </Drawer.Navigator>
   );
 }
+
 function NavTab() {
   enableScreens();
   const navigation = useNavigation();
@@ -150,10 +141,7 @@ function NavTab() {
           borderRadius: 10,
           position: 'absolute',
           borderTopWidth: 0,
-          // alignItems: 'center',
-          // justifyContent: 'center',
         },
-        // tabBarBackground: { backgroundColor: '#000' },
       }}
     >
       <Tab.Screen
@@ -163,7 +151,6 @@ function NavTab() {
           tabBarLabel: '',
           tabBarActiveTintColor: '#47a67f',
           tabBarIcon: ({ color, size }) => <Ionicons name="md-home" size={size} color={color} />,
-          // tabBarBackground: '#000',
         }}
       />
 
@@ -224,18 +211,46 @@ export function NavStack() {
 
   return (
     <Stack.Navigator initialRouteName="Welcome" animationEnabled={true}>
-      <Stack.Screen name="InitialSettings" component={OnboardingScreen} options={{ presentation: 'modal' }} />
-      <Stack.Screen name="Welcome" component={NavTab} options={{ headerShown: false, presentation: 'modal', }} />
+      <Stack.Screen
+        name="InitialSettings"
+        component={OnboardingScreen}
+        options={{ presentation: 'modal' }}
+      />
+      <Stack.Screen
+        name="Welcome"
+        component={NavTab}
+        options={{ headerShown: false, presentation: 'modal' }}
+      />
       {/** Orders*/}
 
       <Stack.Screen name="Orders" component={OrderScreen} options={{ presentation: 'modal' }} />
-      <Stack.Screen name="Order Details" component={OrderDetailsSCreen} options={{ presentation: 'modal', }} />
-      <Stack.Screen name="Add Payment To Order" component={OrderPaymentScreen} options={{ presentation: 'modal', }} />
-      <Stack.Screen name="Order Receipt" component={ReceiptScreen} options={{ presentation: 'modal', }} />
-      <Stack.Screen name="Sale Receipt" component={SaleReceiptsScreen} options={{ presentation: 'modal', }} />
+      <Stack.Screen
+        name="Order Details"
+        component={OrderDetailsSCreen}
+        options={{ presentation: 'modal' }}
+      />
+      <Stack.Screen
+        name="Add Payment To Order"
+        component={OrderPaymentScreen}
+        options={{ presentation: 'modal' }}
+      />
+      <Stack.Screen
+        name="Order Receipt"
+        component={ReceiptScreen}
+        options={{ presentation: 'modal' }}
+      />
+      <Stack.Screen
+        name="Sale Receipt"
+        component={SaleReceiptsScreen}
+        options={{ presentation: 'modal' }}
+      />
 
       {/** Order Purchase Screen */}
-      <Stack.Screen name="Purchase Details" component={PurchaseDetailsScreen} options={{ presentation: 'modal', }} />
+      <Stack.Screen
+        name="Purchase Details"
+        component={PurchaseDetailsScreen}
+        options={{ presentation: 'modal' }}
+      />
       <Stack.Screen
         name="Purchase Orders"
         component={PurchaseOrderScreen}
@@ -251,7 +266,11 @@ export function NavStack() {
           presentation: 'modal',
         }}
       />
-      <Stack.Screen name="Edit Item" component={ItemEditScreen} options={{ presentation: 'modal', }} />
+      <Stack.Screen
+        name="Edit Item"
+        component={ItemEditScreen}
+        options={{ presentation: 'modal' }}
+      />
       <Stack.Screen
         name="Item Search"
         component={ItemSearchScreen}
@@ -260,7 +279,6 @@ export function NavStack() {
           headerBackTitle: '',
           presentation: 'modal',
         }}
-
       />
       <Stack.Screen
         name="Items List"
@@ -268,7 +286,7 @@ export function NavStack() {
         options={{
           title: 'Stock Items',
           headerBackTitle: '',
-          presentation: 'modal'
+          presentation: 'modal',
         }}
       />
       <Stack.Screen
@@ -277,7 +295,7 @@ export function NavStack() {
         options={{
           title: 'Low Stock',
           headerBackTitle: '',
-          presentation: 'modal'
+          presentation: 'modal',
         }}
       />
       <Stack.Screen
@@ -286,7 +304,7 @@ export function NavStack() {
         options={{
           title: 'In Stock',
           headerBackTitle: '',
-          presentation: 'modal'
+          presentation: 'modal',
         }}
       />
       {/** Customer*/}
@@ -296,8 +314,7 @@ export function NavStack() {
         options={{
           ...TransitionPresets.ModalTransition,
           headerBackTitle: '',
-          presentation: 'modal'
-
+          presentation: 'modal',
         }}
       />
       <Stack.Screen name="Edit Customer" component={CustomerEditScreen} />
@@ -305,8 +322,7 @@ export function NavStack() {
         name="Search Customer"
         options={{
           headerShown: false,
-          presentation: 'modal'
-
+          presentation: 'modal',
         }}
         component={CustomerSearchScreen}
       />
@@ -318,7 +334,7 @@ export function NavStack() {
           headerRight: () => (
             <SearchButton onPress={() => navigation.navigate('Search Customer')} />
           ),
-          presentation: 'modal'
+          presentation: 'modal',
         }}
       />
       {/** Supplier*/}
@@ -327,7 +343,7 @@ export function NavStack() {
         component={SupplierCreateScreen}
         options={{
           ...TransitionPresets.ModalTransition,
-          presentation: 'modal'
+          presentation: 'modal',
         }}
       />
       <Stack.Screen name="Edit Supplier" component={SupplierEditScreen} />
@@ -337,12 +353,15 @@ export function NavStack() {
         options={{
           title: 'Suppliers',
           headerRight: () => <RightNavSearch />,
-          presentation: 'modal'
-
+          presentation: 'modal',
         }}
       />
       {/** Reports*/}
-      <Stack.Screen name="Insights" component={SummaryReportScreen} options={{ presentation: 'modal' }} />
+      <Stack.Screen
+        name="Insights"
+        component={SummaryReportScreen}
+        options={{ presentation: 'modal' }}
+      />
       {/* <Stack.Screen name="Fast Going" component={FastGoingScreen} options={{
         title: 'Fast Going',
         headerBackTitle: ''
@@ -367,32 +386,36 @@ export function NavStack() {
 
       {/** Settings*/}
 
-      <Stack.Screen name="General Settings" component={SettingGeneralScreen} options={{ presentation: 'modal' }} />
-      <Stack.Screen name="Setting Edit" component={SettingEditScreen} options={{ presentation: 'modal' }} />
-      <Stack.Screen name="Setting Options" component={SettingOptionsScreen} options={{ presentation: 'modal' }} />
+      <Stack.Screen
+        name="General Settings"
+        component={SettingGeneralScreen}
+        options={{ presentation: 'modal' }}
+      />
+      <Stack.Screen
+        name="Setting Edit"
+        component={SettingEditScreen}
+        options={{ presentation: 'modal' }}
+      />
+      <Stack.Screen
+        name="Setting Options"
+        component={SettingOptionsScreen}
+        options={{ presentation: 'modal' }}
+      />
     </Stack.Navigator>
   );
 }
 
-/**
- * App Root Navigation
- */
 export default function RootNavigation() {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useContext(AuthContext);
   const { theme } = useContext(ThemeContext);
 
-
   useEffect(() => {
-    // Check if the user is logged in or not
-    // Check Secure store for the user object/token
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
   }, [user]);
 
-  // Show loading indicator as we wait for the secure storage to
-  // be read for use.
   if (isLoading) {
     return (
       <View
@@ -408,23 +431,5 @@ export default function RootNavigation() {
     );
   }
 
-  // For us to reach here, it means that the secure storage has been successfully
-  // loaded, accessible and can be used. If the user exists, we consider the user
-  // to have logged in, otherwise the user has to be presented the screen for
-  // authentication and be helped to navigate it.
-  return (
-    <>
-      {user ? (
-        <>
-          <NavigationContainer>
-            <NavDrawer />
-          </NavigationContainer>
-        </>
-      ) : (
-        <NavigationContainer>
-          <AuthStackNavigator />
-        </NavigationContainer>
-      )}
-    </>
-  );
+  return <NavigationContainer>{user ? <NavDrawer /> : <AuthStackNavigator />}</NavigationContainer>;
 }

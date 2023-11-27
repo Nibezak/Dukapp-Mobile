@@ -17,7 +17,7 @@ export const Theme = {
     colorIcon: '#2a3942',
   },
   dark: {
-    statusbar: 'light',
+    statusbar: 'dark',
     theme: 'dark',
     background: darkBlue1,
     accent: darkBlue,

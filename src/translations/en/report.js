@@ -11,10 +11,10 @@ export default {
   low_stock_items: 'Low Stock',
   on_credit: 'On Credit',
   by_cash: 'By Cash',
-  by_Mobile: 'By Mobile',
+  by_mobile: 'By Mobile',
   total: 'Total',
 
-  // dating 
+  // dating
 
   start_date: 'Start Date',
   end_date: 'End Date',

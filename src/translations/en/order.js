@@ -7,6 +7,7 @@ export default {
   orders_description: 'Sales & Purchases',
   orders_sales: 'Sale',
   orders_purchases: 'Purchase',
+  payment_method: 'Payment Method',
 
   // Order screen
   add_customer: '🧑🏽 Customer',

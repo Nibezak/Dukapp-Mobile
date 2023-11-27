@@ -56,7 +56,7 @@ export const generalSettings = [
         title: 'settings.information_option_name',
         description: 'settings.information_option_name_description',
         key: 'business_name',
-        value: 'Chez Lyz',
+        value: 'Maman',
       },
       {
         title: 'settings.information_option_tin',
@@ -68,7 +68,7 @@ export const generalSettings = [
         title: 'settings.information_option_type',
         description: 'settings.information_option_type_description',
         key: 'business_type',
-        value: 'Butike',
+        value: 'Dukapp',
         type: 'select',
         options: [
           { key: 'Boutique', title: 'Boutique' },

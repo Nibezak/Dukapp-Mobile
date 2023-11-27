@@ -5,15 +5,17 @@ import { AuthProvider } from './src/context/AuthProvider';
 import RootNavigation from './src/navigation/RootNavigation';
 import { getSetting } from './src/models/AsyncStorage';
 import i18n from 'i18n-js';
+
 import * as Analytics from 'expo-firebase-analytics';
 import en from './src/translations/en';
 import fr from './src/translations/fr';
 import rw from './src/translations/rw';
-import registerNNPushToken from 'native-notify';
+
 import { Theme } from './src/helpers/theme';
 import { useState } from 'react';
 import { createContext } from 'react';
-import { LogBox } from 'react-native';
+import { LogBox, StatusBar } from 'react-native'; // Import StatusBar
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect } from 'react';
 
@@ -28,11 +30,10 @@ i18n.translations = {
 i18n.locale = 'en';
 
 getSetting('app_language').then((lang) => {
-  console.log('lang', lang);
   i18n.locale = lang;
 });
 
-// When a value is missing from a language it'll fallback to another language with the key present.
+// When a value is missing from a language, it'll fallback to another language with the key present.
 i18n.fallbacks = true;
 
 // log an event when the app is launched
@@ -60,7 +61,6 @@ export const ThemeContext = createContext();
 LogBox.ignoreAllLogs();
 
 export default function Main() {
-  registerNNPushToken(5821, 'VZzLGzSIMPpBmmQN0CMG2I');
   const [theme, setTheme] = useState(Theme.light);
   const [currentTheme, setCurrentTheme] = useState(Theme.light);
   AsyncStorage.getItem('@theme').then(setCurrentTheme);
@@ -72,11 +72,16 @@ export default function Main() {
       setTheme(Theme.dark);
     }
   }, [currentTheme]);
+
   return (
-    // <PaperProvider theme={theme}>
-    <ThemeContext.Provider value={{ theme, setTheme }}>
-      <App />
-    </ThemeContext.Provider>
-    // </PaperProvider>
+    <>
+      {/* Hide the status bar */}
+      <StatusBar hidden />
+
+      {/* Your app content */}
+      <ThemeContext.Provider value={{ theme, setTheme }}>
+        <App />
+      </ThemeContext.Provider>
+    </>
   );
 }
