@@ -18,8 +18,8 @@ import { StatusBar } from 'expo-status-bar';
 import { Formik } from 'formik';
 import loginValidation from '../../helpers/validation/loginValidation';
 
-// Component: PhoneNumberScreen
-export default function PhoneNumberScreen({ navigation }) {
+// Component: LoginScreen
+export default function LoginScreen({ navigation }) {
   const [formattedValue, setFormattedValue] = useState('');
   const { error, isLoading, setIsLoading } = useContext(AuthContext);
   const { theme } = useContext(ThemeContext);

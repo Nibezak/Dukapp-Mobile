@@ -7,7 +7,7 @@ export default function GuestHomeScreen() {
   const navigation = useNavigation();
 
   async function redirect() {
-    return navigation.navigate('PhoneNumber');
+    return navigation.navigate('RegisterScreen');
   }
 
   return (

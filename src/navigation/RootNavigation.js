@@ -14,7 +14,8 @@ import RightNavSearch from '../components/RightNavSearch';
 
 // Auth
 import GuestHomeScreen from '../screens/auth/GuestHomeScreen';
-import PhoneNumberScreen from '../screens/auth/PhoneNumberScreen';
+import LoginScreen from '../screens/auth/LoginScreen';
+import RegisterScreen from '../screens/auth/RegisterScreen';
 import OtpScreen from '../screens/auth/OtpScreen';
 
 // Home Screens
@@ -69,6 +70,7 @@ function AuthStackNavigator() {
   enableScreens();
 
   return (
+    // the first screen the user will see if not signed in
     <Stack.Navigator
       initialRouteName="GuestHome"
       screenOptions={{ headerShown: false, headerBackTitleVisible: false }}
@@ -79,8 +81,13 @@ function AuthStackNavigator() {
         options={{ presentation: 'modal' }}
       />
       <Stack.Screen
-        name="PhoneNumber"
-        component={PhoneNumberScreen}
+        name="RegisterScreen"
+        component={RegisterScreen}
+        options={{ presentation: 'modal' }}
+      />
+      <Stack.Screen
+        name="LoginScreen"
+        component={LoginScreen}
         options={{ presentation: 'modal' }}
       />
       <Stack.Screen name="Otp" component={OtpScreen} options={{ presentation: 'modal' }} />
@@ -226,7 +233,7 @@ export function NavStack() {
       <Stack.Screen name="Orders" component={OrderScreen} options={{ presentation: 'modal' }} />
       <Stack.Screen
         name="Order Details"
-        component={OrderDetailsSCreen}
+        component={OrderDetailsScreen}
         options={{ presentation: 'modal' }}
       />
       <Stack.Screen
