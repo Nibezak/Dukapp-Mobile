@@ -8,7 +8,9 @@ import axiosConfig from '../helpers/axiosConfig';
  */
 export async function sendOTP(phoneNumber) {
   try {
-    return axiosConfig.get('authentication/' + phoneNumber + '/send-otp');
+    // return axiosConfig.get('authentication/' + phoneNumber + '/send-otp');
+    return 'sendotp';
+
   } catch (error) {
     console.error(error);
     return error;
@@ -24,7 +26,9 @@ export async function sendOTP(phoneNumber) {
  */
 export async function verifyOTP(phoneNumber, code) {
   try {
-    return axiosConfig.get('authentication/' + phoneNumber + '/verify/' + code);
+    // return axiosConfig.get('authentication/' + phoneNumber + '/verify/' + code);
+    return '0000';
+
   } catch (error) {
     console.error(error);
     return error;

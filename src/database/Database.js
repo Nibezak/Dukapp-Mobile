@@ -16,12 +16,12 @@ class Database {
       return {
         transaction: () => {
           return {
-            executeSql: () => {},
+            executeSql: () => { },
           };
         },
       };
     }
-    return SQLite.openDatabase(this.getDatabaseName());
+    return SQLite.openDatabaseAsync(this.getDatabaseName());
   }
 
   /**

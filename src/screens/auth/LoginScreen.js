@@ -86,7 +86,7 @@ const WelcomeSection = ({ theme, navigation }) => (
     <Text style={[styles.pitch, { color: theme.text, opacity: 0.7 }]}>
       {t('auth.welcome_to_dukapp_app')}
     </Text>
-    <TouchableOpacity style={{ marginHorizontal: 30 }} onPress={() => navigation.navigate('Login')}>
+    <TouchableOpacity style={{ marginHorizontal: 30 }} onPress={() => navigation.navigate('Register')}>
       <Text style={[styles.verifyPhone, { color: theme.text, opacity: 0.7 }]}>
         {t('auth.verify_your_phone')}
       </Text>

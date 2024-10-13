@@ -78,7 +78,7 @@ export default function RegisterScreen({ navigation }) {
               </Text>
               <TouchableOpacity
                 style={{ marginHorizontal: 30, marginTop: 20 }}
-                onPress={() => navigation.navigate('Login')}
+                onPress={() => navigation.navigate('LoginScreen')}
               >
                 <Text style={{ color: '#47a67f', fontSize: 15, fontWeight: 'bold' }}>
                   {'Log in '}
