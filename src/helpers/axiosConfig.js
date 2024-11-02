@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const instance = axios.create({
   // dukapp.com
-  baseURL: 'http://165.227.137.254:4001/api/v1/',
+  baseURL: 'https://3995-41-90-172-142.ngrok-free.app/api/',
   headers: {
-    'app-id': '0JyYiOQXQQr5H9OEn21312',
+    'Content-Type': 'application/json',
   },
 });
 

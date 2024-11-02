@@ -16,7 +16,6 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [currency, setCurrency] = useState('');
   const [phone, setPhone] = useState('');
-  let code = '0000';
   useEffect(() => {
     // Get data from the storage
     SecureStore.getItemAsync('user').then((storedUser) => {
@@ -27,7 +26,6 @@ export const AuthProvider = ({ children }) => {
     getSetting('app_default_currency').then(setCurrency);
 
   }, []);
-
 
   return (
     <AuthContext.Provider
@@ -41,34 +39,36 @@ export const AuthProvider = ({ children }) => {
         setIsLoading,
         login: (phone, code) => {
           setIsLoading(true);
+          verifyOTP(phone, code)
+            .then((response) => {
+              const shop = response.data;
+              const userResponse = {
+                token: 'TO BE REPLACED TOKEN',
+                id: shop.id,
+                name: shop.name,
+                username: shop.username,
+                email: shop.email,
+                phone: phone,
+                // avatar: response.data.results[0].picture.thumbnail,
+              };
+              setSetting('contact_phone', phone);
+              setUser(userResponse);
+              setError(null);
 
-          // Create a dummy user response with the phone number provided
-          const userResponse = {
-            token: 'DUMMY_TOKEN',
-            id: 'DUMMY_ID',
-            name: 'John Doe',
-            username: 'johndoe',
-            email: 'johndoe@example.com',
-            phone: phone, // Use the passed-in phone number
-          };
+              /** Securely store user information. */
+              SecureStore.setItemAsync('user', JSON.stringify(userResponse));
 
-          // Store the phone number
-          setSetting('contact_phone', phone);
+              /** Run the migration immediately after successful login */
+              migrateDatabase();
 
-          // Set the user data
-          setUser(userResponse);
-          setError(null);
-
-          /** Securely store user information. */
-          SecureStore.setItemAsync('user', JSON.stringify(userResponse));
-
-          /** Run the migration immediately after successful login */
-          migrateDatabase();
-
-          /** Stop loading */
-          setIsLoading(false);
+              /** Stop loading */
+              setIsLoading(false);
+            })
+            .catch((error) => {
+              setError(error.response.data.message);
+              setIsLoading(false);
+            });
         },
-
         logout: () => {
           setIsLoading(true);
           setUser(null);

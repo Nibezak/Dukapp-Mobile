@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView,
   FlatList,
   Keyboard,
+  Platform,
   Dimensions,
   ActivityIndicator,
   ToastAndroid,
@@ -86,7 +87,7 @@ export default function PurchaseOrderScreen({ navigation, route }) {
       ),
       headerLeft: () => (
         <AntDesign
-          name="menuunfold"
+          name="caretright"
           size={24}
           color="#47a67f"
           onPress={() => navigation.openDrawer()}

@@ -7,6 +7,7 @@ import {
   FlatList,
   Keyboard,
   Dimensions,
+  Platform,
   ActivityIndicator,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -104,7 +105,7 @@ export default function OrderScreen({ navigation, route }) {
       ),
       headerLeft: () => (
         <AntDesign
-          name="menuunfold"
+          name="caretright"
           size={24}
           color={theme.primary}
           onPress={() => navigation.openDrawer()}
@@ -141,22 +142,22 @@ export default function OrderScreen({ navigation, route }) {
    */
   async function saleFromSuggestion(item) {
     /** Prevent having negative balance */
-    // if (item.quantity <= 0) {
-    //   Alert.alert(
-    //     'The Stock of : ' + item.name + ' is insuffient #',
-    //     'The remaining quantity is : ' +
-    //       item.quantity +
-    //       ' Please Add more stock to be able to sell',
-    //     [
-    //       {
-    //         text: 'Cancel',
-    //         onPress: () => console.log('Cancel Pressed'),
-    //         style: 'CANCEL',
-    //       },
-    //     ]
-    //   );
-    //   return;
-    // }
+    if (item.quantity <= 0) {
+      Alert.alert(
+        'The Stock of : ' + item.name + ' is insuffient #',
+        'The remaining quantity is : ' +
+        item.quantity +
+        ' Please Add more stock to be able to sell',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'CANCEL',
+          },
+        ]
+      );
+      return;
+    }
 
     // 1. Record the order in the database
     OrderService.quickSale(item, orderType)
@@ -374,13 +375,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   suggestions: {
-    width: '95%',
+    width: '100%',
     borderRadius: 3,
     alignSelf: 'center',
     height: windowHeight,
     position: 'relative',
     marginTop: 10,
-    elevation: 15,
     marginBottom: 5,
     paddingBottom: 5,
   },

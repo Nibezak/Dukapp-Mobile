@@ -76,7 +76,7 @@ export default function Main() {
   return (
     <>
       {/* Hide the status bar */}
-      <StatusBar hidden />
+      {/* <StatusBar hidden /> */}
 
       {/* Your app content */}
       <ThemeContext.Provider value={{ theme, setTheme }}>

@@ -76,11 +76,7 @@ export default function LoginScreen({ navigation }) {
 const WelcomeSection = ({ theme, navigation }) => (
   <View style={styles.welcome}>
     <Image
-      source={
-        theme.theme === 'light'
-          ? require('./../../../assets/snack-icon.png')
-          : require('./../../../assets/snack-icon-dark.png')
-      }
+      source={require('./../../../assets/snack-icon.png')}
       style={styles.appName}
     />
     <Text style={[styles.pitch, { color: theme.text, opacity: 0.7 }]}>
@@ -150,7 +146,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   appName: {
-    width: 200,
+    width: 45,
     marginTop: 10,
     marginBottom: -50,
     alignSelf: 'center',

@@ -69,7 +69,7 @@ export default function GeneralSettingsScreen() {
       headerLeft: () => (
         <TouchableOpacity style={{ paddingLeft: 10 }}>
           <AntDesign
-            name="menuunfold"
+            name="caretright"
             size={24}
             color={theme.primary}
             onPress={() => navigation.openDrawer()}

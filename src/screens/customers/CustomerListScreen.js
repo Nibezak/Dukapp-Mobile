@@ -71,7 +71,7 @@ export default function CustomerListScreen({ navigation }) {
       headerLeft: () => (
         <TouchableOpacity style={{ paddingLeft: 10 }}>
           <AntDesign
-            name="menuunfold"
+            name="caretright"
             size={24}
             color={theme.primary}
             onPress={() => navigation.openDrawer()}

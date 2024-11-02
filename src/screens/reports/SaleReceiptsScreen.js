@@ -74,7 +74,7 @@ export default function SaleReceiptsScreen({ navigation, route }) {
       ),
       headerLeft: () => (
         <AntDesign
-          name="menuunfold"
+          name="caretright"
           size={24}
           color={theme.primary}
           onPress={() => navigation.openDrawer()}

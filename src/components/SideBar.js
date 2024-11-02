@@ -26,7 +26,7 @@ export default function SideBar() {
     <MaterialCommunityIcons name="truck-delivery-outline" size={24} color={theme.primary} />
   );
   const ReportInsightsIcon = <Feather name="bar-chart" size={24} color={theme.primary} />;
-  const ReceiptsIcon = <Ionicons name="ios-receipt-outline" size={24} color={theme.primary} />;
+  const ReceiptsIcon = <Ionicons name="receipt-outline" size={24} color={theme.primary} />;
   const ShareIcon = <AntDesign name="sharealt" size={24} color={theme.primary} />;
   const BankIcon = <Ionicons name="card-outline" size={24} color={theme.primary} />;
 
@@ -115,15 +115,11 @@ export default function SideBar() {
   }
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
-      <View style={{ justifyContent: 'center', flex: 0.35, paddingHorizontal: 20 }}>
+      <View style={{ justifyContent: 'center', flex: 0.50, paddingHorizontal: 20 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
           <Image
-            source={
-              theme.theme === 'light'
-                ? require('./../../assets/snack-icon.png')
-                : require('./../../assets/snack-icon-dark.png')
-            }
-            style={{ width: 120, height: 70 }}
+            source={require('./../../assets/dukapp-color.png')}
+            style={{ width: 50, height: 50 }}
           />
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>

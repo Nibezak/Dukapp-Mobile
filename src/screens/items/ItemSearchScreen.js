@@ -4,18 +4,15 @@ import {
   Text,
   StyleSheet,
   InteractionManager,
-  Image,
-  Button,
   FlatList,
   TouchableOpacity,
-  StatusBar as Bar,
+  StatusBar,
+  TextInput,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { t } from 'i18n-js';
-import InputText from '../../components/InputText';
 import ItemService from '../../services/ItemService';
-import Header from '../../components/Header';
 import RenderItem from './RenderItem';
 import { ThemeContext } from '../../../App';
 import { SafeAreaView } from 'react-native';
@@ -23,126 +20,110 @@ import { SafeAreaView } from 'react-native';
 const AVATAR = 'https://cdn4.vectorstock.com/i/1000x1000/16/38/add-item-icon-vector-16301638.jpg';
 
 export default function ItemSearchScreen({ navigation }) {
-  // Set the state
   const [items, setItems] = useState([]);
   const [itemsBuffer, setItemsBuffer] = useState([]);
-  const [searchTerm, setSearchTerm] = useState();
+  const [searchTerm, setSearchTerm] = useState('');
   const { theme } = useContext(ThemeContext);
 
   useFocusEffect(
     useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
-        // Expensive task
         refreshItems();
       });
+      return () => task.cancel(); // Clean up on unmount
     }, [])
   );
 
   useEffect(() => {
     refreshItems();
-    setItemsBuffer(items);
   }, []);
 
-  /**
-   * Handle Search
-   */
-  function handleSearch(text) {
-    // 1. Update the state
+  const handleSearch = (text) => {
     setSearchTerm(text.trim());
 
     if (itemsBuffer.length === 0) {
       setItemsBuffer(items);
     }
 
-    const itemsToSearchFrom = itemsBuffer;
-
-    // 2. Find items matching what the user typed
-    //    and suggest the user these items
-    let filteredItems = itemsToSearchFrom.filter((item) => {
-      return item.name.toLowerCase().startsWith(text.trim().toLowerCase());
-    });
+    const filteredItems = itemsBuffer.filter((item) =>
+      item.name.toLowerCase().startsWith(text.trim().toLowerCase())
+    );
 
     setItems(filteredItems);
-  }
+  };
 
-  /**
-   * Refresh Suppliers from DB
-   */
-  async function refreshItems() {
-    // Update Items STATE
+  const refreshItems = async () => {
+    try {
+      const itemsFromDB = await ItemService.getItems();
+      const updatedItems = [
+        {
+          id: 'add',
+          name: t('item.new_item'),
+          description: t('item.new_item'),
+          category: 'add_new',
+          reorder_level: 0,
+          quantity: 0,
+          cost_price: 0,
+          sale_price: 0,
+          is_service: 0,
+        },
+        ...itemsFromDB,
+      ];
+      setItems(updatedItems);
+      setItemsBuffer(updatedItems);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-    ItemService.getItems()
-      .then((itemsFromDB) => {
-        const updatedItems = [
-          {
-            id: 'add',
-            name: t('item.new_item'),
-            description: t('item.new_item'),
-            category: 'add_new',
-            reorder_level: 0,
-            quantity: 0,
-            cost_price: 0,
-            sale_price: 0,
-            is_service: 0,
-          },
-          ...itemsFromDB,
-        ];
-        setItems(updatedItems);
-      })
-      .catch((error) => {
-        throw error;
-      });
-  }
-
-  const renderItem = useCallback(({ item }) => (
-    <RenderItem
-      item={item}
-      index={item.id}
-      key={item.id}
-      onPress={() =>
-        navigation.navigate(`${t('screens.editItem')}`, {
-          item: item,
-        })
-      }
-    />
-  ));
-
-  const keyExtractor = useCallback((item) => item.id.toString(), []);
+  const renderItem = useCallback(
+    ({ item }) => (
+      <RenderItem
+        item={item}
+        key={item.id}
+        onPress={() =>
+          navigation.navigate(t('screens.editItem'), {
+            item: item,
+          })
+        }
+      />
+    ),
+    [navigation]
+  );
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
-      <Header>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{ paddingLeft: 10, marginTop: 10, marginRight: 20 }}
-        >
+      <StatusBar />
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <MaterialIcons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
-
-        <InputText
-          value={searchTerm}
-          autoFocus={true}
-          onChangeText={handleSearch}
-          placeholder={t('common.search_placeholder')}
-          activeUnderlineColor={theme.colorIcon}
-        />
-
-        <TouchableOpacity
-          style={{ paddingRight: 1, marginTop: 10 }}
-          onPress={() => {
-            setSearchTerm('');
-            handleSearch('');
-          }}
-        >
-          <MaterialIcons name="close" size={24} color={theme.text} />
-        </TouchableOpacity>
-      </Header>
+        <View style={styles.searchContainer}>
+          <MaterialIcons name="search" size={20} color={theme.textSecondary} style={styles.searchIcon} />
+          <TextInput
+            style={[styles.searchInput, { borderColor: theme.colorIcon }]}
+            value={searchTerm}
+            onChangeText={handleSearch}
+            placeholder={t('common.search_placeholder')}
+            placeholderTextColor={theme.textSecondary}
+          />
+          <TouchableOpacity
+            style={styles.clearButton}
+            onPress={() => {
+              setSearchTerm('');
+              handleSearch('');
+            }}
+          >
+            <MaterialIcons name="delete-outline" size={24} color={theme.text} />
+          </TouchableOpacity>
+        </View>
+      </View>
 
       <FlatList
-        style={{ marginTop: 20 }}
+        style={styles.itemList}
         data={items}
         renderItem={renderItem}
-        keyExtractor={keyExtractor}
+        keyExtractor={(item) => item.id.toString()}
         maxToRenderPerBatch={6}
       />
     </SafeAreaView>
@@ -153,27 +134,40 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  row: {
+  header: {
     flexDirection: 'row',
-    padding: 20,
+    alignItems: 'center',
+    padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#e2e8f0',
+    marginTop: 30,
+    backgroundColor: '#ffffff', // White background for professionalism
   },
-  avatar: {
-    borderRadius: 20,
-    width: 40,
-    height: 40,
-    marginRight: 10,
+  backButton: {
+    padding: 10,
   },
-  rowText: {
+  searchContainer: {
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f9f9f9',
+    marginLeft: 10,
   },
-  details: {
-    alignSelf: 'flex-start',
-    fontSize: 14,
+  searchIcon: {
+    paddingHorizontal: 10,
   },
-  names: {
-    fontWeight: 'bold',
-    paddingRight: 10,
+  searchInput: {
+    flex: 1,
+    height: 40,
+    paddingHorizontal: 0,
+  },
+  clearButton: {
+    padding: 10,
+  },
+  itemList: {
+    marginTop: 2,
   },
 });

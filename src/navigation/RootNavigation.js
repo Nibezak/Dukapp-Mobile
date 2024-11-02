@@ -157,7 +157,7 @@ function NavTab() {
         options={{
           tabBarLabel: '',
           tabBarActiveTintColor: '#47a67f',
-          tabBarIcon: ({ color, size }) => <Ionicons name="md-home" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} />,
         }}
       />
 
@@ -165,7 +165,7 @@ function NavTab() {
         name="Items List"
         component={ItemListScreen}
         options={{
-          title: 'Stock Items',
+          title: 'Stock',
           tabBarLabel: '',
           tabBarActiveTintColor: '#47a67f',
           tabBarIcon: ({ color, size }) => (
@@ -182,7 +182,7 @@ function NavTab() {
           tabBarLabel: '',
           tabBarActiveTintColor: '#47a67f',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="md-add-circle" size={36} component={OrderScreen} color={color} />
+            <Ionicons name="add-circle" size={36} component={OrderScreen} color={color} />
           ),
         }}
       />
@@ -234,7 +234,7 @@ export function NavStack() {
       <Stack.Screen
         name="Order Details"
         component={OrderDetailsScreen}
-        options={{ presentation: 'modal' }}
+        options={{ presentation: 'card' }}
       />
       <Stack.Screen
         name="Add Payment To Order"
@@ -249,7 +249,7 @@ export function NavStack() {
       <Stack.Screen
         name="Sale Receipt"
         component={SaleReceiptsScreen}
-        options={{ presentation: 'modal' }}
+        options={{ presentation: 'card' }}
       />
 
       {/** Order Purchase Screen */}
@@ -261,22 +261,22 @@ export function NavStack() {
       <Stack.Screen
         name="Purchase Orders"
         component={PurchaseOrderScreen}
-        options={{ presentation: 'modal' }}
+        options={{ presentation: 'card' }}
       />
       {/** Items*/}
       <Stack.Screen
         name="New Item"
         component={ItemCreateScreen}
         options={{
-          ...TransitionPresets.ModalTransition,
+          // ...TransitionPresets.ModalTransition,
           headerBackTitle: '',
-          presentation: 'modal',
+          presentation: 'card',
         }}
       />
       <Stack.Screen
         name="Edit Item"
         component={ItemEditScreen}
-        options={{ presentation: 'modal' }}
+        options={{ presentation: 'card' }}
       />
       <Stack.Screen
         name="Item Search"
@@ -291,9 +291,9 @@ export function NavStack() {
         name="Items List"
         component={ItemListScreen}
         options={{
-          title: 'Stock Items',
+          title: 'Stock',
           headerBackTitle: '',
-          presentation: 'modal',
+          presentation: 'card',
         }}
       />
       <Stack.Screen
@@ -302,7 +302,7 @@ export function NavStack() {
         options={{
           title: 'Low Stock',
           headerBackTitle: '',
-          presentation: 'modal',
+          presentation: 'card',
         }}
       />
       <Stack.Screen
@@ -311,7 +311,7 @@ export function NavStack() {
         options={{
           title: 'In Stock',
           headerBackTitle: '',
-          presentation: 'modal',
+          presentation: 'card',
         }}
       />
       {/** Customer*/}
@@ -319,9 +319,9 @@ export function NavStack() {
         name="New Customer"
         component={CustomerCreateScreen}
         options={{
-          ...TransitionPresets.ModalTransition,
+          // ...TransitionPresets.ModalTransition,
           headerBackTitle: '',
-          presentation: 'modal',
+          presentation: 'card',
         }}
       />
       <Stack.Screen name="Edit Customer" component={CustomerEditScreen} />
@@ -341,7 +341,7 @@ export function NavStack() {
           headerRight: () => (
             <SearchButton onPress={() => navigation.navigate('Search Customer')} />
           ),
-          presentation: 'modal',
+          presentation: 'card',
         }}
       />
       {/** Supplier*/}
@@ -349,8 +349,8 @@ export function NavStack() {
         name="New Supplier"
         component={SupplierCreateScreen}
         options={{
-          ...TransitionPresets.ModalTransition,
-          presentation: 'modal',
+          // ...TransitionPresets.ModalTransition,
+          presentation: 'card',
         }}
       />
       <Stack.Screen name="Edit Supplier" component={SupplierEditScreen} />
@@ -360,14 +360,14 @@ export function NavStack() {
         options={{
           title: 'Suppliers',
           headerRight: () => <RightNavSearch />,
-          presentation: 'modal',
+          presentation: 'card',
         }}
       />
       {/** Reports*/}
       <Stack.Screen
         name="Insights"
         component={SummaryReportScreen}
-        options={{ presentation: 'modal' }}
+        options={{ presentation: 'card' }}
       />
       {/* <Stack.Screen name="Fast Going" component={FastGoingScreen} options={{
         title: 'Fast Going',
@@ -396,17 +396,17 @@ export function NavStack() {
       <Stack.Screen
         name="General Settings"
         component={SettingGeneralScreen}
-        options={{ presentation: 'modal' }}
+        options={{ presentation: 'card' }}
       />
       <Stack.Screen
         name="Setting Edit"
         component={SettingEditScreen}
-        options={{ presentation: 'modal' }}
+        options={{ presentation: 'card' }}
       />
       <Stack.Screen
         name="Setting Options"
         component={SettingOptionsScreen}
-        options={{ presentation: 'modal' }}
+        options={{ presentation: 'card' }}
       />
     </Stack.Navigator>
   );

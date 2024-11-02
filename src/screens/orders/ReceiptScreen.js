@@ -235,8 +235,8 @@ export default function OrderDetailsScreen({ navigation, route }) {
           >
             <ZigzagView>
               <Image
-                source={require('./../../../assets/snack-icon.png')}
-                style={{ width: 120, height: 100, marginHorizontal: 30 }}
+                source={require('./../../../assets/dukapp-color.png')}
+                style={{ width: 50, height: 50, marginHorizontal: 30, marginTop: 10 }}
               />
               {/** RECEIPT HEADER */}
 
@@ -293,6 +293,10 @@ export default function OrderDetailsScreen({ navigation, route }) {
                   <Text style={styles.totalAmount}>{number(order.total)}</Text>
                 </View>
               </View>
+              <Text style={styles.poweredByText}>
+                Powered by Dukapp
+              </Text>
+
             </ZigzagView>
           </ViewShot>
         </View>
@@ -310,6 +314,15 @@ export default function OrderDetailsScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  poweredByText: {
+    textAlign: 'center', // Center the text
+    paddingVertical: 10, // Add vertical padding
+    paddingHorizontal: 15, // Add horizontal padding
+    fontSize: 14, // Adjust font size as needed
+    color: "gray", // Use the theme's text color
+    fontWeight: '800', // Use a lighter font weight for a minimal look
+    backgroundColor: 'transparent', // Ensure the background is transparent
   },
   orderContainer: {
     paddingHorizontal: 30,

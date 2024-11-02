@@ -21,7 +21,7 @@ class Database {
         },
       };
     }
-    return SQLite.openDatabaseAsync(this.getDatabaseName());
+    return SQLite.openDatabase(this.getDatabaseName());
   }
 
   /**

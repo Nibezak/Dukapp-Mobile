@@ -1,15 +1,6 @@
-import {
-  InteractionManager,
-  ActivityIndicator,
-  View,
-  TouchableOpacity,
-  Text,
-  ScrollView,
-  ToastAndroid,
-  Alert,
-} from 'react-native';
+import { InteractionManager, ActivityIndicator, View, TouchableOpacity, Text, ScrollView, ToastAndroid, Alert } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ReportService from './../../services/ReportService';
 import { money, number } from '../../helpers/Numbers';
 import { getSetting } from '../../models/AsyncStorage';
@@ -21,7 +12,6 @@ import { AntDesign } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import OrderService from '../../services/OrderService';
 import { WelcomeInsights } from '../../components/WelcomeInsights';
-import { ThemeContext } from '../../../App';
 
 export default function SummaryReportScreen() {
   const [currency, setCurrency] = useState(null);
@@ -33,7 +23,6 @@ export default function SummaryReportScreen() {
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
   const navigation = useNavigation();
-  const { theme } = useContext(ThemeContext);
 
   // Date Picker
   const [datePicker, setDatePicker] = useState(false);
@@ -43,9 +32,9 @@ export default function SummaryReportScreen() {
   const [profit, setProfit] = useState(0);
   const [onCredit, setOnCredit] = useState(0);
   const [revenueSummaries, setRevenueSummaries] = useState([
-    { color: '#14b8a6', title: `${t('report.today_sales')}`, value: sales, route: 'Insights' },
-    { color: '#4ade80', title: `${t('report.today_profit')}`, value: profit, route: 'Insights' },
-    { color: '#f1c40f', title: `${t('report.on_credit')}`, value: onCredit, route: 'Insights' },
+    { color: '#14b8a6', title: 'Sales', value: sales, route: 'Insights' },
+    { color: '#4ade80', title: 'Profit', value: profit, route: 'Insights' },
+    { color: '#f1c40f', title: 'On Credit', value: onCredit, route: 'Insights' },
   ]);
 
   // Payment method summaries
@@ -53,9 +42,9 @@ export default function SummaryReportScreen() {
   const [byMobile, setByMobile] = useState(0);
   const [byCredit, setByCredit] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState([
-    { color: '#718096', title: `${t('report.by_cash')}`, value: byCash, route: 'Stock' },
-    { color: '#718096', title: `${t('report.by_mobile')}`, value: byMobile, route: 'Insights' },
-    { color: '#718096', title: `${t('report.total')}`, value: byCredit, route: 'Insights' },
+    { color: '#718096', title: 'By Cash', value: byCash, route: 'Stock' },
+    { color: '#718096', title: 'By Mobile', value: byMobile, route: 'Insights' },
+    { color: '#718096', title: 'Total ', value: byCredit, route: 'Insights' },
   ]);
 
   // Stock Summaries
@@ -91,18 +80,13 @@ export default function SummaryReportScreen() {
     refreshOrders();
     // Load data for the report
     refreshReportByDate(startDate, endDate);
-  }, [startDate, endDate, theme]);
+  }, [startDate, endDate]);
 
   const keyExtractor = useCallback((index) => index.toString(), []);
 
   function setHeader() {
     navigation.setOptions({
-      headerTitle: `${t('screens.reportInsights')}`,
       headerTitleAlign: 'center',
-      headerTintColor: theme.text,
-      headerStyle: {
-        backgroundColor: theme.accent,
-      },
       headerRight: () => (
         <>
           <View>
@@ -110,12 +94,7 @@ export default function SummaryReportScreen() {
               onPress={() => navigation.goBack()}
               style={{ paddingHorizontal: 10, marginHorizontal: 10 }}
             >
-              <AntDesign
-                name="minuscircleo"
-                size={24}
-                color={theme.primary}
-                style={{ fontWeight: 'semibold' }}
-              />
+              <AntDesign name="minuscircleo" size={24} color="#718096" style={{ fontWeight: 'semibold' }} />
             </TouchableOpacity>
           </View>
         </>
@@ -124,7 +103,7 @@ export default function SummaryReportScreen() {
         <AntDesign
           name="menuunfold"
           size={24}
-          color={theme.primary}
+          color="#47a67f"
           onPress={() => navigation.openDrawer()}
           style={{ paddingLeft: 10 }}
         />
@@ -133,9 +112,7 @@ export default function SummaryReportScreen() {
   }
 
   async function refreshOrders() {
-    return OrderService.ordersWithItems(setOrders, orderType, null, 8).then(() =>
-      setshowLoading(false)
-    );
+    return OrderService.ordersWithItems(setOrders, orderType, null, 8).then(() => setshowLoading(false))
   }
   /**
    * Fetch report from database based on the date
@@ -212,226 +189,175 @@ export default function SummaryReportScreen() {
       </View>
     );
   }
-
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <View style={styles.container}>
       {orders.length === 0 ? (
         <WelcomeInsights />
       ) : (
-        <>
-          <View>
-            <View style={[styles.datePicker, { flexDirection: 'row' }]}>
-              {/* SECTION FOR DATE PICKER */}
-              <TouchableOpacity
-                onPress={() => setShowStartDatePicker(true)}
-                style={[styles.dateSelector, { backgroundColor: theme.accent }]}
-              >
-                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                  <Text style={{ color: theme.text, fontSize: 12 }}>{t('report.start_date')}</Text>
-                </View>
-                <Text style={[styles.title, { color: theme.text, opacity: 0.7 }]}>
-                  {startDate.toString()}
-                </Text>
-              </TouchableOpacity>
-              <Text style={[styles.title, { fontWeight: 'bold', color: theme.text, opacity: 0.7 }]}>
-                {' '}
-                {'-'}{' '}
-              </Text>
-              <TouchableOpacity
-                onPress={() => setShowEndDatePicker(true)}
-                style={[styles.dateSelector, { backgroundColor: theme.accent }]}
-              >
-                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                  <Text style={{ color: theme.text, fontSize: 12 }}>{t('report.end_date')}</Text>
-                </View>
-                <Text style={[styles.title, { color: theme.text, opacity: 0.7 }]}>
-                  {endDate.toString()}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            {showStartDatePicker && (
-              <DateTimePicker
-                value={new Date(startDate)}
-                mode={'date'}
-                maximumDate={new Date()}
-                display={'default'}
-                accentColor={'#718096'}
-                themeVariant={'dark'}
-                onChange={(event, date) => {
-                  /** Hide the start date */
-                  setShowStartDatePicker(!showStartDatePicker);
-                  /** Update the start date */
-                  setStartDate(date.toISOString().slice(0, 10));
-                }}
-              />
-            )}
-
-            {showEndDatePicker && (
-              <DateTimePicker
-                value={new Date(endDate)}
-                mode={'date'}
-                display={'default'}
-                accentColor={'#718096'}
-                // Ensure This is always greator than start date
-                minimumDate={new Date(startDate)}
-                maximumDate={new Date()}
-                onChange={(event, date) => {
-                  /** Hide the end date */
-                  setShowEndDatePicker(!showEndDatePicker);
-                  /** Update the start date */
-                  setEndDate(date.toISOString().slice(0, 10));
-                }}
-              />
-            )}
-
-            {/* END DATE PICKER SECTION */}
-            <View
-              style={{
-                backgroundColor: theme.accent,
-                paddingHorizontal: 10,
-                marginHorizontal: 10,
-                borderRadius: 10,
-                width: '100%',
-                height: 500,
-              }}
-            >
-              <ScrollView>
-                <View style={{ marginRight: '1%' }}>
-                  <View
-                    style={{ flexDirection: 'row', justifyContent: 'center', paddingVertical: 10 }}
-                  >
-                    <Text style={{ color: theme.text, fontWeight: 'bold' }}>{t('report.daily_summary')}</Text>
-                  </View>
-                  <View style={styles.row}>
-                    {revenueSummaries.map((item, index) => (
-                      <RenderReportItem
-                        title={item.title}
-                        value={money(item.value)}
-                        titleColor={item.color}
-                        key={keyExtractor(index)}
-                        route={item.route}
-                      />
-                    ))}
-                  </View>
-                  <View
-                    style={{
-                      paddingVertical: 2,
-                      paddingHorizontal: 2,
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Title
-                      style={{
-                        paddingHorizontal: 7,
-                        color: theme.text,
-                        fontWeight: 'bold',
-                        fontSize: 12,
-                      }}
-                    >
-                      {t('report.payment_summary')}
-                    </Title>
-                  </View>
-                  <View style={styles.row}>
-                    {paymentMethod.map((item, index) => (
-                      <RenderReportItem
-                        title={item.title}
-                        value={money(item.value)}
-                        titleColor={item.color}
-                        key={keyExtractor(index)}
-                        route={item.route}
-                      />
-                    ))}
-                  </View>
-                  <View
-                    style={{
-                      paddingVertical: 2,
-                      paddingHorizontal: 2,
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Title
-                      style={{
-                        paddingHorizontal: 7,
-                        color: theme.text,
-                        fontWeight: 'bold',
-                        fontSize: 12,
-                      }}
-                    >
-                      {t('report.items_summary')}
-                    </Title>
-                  </View>
-                  <View style={styles.row2}>
-                    {stockSummaries.map((item, index) => (
-                      <RenderReportItem
-                        title={item.title}
-                        value={number(item.value)}
-                        titleColor={item.color}
-                        route={item.route}
-                        key={keyExtractor(index)}
-                      />
-                    ))}
-                  </View>
-                </View>
-              </ScrollView>
-            </View>
+        <View style={styles.content}>
+          <View style={styles.datePickerContainer}>
+            <TouchableOpacity onPress={() => setShowStartDatePicker(true)} style={styles.dateSelector}>
+              <Text style={styles.dateLabel}>Start Date</Text>
+              <Text style={styles.dateValue}>{startDate}</Text>
+            </TouchableOpacity>
+            <Text style={styles.dateSeparator}> - </Text>
+            <TouchableOpacity onPress={() => setShowEndDatePicker(true)} style={styles.dateSelector}>
+              <Text style={styles.dateLabel}>End Date</Text>
+              <Text style={styles.dateValue}>{endDate}</Text>
+            </TouchableOpacity>
           </View>
-        </>
+
+          {showStartDatePicker && (
+            <DateTimePicker
+              value={new Date(startDate)}
+              mode="date"
+              maximumDate={new Date()}
+              display="default"
+              onChange={(event, date) => {
+                setShowStartDatePicker(false);
+                if (date) {
+                  setStartDate(date.toISOString().slice(0, 10));
+                  ToastAndroid.show('Choose end date to continue', ToastAndroid.SHORT);
+                }
+              }}
+            />
+          )}
+
+          {showEndDatePicker && (
+            <DateTimePicker
+              value={new Date(endDate)}
+              mode="date"
+              display="default"
+              minimumDate={new Date(startDate)}
+              maximumDate={new Date()}
+              onChange={(event, date) => {
+                setShowEndDatePicker(false);
+                if (date) {
+                  setEndDate(date.toISOString().slice(0, 10));
+                }
+              }}
+            />
+          )}
+
+          <View style={styles.summaryContainer}>
+            <ScrollView>
+              <Text style={styles.summaryHeader}>Summary</Text>
+              <View style={styles.summarySection}>
+                {revenueSummaries.map((item, index) => (
+                  <RenderReportItem
+                    key={keyExtractor(index)}
+                    title={item.title}
+                    value={money(item.value)}
+                    titleColor={item.color}
+                    route={item.route}
+                  />
+                ))}
+              </View>
+
+              <Text style={styles.sectionTitle}>{t('report.payment_summary')}</Text>
+              <View style={styles.summarySection}>
+                {paymentMethod.map((item, index) => (
+                  <RenderReportItem
+                    key={keyExtractor(index)}
+                    title={item.title}
+                    value={money(item.value)}
+                    titleColor={item.color}
+                    route={item.route}
+                  />
+                ))}
+              </View>
+
+              <Text style={styles.sectionTitle}>{t('report.items_summary')}</Text>
+              <View style={styles.summarySection}>
+                {stockSummaries.map((item, index) => (
+                  <RenderReportItem
+                    key={keyExtractor(index)}
+                    title={item.title}
+                    value={number(item.value)}
+                    titleColor={item.color}
+                    route={item.route}
+                  />
+                ))}
+              </View>
+            </ScrollView>
+          </View>
+        </View>
       )}
     </View>
   );
+
 }
 
 const styles = {
   container: {
     flex: 1,
-    paddingHorizontal: 5,
+    padding: 16,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
   },
-  subHeader: {
-    paddingHorizontal: 7,
-    color: '#718096',
-    marginTop: 10,
-    fontSize: 16,
-  },
-  rowText: {
-    justifyContent: 'center',
-    alignContent: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  card: {
+  content: {
     flex: 1,
-    padding: 10,
-    // backgroundColor: '#f7fafc',
+    marginTop: 10,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 20,
   },
-  title: {
-    marginTop: 5,
-    fontSize: 14,
-    alignSelf: 'center',
-    fontWeight: 'bold',
-    justifyContent: 'center',
-    textAlign: 'center',
-    color: '#718096',
+  datePickerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
   },
   dateSelector: {
-    paddingHorizontal: 50,
-    marginHorizontal: 5,
-    paddingVertical: 20,
+    backgroundColor: '#e0f7fa',
+    padding: 12,
     borderRadius: 10,
-    backgroundColor: '#f9f9f9',
-
-    marginVertical: 30,
-    elevation: 5,
+    flex: 1,
+    marginHorizontal: 4,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#b2ebf2',
+    elevation: 2,
   },
-  value: {
-    textAlign: 'center',
-    fontWeight: 'semi-bold',
+  dateLabel: {
+    fontWeight: '600',
+    color: '#00796b',
+    fontSize: 14,
+  },
+  dateValue: {
     fontSize: 16,
-    alignSelf: 'center',
-    color: '#4a5568',
+    color: '#004d40',
+    marginTop: 4,
   },
-  datePicker: {
-    justifyContent: 'center',
+  dateSeparator: {
+    alignSelf: 'center',
+    fontSize: 18,
+    color: '#00796b',
+  },
+  summaryContainer: {
+    flex: 1,
+    marginVertical: 10,
+  },
+  summaryHeader: {
+    fontSize: 26,
+    fontWeight: '700',
+    color: '#37474f',
+    marginBottom: 12,
+  },
+  summarySection: {
+    marginBottom: 16,
+    paddingVertical: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#455a64',
+    marginVertical: 12,
   },
 };
