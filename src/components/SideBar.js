@@ -8,7 +8,6 @@ import {
 } from '@expo/vector-icons';
 import { useContext, useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Share, FlatList } from 'react-native';
-import * as Analytics from 'expo-firebase-analytics';
 import { getSetting } from '../models/AsyncStorage';
 import { useNavigation } from '@react-navigation/native';
 import { ThemeContext } from '../../App';
@@ -52,7 +51,6 @@ export default function SideBar() {
         url: imageUrl,
         type: 'image/png',
       });
-      Analytics.logEvent('share', { shop: businessName, method: 'share' });
     } catch (error) {
       console.log(error.message);
     }

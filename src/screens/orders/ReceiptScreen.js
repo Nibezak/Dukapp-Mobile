@@ -25,7 +25,6 @@ import { getSetting } from '../../models/AsyncStorage';
 import ViewShot from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import CheckButton from '../../components/CheckButton';
-import * as Analytics from 'expo-firebase-analytics';
 import { ThemeContext } from '../../../App';
 import PaylinkButton from '../../components/PaylinkButton';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -184,10 +183,7 @@ export default function ReceiptScreen({ navigation, route }) {
   }
 
   async function checkout() {
-    Analytics.logEvent('checkout', {
-      shop: businessName,
-      method: 'checkout',
-    });
+
     OrderService.addComplete(order.id).then(() => {
       navigation.navigate('Order Sale').then(() => {
         ToastAndroid.show('Checkout complete', ToastAndroid.SHORT);
@@ -267,9 +263,6 @@ export default function ReceiptScreen({ navigation, route }) {
                 </View>
               </View>
 
-              <Text style={styles.poweredByText}>
-                POWERED BY DUKAPP
-              </Text>
             </ZigzagView>
           </ViewShot>
         </View>
@@ -316,15 +309,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 8, // Optional margin around the row
   },
-  poweredByText: {
-    textAlign: 'center', // Center the text
-    paddingVertical: 10, // Add vertical padding
-    paddingHorizontal: 15, // Add horizontal padding
-    fontSize: 14, // Adjust font size as needed
-    color: "gray", // Use the theme's text color
-    fontWeight: '800', // Use a lighter font weight for a minimal look
-    backgroundColor: 'transparent', // Ensure the background is transparent
-  },
+
   orderContainer: {
     paddingHorizontal: 30,
   },

@@ -12,7 +12,6 @@ export default function GuestHomeScreen() {
 
   return (
     <>
-      <StatusBar hidden />
       <View style={styles.container}>
         <OnboardFlow
           pages={[

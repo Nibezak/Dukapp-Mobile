@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const instance = axios.create({
   // dukapp.com
-  baseURL: 'https://3995-41-90-172-142.ngrok-free.app/api/',
+  baseURL: 'https://4a19-105-161-98-223.ngrok-free.app/api/',
   headers: {
     'Content-Type': 'application/json',
   },

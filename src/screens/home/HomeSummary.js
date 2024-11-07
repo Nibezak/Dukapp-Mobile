@@ -63,12 +63,12 @@ export default function HomeSummary() {
           descriptionStyle={{ color: theme.primary }}
           activeOpacity={0.9}
         />
-        <Metric
+        {/* <Metric
           number={money(todayProfit, currency)}
           description={t('report.today_profit')}
           activeOpacity={0.9}
           descriptionStyle={{ color: theme.primary }}
-        />
+        /> */}
         <Metric
           number={lowStockItems}
           description={t('report.low_stock_items')}

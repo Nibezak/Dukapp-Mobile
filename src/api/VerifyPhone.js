@@ -9,6 +9,7 @@ import axiosConfig from '../helpers/axiosConfig';
 export async function sendOTP(phoneNumber) {
   try {
     const response = axiosConfig.post("/sendOTP?mobile_number=" + phoneNumber);
+    console.log(response);
     return response;
   } catch (error) {
     console.error(error);
@@ -28,6 +29,7 @@ export async function verifyOTP(phoneNumber, code) {
     const response = axiosConfig.post(
       "/verifyOTP?mobile_number=" + phoneNumber + "&otp=" + code
     );
+    console.log(response);
     return response;
   } catch (error) {
     console.error(error);

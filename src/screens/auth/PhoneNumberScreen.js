@@ -1,5 +1,5 @@
 import React, { useState, useRef, useContext } from 'react';
-import { StyleSheet, View, Text, KeyboardAvoidingView, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
+import { StyleSheet, View, Text, KeyboardAvoidingView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaskInput from 'react-native-mask-input';
 import { AuthContext } from '../../context/AuthProvider';
@@ -10,12 +10,9 @@ export default function RegisterScreen({ navigation }) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const { theme } = useContext(ThemeContext);
-  const keyboardVerticalOffset = Platform.OS === 'ios' ? 90 : 0;
-
 
   const handleSignUp = async () => {
     setLoading(true);
-    console.log(phoneNumber)
     await sendOTP(phoneNumber).then(() => {
       navigation.navigate('Otp', { phoneNumber });
       setLoading(false);
@@ -23,8 +20,7 @@ export default function RegisterScreen({ navigation }) {
   };
 
   return (
-    <KeyboardAvoidingView keyboardVerticalOffset={keyboardVerticalOffset}
-      style={{ flex: 1, marginVertical: 50 }} behavior="padding">
+    <KeyboardAvoidingView keyboardVerticalOffset={80} style={{ flex: 1 }} behavior="padding">
       {loading && (
         <View style={[StyleSheet.absoluteFill, styles.loading]}>
           <ActivityIndicator size="large" color="#1063FD" />
@@ -48,7 +44,7 @@ export default function RegisterScreen({ navigation }) {
             value={phoneNumber}
             keyboardType="numeric"
             autoFocus
-            placeholder="07 ... your phone number"
+            placeholder="+250 your phone number"
             onChangeText={(masked) => setPhoneNumber(masked)}
             style={styles.input}
           />
@@ -108,7 +104,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   enabled: {
-    backgroundColor: '#14B8A6',
+    backgroundColor: '#1063FD',
   },
   buttonText: {
     color: '#6E6E73',
@@ -153,30 +149,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  countryItem: {
-    padding: 15,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderColor: '#DCDCE2',
-  },
-  countryText: {
-    fontSize: 16,
-    color: '#6E6E73',
-  },
-  countryCode: {
-    fontSize: 16,
-    color: '#1063FD',
-  },
-  closeModal: {
-    padding: 20,
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
   },
 });

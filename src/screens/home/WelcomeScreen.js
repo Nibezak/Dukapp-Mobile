@@ -1,15 +1,14 @@
 import React, { useEffect, useCallback, useState, useContext } from 'react';
-import { View, FlatList, StyleSheet, Image, InteractionManager } from 'react-native';
+import { View, StyleSheet, Image, InteractionManager, Text } from 'react-native';
 import HomeSummary from './HomeSummary';
 import { t } from 'i18n-js';
 import OrderService from '../../services/OrderService';
 import { useFocusEffect } from '@react-navigation/native';
-import { Title, ActivityIndicator } from 'react-native-paper';
+import { ActivityIndicator, Title } from 'react-native-paper';
 import RevenueBarChart from '../reports/RevenueBarChart';
 import { AntDesign } from '@expo/vector-icons';
 import { WelcomeAnimation } from '../../components/WelcomeAnimation';
 import { getSetting } from '../../models/AsyncStorage';
-import * as Analytics from 'expo-firebase-analytics';
 import { onAuthStateChanged } from '@firebase/auth';
 import { auth } from '../../../firebase';
 import { ThemeContext } from '../../../App';
@@ -36,29 +35,19 @@ export default function WelcomeScreen({ navigation }) {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
     });
-    tracker();
     setHeader();
     retrieveCurrency();
     refreshOrders();
   }, [theme]);
 
-  async function tracker() {
-    if (user) {
-      Analytics.setUserId(user.email);
-      Analytics.logEvent('users', {
-        user: user.email,
-        screen: 'screens',
-        navigation: 'Home Screen',
-      });
-    }
-  }
+
 
   function setHeader() {
     navigation.setOptions({
       headerTitle: () => (
         <Image
           source={require('./../../../assets/dukapp-color.png')}
-          style={{ width: 45, height: 45, paddingVertical: 10 }}
+          style={{ width: 35, height: 35, paddingVertical: 10 }}
         />
       ),
       headerTitleAlign: 'center',
@@ -101,6 +90,10 @@ export default function WelcomeScreen({ navigation }) {
   function retrieveCurrency() {
     getSetting('app_default_currency').then(setCurrency);
   }
+  const handleDeleteOrder = (orderId) => {
+    setOrders((prevOrders) => prevOrders.filter(order => order.id !== orderId));
+  };
+
 
   const renderOrder = useCallback((item) => (
     <RecentOrder
@@ -112,6 +105,7 @@ export default function WelcomeScreen({ navigation }) {
           item: item,
         })
       }
+      onDelete={handleDeleteOrder} // Pass the onDelete function
     />
   ), []);
 
@@ -139,9 +133,11 @@ export default function WelcomeScreen({ navigation }) {
         <WelcomeAnimation />
       ) : (
         <>
-          {/* <Title style={styles.title}>{t('welcome.today_insights')}</Title> */}
+          <Text style={styles.title}>Today's Insights</Text>
           {/* Wrap the chart and list in a container View */}
+          <HomeSummary />
           <View style={styles.chartContainer}>
+
             <RevenueBarChart
               orders={orders}
               renderOrder={renderOrder}
@@ -158,7 +154,7 @@ export default function WelcomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 16,
+    fontSize: 13,
     alignSelf: 'left',
     marginHorizontal: 20,
     color: '#718096',
@@ -171,7 +167,6 @@ const styles = StyleSheet.create({
   },
   chartContainer: {
     flex: 1, // Optional: make it take full height if needed
-    marginTop: -10,
     marginBottom: 10, // Add margin for spacing
   },
 });

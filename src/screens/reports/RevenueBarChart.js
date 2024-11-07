@@ -1,72 +1,101 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, useWindowDimensions, FlatList } from 'react-native';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, useWindowDimensions, FlatList, Dimensions, InteractionManager } from 'react-native';
 import { Canvas, Group } from '@shopify/react-native-skia';
 import { useSharedValue, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
+import * as d3 from 'd3';
+import { ThemeContext } from '../../../App';
+import ReportService from '../../services/ReportService'; // Assuming this now has lastSevenDaysSales
+
 import BarPath from '../../components/BarPath';
 import XAxisText from '../../components/XAxisText';
 import AnimatedText from '../../components/AnimatedText';
-import { data } from '../../database/Data';
+import { getSetting } from '../../models/AsyncStorage';
 
-import * as d3 from 'd3';
-import { Theme } from '../../helpers/theme';
-import { AntDesign, Feather } from '@expo/vector-icons';
-import { ThemeContext } from '../../../App';
+const screenWidth = Dimensions.get('window').width;
 
-const RevenueBarChart = ({ orders, renderOrder, keyExtractor }) => {
+const dayMapping = {
+  Mon: 'Monday',
+  Tue: 'Tuesday',
+  Wed: 'Wednesday',
+  Thu: 'Thursday',
+  Fri: 'Friday',
+  Sat: 'Saturday',
+  Sun: 'Sunday',
+};
+
+const RevenueBarChart = ({ startDate, endDate, orders, renderOrder, keyExtractor }) => {
   const { width } = useWindowDimensions();
-  const totalValue = data.reduce((acc, cur) => acc + cur.value, 0);
 
-  const barWidth = 28;
-  const graphMargin = 20;
 
-  const canvasHeight = 250;
-  const canvasWidth = width;
-  const graphHeight = canvasHeight - graphMargin;
-  const graphWidth = width;
-  const [selectedDay, setSelectedDay] = useState('Total');
+  // Initializing state for days and sales (replaces "profits")
+  const [dataSets, setDataSets] = useState({
+    days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    sales: [0, 0, 0, 0, 0, 0, 0],
+  });
+
+  // Calculate the total sales for the week (adjusting from profits)
+  const totalSales = dataSets.sales.reduce((acc, cur) => acc + (cur === 0 ? 0 : cur), 0);
+  const [selectedDay, setSelectedDay] = useState(`This week`);
   const selectedBar = useSharedValue(null);
-  const selectedValue = useSharedValue(0);
+  const selectedValue = useSharedValue(totalSales);
   const progress = useSharedValue(0);
   const { theme } = useContext(ThemeContext);
+  const [currency, setCurrency] = useState(null);
 
-  // x domain
-  const xDomain = data.map(dataPoint => dataPoint.label);
+  const barWidth = 25;
+  const graphMargin = 20;
+  const canvasHeight = 250;
+  const graphHeight = canvasHeight - graphMargin;
+  const graphWidth = width;
 
-  // range of the x scale
+  // X and Y scales for d3 (uses dataSets.sales instead of profits)
+  const xDomain = dataSets.days;
   const xRange = [0, graphWidth];
-
-  // Create the x scale
   const x = d3.scalePoint().domain(xDomain).range(xRange).padding(1);
 
-  // y domain
-  const yDomain = [0, d3.max(data, (yDataPoint) => yDataPoint.value)];
-
-  // range of the y scale
+  const yDomain = [0, d3.max(dataSets.sales.map(value => (value === 0 ? 0 : value)))];
   const yRange = [0, graphHeight];
-
-  // Create the y scale
   const y = d3.scaleLinear().domain(yDomain).range(yRange);
 
-  // Animate the bar heights by updating the progress value
-  useEffect(() => {
-    progress.value = withTiming(1, { duration: 1000 });
-    selectedValue.value = withTiming(totalValue, { duration: 1000 });
-  }, [progress, selectedValue, totalValue]);
+  // Update chart when component is in focus or dates change
+  useFocusEffect(
+    useCallback(() => {
+      const task = InteractionManager.runAfterInteractions(() => {
+        refreshChart();
+      });
+      return () => task.cancel();
+    }, [startDate, endDate])
+  );
 
+  useEffect(() => {
+    refreshChart();
+    getSetting('app_default_currency').then(setCurrency);
+  }, [startDate, endDate]);
+
+  // Call lastSevenDaysSales to update sales data (replaces lastSevenDaysProfit)
+  async function refreshChart() {
+    ReportService.lastSevenDaysSales(setDataSets, 7); // Fetches sales data
+    progress.value = withTiming(1, { duration: 1000 });
+    selectedValue.value = withTiming(totalSales, { duration: 1000 });
+  }
+
+  // Adjusted helper function to get display sales instead of profits
+  const getDisplaySales = () => {
+    return dataSets.sales.map(value => (value === 0 ? 0 : value)); // Maps 0 to 5 as user prefers
+  };
+
+  // Touch event handler to update selected day and sales value
   const touchHandler = (e) => {
-    // Get the x and y coordinates of the touch
     const touchX = e.nativeEvent.locationX;
     const touchY = e.nativeEvent.locationY;
-
-    // Calculate the index of the touched bar based on touchX and x axis step
     const index = Math.floor((touchX - barWidth / 2) / x.step());
 
-    // if the index is within the bounds of the data array
-    if (index >= 0 && index < data.length) {
-      const { label, value, day } = data[index];
+    if (index >= 0 && index < dataSets.days.length) {
+      const label = dataSets.days[index];
+      const value = getDisplaySales()[index]; // Uses sales instead of profits
 
-      // Check if the touch is within the bounds of the touched bar
       if (
         touchX > x(label) - barWidth / 2 &&
         touchX < x(label) + barWidth / 2 &&
@@ -74,12 +103,12 @@ const RevenueBarChart = ({ orders, renderOrder, keyExtractor }) => {
         touchY < graphHeight
       ) {
         selectedBar.value = label;
-        setSelectedDay(day);
-        selectedValue.value = withTiming(value);
+        setSelectedDay(label);
+        selectedValue.value = withTiming(totalSales); // Animates the selected sales value
       } else {
         selectedBar.value = null;
-        setSelectedDay('Total');
-        selectedValue.value = withTiming(totalValue);
+        setSelectedDay(`This Week's`);
+        selectedValue.value = withTiming(value); // Animates the total sales
       }
     }
   };
@@ -87,30 +116,37 @@ const RevenueBarChart = ({ orders, renderOrder, keyExtractor }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.textContainer}>
-        <AnimatedText selectedValue={selectedValue} theme={theme.text} />
         <View style={styles.revenueView}>
-          <Text style={[styles.textSteps, { color: "#718096" }]}>{selectedDay} Revenue</Text>
-          <Feather name="more-horizontal" size={24} color={theme.primary} />
+          <Text style={[styles.textSteps, { color: '#718096' }]}>
+            {dayMapping[selectedDay] || `This week`}'s sales {/* Updated label to show Sales */}
+          </Text>
         </View>
+        {/* Display selected sales value */}
+        <View >
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <AnimatedText selectedValue={selectedValue} theme={theme.text} />
+          </View>
+        </View>
+
       </View>
       <Canvas
         onTouchStart={touchHandler}
-        style={{ width: canvasWidth, height: canvasHeight, marginTop: 20 }}>
-        {data.map((dataPoint, index) => (
+        style={{ width: screenWidth, height: canvasHeight, marginTop: 20 }}>
+        {dataSets.days.map((label, index) => (
           <Group key={index}>
             <BarPath
               progress={progress}
-              x={x(dataPoint.label)}
-              y={y(dataPoint.value)}
+              x={x(label)}
+              y={y(getDisplaySales()[index])} // Draws bars using sales data
               barWidth={barWidth}
               graphHeight={graphHeight}
-              label={dataPoint.label}
+              label={label}
               selectedBar={selectedBar}
             />
             <XAxisText
-              x={x(dataPoint.label)}
+              x={x(label)}
               y={canvasHeight}
-              text={dataPoint.label}
+              text={label}
               selectedBar={selectedBar}
             />
           </Group>
@@ -134,23 +170,19 @@ export default RevenueBarChart;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Theme.background,
+    backgroundColor: '#f7fafc',
   },
+
   recentItems: {
-    flex: 1, // Fill available space
-    marginTop: 10, // Margin on top
-    marginBottom: 40, // Margin at the bottom
-    borderRadius: 8, // Optional rounded corners
+    flex: 1,
+    marginTop: 10,
+    marginBottom: 40,
+    borderRadius: 8,
   },
   textContainer: {
-
+    marginTop: -20,
     justifyContent: 'center',
     marginHorizontal: 20,
-  },
-  icon: {
-    width: 40,
-    height: 40,
-    marginBottom: 20,
   },
   textTitle: {
     fontFamily: 'Roboto-Regular',
@@ -159,18 +191,15 @@ const styles = StyleSheet.create({
   },
   textSteps: {
     fontFamily: 'Roboto-Regular',
-    fontSize: 19,
-    marginTop: 1,
+    fontSize: 13,
+    textTransform: 'uppercase',
+    marginTop: -10,
+    fontWeight: 'semibold'
   },
   revenueView: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 5, // Increase padding to add more space
   },
-  playButton: {
-    fontSize: 16,
-    color: '#007BFF',
-    marginLeft: 10, // Additional spacing on the left of the second text
-  },
+
 });

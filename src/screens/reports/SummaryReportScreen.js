@@ -101,7 +101,7 @@ export default function SummaryReportScreen() {
       ),
       headerLeft: () => (
         <AntDesign
-          name="menuunfold"
+          name="caretright"
           size={24}
           color="#47a67f"
           onPress={() => navigation.openDrawer()}
@@ -217,7 +217,7 @@ export default function SummaryReportScreen() {
                 setShowStartDatePicker(false);
                 if (date) {
                   setStartDate(date.toISOString().slice(0, 10));
-                  ToastAndroid.show('Choose end date to continue', ToastAndroid.SHORT);
+                  ToastAndroid.show('Updated!', ToastAndroid.SHORT);
                 }
               }}
             />

@@ -6,7 +6,6 @@ import RootNavigation from './src/navigation/RootNavigation';
 import { getSetting } from './src/models/AsyncStorage';
 import i18n from 'i18n-js';
 
-import * as Analytics from 'expo-firebase-analytics';
 import en from './src/translations/en';
 import fr from './src/translations/fr';
 import rw from './src/translations/rw';
@@ -63,13 +62,12 @@ LogBox.ignoreAllLogs();
 export default function Main() {
   const [theme, setTheme] = useState(Theme.light);
   const [currentTheme, setCurrentTheme] = useState(Theme.light);
-  AsyncStorage.getItem('@theme').then(setCurrentTheme);
 
   useEffect(() => {
     if (currentTheme && currentTheme === 'light') {
       setTheme(Theme.light);
     } else {
-      setTheme(Theme.dark);
+      setTheme(Theme.light);
     }
   }, [currentTheme]);
 

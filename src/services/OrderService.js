@@ -5,468 +5,278 @@ import {
   unixTimeStamp,
   unixHourStamp,
   unixMinuteStamp,
-  unixSecondsStamp,
-  unixYearStamp,
 } from '../helpers/Dates';
 import Database from '../database/Database';
 import { getSetting } from '../models/AsyncStorage';
 import ItemInventory from '../models/ItemInventory';
+
 /**
  * Class to handle order management
- *
  */
 class OrderService {
   /**
    * Get orders from Database
+   * @param {Function} setOrders - Function to set the orders
    */
   async getOrders(setOrders) {
-    Order.refresh().limit(20).desc().get().then(setOrders);
+    const orders = await Order.refresh().limit(20).desc().get();
+    setOrders(orders);
   }
 
   /**
    * Find order by ID
+   * @param {number} orderId - The ID of the order to find
+   * @returns {Promise<Object>} - The order details
    */
   async findOrder(orderId) {
-    return Order.refresh()
-      .find(orderId)
-      .then((orderResults) => {
-        // Clean Order Payments
-        orderResults.payments = JSON.parse(orderResults.payments);
-        return orderResults;
-      })
-      .catch((error) => {
-        throw error;
-      });
+    try {
+      const orderResults = await Order.refresh().find(orderId);
+      // Clean Order Payments
+      orderResults.payments = JSON.parse(orderResults.payments);
+      return orderResults;
+    } catch (error) {
+      throw error;
+    }
   }
 
   /**
-   * Get orders and their items as stored
-   * in the database
+   * Get orders and their items from the database
+   * @param {Function} setOrders - Function to set the orders
+   * @param {string} orderType - Type of order ('sale' by default)
+   * @param {number|null} orderId - Optional order ID
+   * @param {number} limit - Limit for orders to fetch
+   * @returns {Promise<Array|Object>} - The orders with items
    */
   async ordersWithItems(setOrders, orderType = 'sale', orderId = null, limit = 100) {
-    let orders = [];
+    let orders;
 
-    // Get orders first
-    switch (orderId) {
-      case null:
-        orders = await Order.refresh().where('order_type', orderType).desc().limit(limit).get();
-        break;
-      default:
-        orders = await Order.refresh().where('order_type', orderType).where('id', orderId).get();
-        break;
+    // Get orders based on orderId
+    if (orderId) {
+      orders = await Order.refresh().where('order_type', orderType).where('id', orderId).get();
+    } else {
+      orders = await Order.refresh().where('order_type', orderType).desc().limit(limit).get();
     }
 
-    // 2. Add items to each order
-
-    for (var order of orders) {
-      // 3. Get Line Items per order
+    // Add items to each order
+    for (const order of orders) {
       order.line_items = [];
+      const retrieved_line_items = await OrderItem.refresh().where('order_id', order.id).get();
+      order.line_items = retrieved_line_items;
 
-      // Get Items per order
-      await OrderItem.refresh()
-        .where('order_id', order.id)
-        .get()
-        .then((retrieved_line_items) => {
-          // 4. Add line items
-          order.line_items = retrieved_line_items;
-
-          // 5. Compute Order total based on line items
-          order.total = retrieved_line_items.reduce((sum, current) => {
-            return sum + current.total;
-          }, 0);
-
-          // 6. Parse payments as well
-          order.payments = JSON.parse(order.payments);
-        })
-        .catch((error) => {
-          throw error;
-        });
+      // Compute Order total based on line items
+      order.total = retrieved_line_items.reduce((sum, current) => sum + current.total, 0);
+      order.payments = JSON.parse(order.payments);
     }
 
-    // We need a collection of orders
-    if (orderId === null) {
-      setOrders(orders);
-      return orders;
-    }
-
-    // We need a single order based on
-    // on the passed order id
-    setOrders(orders[0]);
-    return orders[0];
+    // Set orders or single order based on orderId
+    setOrders(orderId ? orders[0] : orders);
+    return orderId ? orders[0] : orders;
   }
 
   /**
-   * Get order Items
+   * Get order items for a specific order
+   * @param {number} orderId - The ID of the order
+   * @param {Function} setOrderItems - Function to set the order items
    */
   async getOrderItems(orderId, setOrderItems) {
-    OrderItem.refresh().where('order_id', orderId).get().then(setOrderItems);
+    const orderItems = await OrderItem.refresh().where('order_id', orderId).get();
+    setOrderItems(orderItems);
   }
 
   /**
-   *
+   * Complete an order and its items
+   * @param {Object} orderDetails - Details of the order
+   * @param {Array} items - Items to be included in the order
+   * @returns {Promise<Object>} - The result of the order creation
    */
   async complete(orderDetails, items) {
-    // 1. Ensure order is created
-    return Order.create(orderDetails).then((result) => {
-      // Extract Order ID
-      const orderId = result.insertId;
+    const result = await Order.create(orderDetails);
+    const orderId = result.insertId;
 
-      // Order Created let's us register order items
-      // in the database as well
-      // 1. start by adding order it to each item
-      items.forEach(async (item) => {
-        // 2. Create item in the database table
-        const orderItemAttributes = { ...item, order_id: orderId };
-        this.addItemToOrder(orderItemAttributes, orderDetails.order_type);
-      });
+    // Add order items
+    await Promise.all(items.map(async (item) => {
+      const orderItemAttributes = { ...item, order_id: orderId };
+      await this.addItemToOrder(orderItemAttributes, orderDetails.order_type);
+    }));
 
-      return {
-        order_id: result.insertId,
-        rows_affected: result.rowsAffected,
-      };
-    });
+    return {
+      order_id: result.insertId,
+      rows_affected: result.rowsAffected,
+    };
   }
 
   /**
-   * Add one item to order
+   * Add one item to an order
+   * @param {Object} itemAttributes - Attributes of the item
+   * @param {string} orderType - Type of order
+   * @returns {Promise<Object>} - The result of the item addition
    */
   async addItemToOrder(itemAttributes, orderType) {
-    // 1. Add Item to the order
-    return OrderItem.create(itemAttributes)
-      .then((result) => {
-        // 2. Adjust item stock
-        this.adjustStock(itemAttributes.item_id, itemAttributes.quantity, orderType);
-
-        return {
-          order_item_id: result.insertId,
-          rows_affected: result.rowsAffected,
-        };
-      })
-      .catch(function (error) {
-        console.log('There has been a problem with your fetch operation: ' + error.message);
-        // ADD THIS THROW error
-        throw error;
-      });
+    try {
+      const result = await OrderItem.create(itemAttributes);
+      await this.adjustStock(itemAttributes.item_id, itemAttributes.quantity, orderType);
+      return {
+        order_item_id: result.insertId,
+        rows_affected: result.rowsAffected,
+      };
+    } catch (error) {
+      console.log('Error adding item to order:', error.message);
+      throw error;
+    }
   }
 
   /**
-   * get Order by Id
+   * Get Order by Id
+   * @param {number} orderId - The ID of the order
+   * @returns {Promise<Object>} - The order details
    */
   async getOrderById(orderId) {
-    return Order.refresh().where('id', orderId).get();
+    return await Order.refresh().where('id', orderId).get();
   }
 
   /**
    * Add a customer to an existing order
+   * @param {number} orderId - The ID of the order
+   * @param {number} customerOrSupplierId - The ID of the customer or supplier
+   * @returns {Promise<Object>} - The result of the update
    */
   async addCustomerToOrder(orderId, customerOrSupplierId) {
-    return Order.refresh().where('id', orderId).update({
+    return await Order.refresh().where('id', orderId).update({
       customer_supplier_id: customerOrSupplierId,
     });
   }
 
   /**
-   * Add Payment to an order
+   * Add payment to an order
+   * @param {number} orderId - The ID of the order
+   * @param {Array} payments - Array of payment details
+   * @returns {Promise<Object>} - The result of the update
    */
   async addPaymentToOrder(orderId, payments = []) {
-    return Order.refresh()
-      .where('id', orderId)
-      .update({ payments: JSON.stringify(payments) });
-  }
-  async addComplete(orderId) {
-    return Order.refresh().where('id', orderId).update({
-      status: 'completed'
-    })
+    return await Order.refresh().where('id', orderId).update({ payments: JSON.stringify(payments) });
   }
 
   /**
-   * Sale/ purchase an item based on what the
-   * Application suggested the user
+   * Mark an order as completed
+   * @param {number} orderId - The ID of the order
+   * @returns {Promise<Object>} - The result of the update
+   */
+  async addComplete(orderId) {
+    return await Order.refresh().where('id', orderId).update({
+      status: 'completed',
+    });
+  }
+
+  /**
+   * Perform a quick sale of an item
+   * @param {Object} item - The item to sell
+   * @param {string} orderType - The type of order
+   * @returns {Promise<Object>} - The result of the sale
    */
   async quickSale(item, orderType) {
-    // 1. Prepare the item
-    const itemAttributes = [
-      {
-        item_id: item.id,
-        name: item.name,
-        description: item.description,
-        quantity: 1,
-        unit_cost_price: item.cost_price,
-        unit_sales_price: item.sale_price,
-        total: item.sale_price,
-      },
-    ];
-
-    // Get order total
-    let orderTotal = 0;
-    itemAttributes.forEach((item) => {
-      orderTotal = item.total;
-    });
-
-    const currency = await getSetting('app_default_currency');
-    const defaultPaymentMethod = await getSetting('app_default_payment_method');
-
-    // 2. Prepare the order
-    const orderAttributes = {
-      order_type: orderType.toLowerCase(),
-      order_key: 'S' + unixTimeStamp(),
-      created_via: 'android-mobile-app',
-      version: '1.0.0',
-      status: 'pending',
-      discount_total: 0,
-      discount_tax: 0,
-      total: orderTotal,
-      total_tax: 0,
-      prices_include_tax: 0,
-      customer_supplier_id: 0,
-      customer_supplier_note: 0,
-      payments: JSON.stringify([
-        {
-          method: defaultPaymentMethod,
-          title: defaultPaymentMethod,
-          transaction_id: 'P' + unixTimeStamp(),
-          amount: orderTotal,
-          currency: currency,
-          date_paid: ` ${unixHourStamp()}:${unixMinuteStamp()}`,
-        },
-      ]),
-    };
-
-    // 3. Now we have order and the item,
-    //    let us record them
-    return this.complete(orderAttributes, itemAttributes).then((result) => {
-      console.log(result)
-    })
-  }
-  async quickSalePurchase(item, orderType) {
-    // 1. Prepare the item
-    const itemAttributes = [
-      {
-        item_id: item.id,
-        name: item.name,
-        description: item.description,
-        quantity: 1,
-        unit_cost_price: item.cost_price,
-        unit_sales_price: item.sale_price,
-        total: item.cost_price,
-      },
-    ];
-
-    // Get order total
-    let orderTotal = 0;
-    itemAttributes.forEach((item) => {
-      orderTotal = item.total;
-    });
-
-    const currency = await getSetting('app_default_currency');
-    const defaultPaymentMethod = await getSetting('app_default_payment_method');
-
-    // 2. Prepare the order
-    const orderAttributes = {
-      order_type: orderType.toLowerCase(),
-      order_key: 'S' + unixTimeStamp(),
-      created_via: 'android-mobile-app',
-      version: '1.0.0',
-      status: 'pending',
-      discount_total: 0,
-      discount_tax: 0,
-      total: orderTotal,
-      total_tax: 0,
-      prices_include_tax: 0,
-      customer_supplier_id: 0,
-      customer_supplier_note: 0,
-      payments: JSON.stringify([
-        {
-          method: defaultPaymentMethod,
-          title: defaultPaymentMethod,
-          transaction_id: 'P' + unixTimeStamp(),
-          amount: orderTotal,
-          currency: currency,
-          date_paid: ` ${unixHourStamp()}:${unixMinuteStamp()}`,
-        },
-      ]),
-    };
-
-    // 3. Now we have order and the item,
-    //    let us record them
-    return this.complete(orderAttributes, itemAttributes);
-  }
-  /**
-   * Update order Item Total Manually
-   */
-  async setItemTotalManually(item, customItemTotal) {
-    return OrderItem.refresh()
-      .where('id', item.id)
-      .update({ total: parseFloat(customItemTotal) })
-      .then((results) => {
-        // Recalculate order total
-        return Database.statement(
-          `UPDATE orders 
-            SET total = (SELECT sum(total) from order_items WHERE order_id = ?) 
-           WHERE orders.id = ?`,
-          [item.order_id, item.order_id]
-        );
-      });
-  }
-
-  /**
-   * Set Customer Quantity
-   *
-   * @param {Item Model} item
-   * @param {Customer Quantity to set} customerItemQuantity
-   * @returns
-   */
-  async setItemQuantityManually(item, customerItemQuantity) {
-    return OrderItem.refresh()
-      .where('id', item.id)
-      .update({ total: parseFloat(customerItemQuantity) });
-  }
-
-  /**
-   * Record Order in Database
-   *
-   */
-  async recordOrder(item, orderType) {
-    // Push new sales to the queue
-    const newOrder = {
-      order_type: orderType,
+    const itemAttributes = [{
       item_id: item.id,
-      item_name: item.name,
-      item_description: item.description,
-      customer_or_supplier_id: 0,
+      name: item.name,
+      description: item.description,
       quantity: 1,
-      cost_price: item.cost_price,
-      sale_price: item.sale_price,
-      payment_mode: null,
+      unit_cost_price: item.cost_price,
+      unit_sales_price: item.sale_price,
+      total: item.sale_price,
+    }];
+
+    const orderTotal = itemAttributes[0].total;
+    const currency = await getSetting('app_default_currency');
+    const defaultPaymentMethod = await getSetting('app_default_payment_method');
+
+    const orderAttributes = {
+      order_type: orderType.toLowerCase(),
+      order_key: 'S' + unixTimeStamp(),
+      created_via: 'android-mobile-app',
+      version: '1.0.0',
+      status: 'pending',
+      discount_total: 0,
+      discount_tax: 0,
+      total: orderTotal,
+      total_tax: 0,
+      prices_include_tax: 0,
+      customer_supplier_id: 0,
+      customer_supplier_note: 0,
+      payments: JSON.stringify([{
+        method: defaultPaymentMethod,
+        title: defaultPaymentMethod,
+        transaction_id: 'P' + unixTimeStamp(),
+        amount: orderTotal,
+        currency: currency,
+        date_paid: `${unixHourStamp()}:${unixMinuteStamp()}`,
+      }]),
     };
 
-    return Order.create(newOrder).then((result) => {
-      // 1. Reduce Stock for sale
-      //    Increase stock for purchase
-      this.adjustStock(item, newOrder.quantity, newOrder.order_type);
-      return result;
-    });
+    return await this.complete(orderAttributes, itemAttributes);
   }
 
   /**
-   * Adjust stock as orders are being
-   * Tracked
+   * Perform a quick purchase of an item
+   * @param {Object} item - The item to purchase
+   * @param {string} orderType - The type of order
+   * @returns {Promise<Object>} - The result of the purchase
+   */
+  async quickSalePurchase(item, orderType) {
+    const itemAttributes = [{
+      item_id: item.id,
+      name: item.name,
+      description: item.description,
+      quantity: 1,
+      unit_cost_price: item.cost_price,
+      unit_sales_price: item.sale_price,
+      total: item.cost_price,
+    }];
+
+    const orderTotal = itemAttributes[0].total;
+    const currency = await getSetting('app_default_currency');
+    const defaultPaymentMethod = await getSetting('app_default_payment_method');
+
+    const orderAttributes = {
+      order_type: orderType.toLowerCase(),
+      order_key: 'S' + unixTimeStamp(),
+      created_via: 'android-mobile-app',
+      version: '1.0.0',
+      status: 'pending',
+      discount_total: 0,
+      discount_tax: 0,
+      total: orderTotal,
+      total_tax: 0,
+      prices_include_tax: 0,
+      customer_supplier_id: 0,
+      customer_supplier_note: 0,
+      payments: JSON.stringify([{
+        method: defaultPaymentMethod,
+        title: defaultPaymentMethod,
+        transaction_id: 'P' + unixTimeStamp(),
+        amount: orderTotal,
+        currency: currency,
+        date_paid: `${unixHourStamp()}:${unixMinuteStamp()}`,
+      }]),
+    };
+
+    return await this.complete(orderAttributes, itemAttributes);
+  }
+
+  /**
+   * Adjust stock of an item based on the order type
+   * @param {number} itemId - The ID of the item
+   * @param {number} quantity - The quantity to adjust
+   * @param {string} orderType - The type of order
    */
   async adjustStock(itemId, quantity, orderType) {
-    const stockItem = Item.refresh().where('id', itemId);
-
-    switch (orderType.toLowerCase()) {
-      case 'sale':
-      case 'sale-more':
-      case 'purchase-less':
-        stockItem.reduceQuantity(quantity);
-        break;
-      case 'purchase':
-      case 'purchase-more':
-      case 'sale-less':
-        stockItem.increaseQuantity(quantity);
-        break;
-    }
-  }
-
-  /**
-   * Update order item
-   *
-   * @params
-   *  orderItem to edit
-   *  action: More for increase and less for decrease
-   *  lineItemsLength: if it's the only one item, then delete it
-   */
-  async updateOrderItem(orderItem, actionType, quantity = 1) {
-    // Calculate changes
-    let orderLineItem = orderItem;
-
-    // Update quantity based on the order change
-    switch (actionType.toLowerCase()) {
-      case 'sale-more':
-      case 'purchase-more':
-        orderLineItem.quantity = orderLineItem.quantity + 1;
-        break;
-      case 'sale-less':
-      case 'purchase-less':
-        orderLineItem.quantity = orderLineItem.quantity - 1;
-        break;
-    }
-
-    // You cannot sell negative quantity, Remove order
-    if (actionType.endsWith('less') && orderItem.quantity < 1) {
-      OrderItem.refresh().where('id', orderLineItem.id).delete();
+    const itemInventory = await ItemInventory.refresh().where('item_id', itemId).get();
+    if (itemInventory.length > 0) {
+      const stockQuantity = itemInventory[0].quantity;
+      const newQuantity = orderType === 'purchase' ? stockQuantity + quantity : stockQuantity - quantity;
+      await ItemInventory.refresh().where('item_id', itemId).update({ quantity: newQuantity });
     } else {
-      // Persist changes in DB
-      orderLineItem.total = orderLineItem.unit_sales_price * orderLineItem.quantity;
-      OrderItem.refresh().where('id', orderLineItem.id).update(orderLineItem);
+      // Handle case where item inventory does not exist
+      console.error(`Item with ID ${itemId} not found in inventory.`);
     }
-
-    // Update inventory items
-    return this.adjustStock(orderLineItem.item_id, quantity, actionType).then((results) => {
-      /** Track the item inventory
-       * @TODO ensure inventory are being recorded
-       */
-      ItemInventory.trackInventory(
-        orderItem.item_id,
-        quantity,
-        orderItem.total,
-        'Order sales | ' + actionType
-      ).then((inventory) => {
-        console.log('==== INVENTORY=======');
-        console.log(inventory);
-
-        console.log(ItemInventory.get());
-      });
-
-      return results;
-    });
-  }
-
-  async updateOrderPurchaseItem(orderItem, actionType, quantity = 1) {
-    // Calculate changes
-    let orderLineItem = orderItem;
-
-    // Update quantity based on the order change
-    switch (actionType.toLowerCase()) {
-      case 'sale-more':
-      case 'purchase-more':
-        orderLineItem.quantity = orderLineItem.quantity + 1;
-        break;
-      case 'sale-less':
-      case 'purchase-less':
-        orderLineItem.quantity = orderLineItem.quantity - 1;
-        break;
-    }
-
-    // You cannot sell negative quantity, Remove order
-    if (actionType.endsWith('less') && orderItem.quantity < 1) {
-      OrderItem.refresh().where('id', orderLineItem.id).delete();
-    } else {
-      // Persist changes in DB
-      orderLineItem.total = orderLineItem.unit_cost_price * orderLineItem.quantity;
-      OrderItem.refresh().where('id', orderLineItem.id).update(orderLineItem);
-    }
-
-    // Update inventory items
-    return this.adjustStock(orderLineItem.item_id, quantity, actionType).then((results) => {
-      /** Track the item inventory
-       * @TODO ensure inventory are being recorded
-       */
-      ItemInventory.trackInventory(
-        orderItem.item_id,
-        quantity,
-        orderItem.total,
-        'Order sales | ' + actionType
-      ).then((inv) => {
-        console.log('==== INVENTORY=======');
-
-        console.log(inv);
-        console.log(ItemInventory.get());
-      });
-
-      return results;
-    });
   }
 }
 

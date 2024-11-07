@@ -82,7 +82,7 @@ export default function ItemSearchScreen({ navigation }) {
         item={item}
         key={item.id}
         onPress={() =>
-          navigation.navigate(t('screens.editItem'), {
+          navigation.navigate(`Edit Item`, {
             item: item,
           })
         }

@@ -39,7 +39,7 @@ export const generalSettings = [
         type: 'select',
         options: [
           // { key: "System Default", title: "System Default" },
-          { key: 'dark', title: 'Dark Mode' },
+          // { key: 'dark', title: 'Dark Mode' },
           { key: 'light', title: 'Light Mode' },
         ],
       },

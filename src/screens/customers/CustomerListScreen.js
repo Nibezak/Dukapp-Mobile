@@ -8,7 +8,6 @@ import RenderCustomer from './RenderCustomer';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import SearchButton from '../../components/SearchButton';
 import { CustomersAnimation } from '../../components/CustomersAnimation';
-import * as Analytics from 'expo-firebase-analytics';
 import { onAuthStateChanged } from '@firebase/auth';
 import { auth } from '../../../firebase';
 import { ThemeContext } from '../../../App';
@@ -34,22 +33,13 @@ export default function CustomerListScreen({ navigation }) {
       setUser(user);
     });
     refreshCustomers();
-    tracker();
   }, []);
 
   /**
    * Get DB customers
    */
 
-  // track screen on google analytics
-  async function tracker() {
-    Analytics.setUserId(user.email);
-    Analytics.logEvent('users', {
-      user: user.email,
-      screen: 'screens',
-      navigation: 'Customer Screen',
-    });
-  }
+
   async function refreshCustomers() {
     CustomerService.getCustomers()
       .then(setCustomers)

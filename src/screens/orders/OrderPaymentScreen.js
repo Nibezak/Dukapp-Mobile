@@ -67,17 +67,14 @@ export default function OrderPaymentScreen({ navigation, route }) {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <View style={styles.row}>
-        <InputSelect
-          testID={'payment-option-selection'}
-          mode={'dropdown'}
-          title={t('order.payment_method')}
-          selectedValue={method}
-          style={{ height: 150, width: 150 }}
-          onValueChange={(itemValue, itemIndex) => handleSetMethod(itemValue, itemIndex)}
-          options={paymentOptions}
-        />
-      </View>
+      <InputSelect
+        testID={'payment-option-selection'}
+        mode={'dropdown'}
+        title={t('order.payment_method')}
+        selectedValue={method}
+        onValueChange={(itemValue, itemIndex) => handleSetMethod(itemValue, itemIndex)}
+        options={paymentOptions}
+      />
       <View style={styles.row}>
         <FieldText
           defaultValue={order.total.toString()}
@@ -96,10 +93,6 @@ export default function OrderPaymentScreen({ navigation, route }) {
         <ButtonFilled onPress={handleAddPayment} color={theme.primary} labelColor={theme.text}>
           {'Save'}
         </ButtonFilled>
-        {/* <Button onPress={} color={'#f1f1f1'} backgroundColor={}>
-        </Button> */}
-        {/* <Button onPress={handleAddPayment} color={'#f1f1f1'} backgroundColor={'#47a67f'}>
-        </Button> */}
       </View>
     </View>
   );
@@ -116,7 +109,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     padding: 10,
-    marginTop: 30,
   },
   amount: {
     fontSize: 14,

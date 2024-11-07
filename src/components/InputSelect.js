@@ -3,69 +3,63 @@ import { StyleSheet, View, Text } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { ThemeContext } from '../../App';
 
-/**
- * Styles for the Components
- */
-const styles = {
-  input: {
-    flex: 1,
-    margin: 2,
-    fontSize: 16,
-    borderBottomWidth: 1,
-    borderRadius: 3,
-    backgroundColor: '#fff',
+const styles = StyleSheet.create({
+  container: {
+    marginHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: 'transparent',
+    borderRadius: 8,
+    width: '90%',
+    paddingHorizontal: 5,
   },
-  styleItem: {},
   label: {
-    flex: 1,
-    alignSelf: 'center',
-    paddingHorizontal: 10,
-    fontSize: 16,
-    color: '#2d3748',
+    fontSize: 24,
+    fontWeight: '500',
+    marginBottom: 10,
+    opacity: 0.9,
+    width: '100%', // Make the label full width
   },
-};
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 6,
+    overflow: 'hidden',
+    width: '100%', // Make the picker container full width
+  },
+  picker: {
+    height: 44,
+    fontSize: 16,
+    width: '100%', // Make the picker full width
+  },
+});
 
 export default function InputSelect(props) {
-  const { options } = props;
+  const { options, title } = props;
   const { theme } = useContext(ThemeContext);
-  /**
-   * Condistionally Display the label
-   * based on the title availability
-   */
-  function DisplayLabel() {
-    if (props.title) {
-      return <Text style={[styles.label, { color: theme.text, opacity: 0.8 }]}>{props.title}</Text>;
-    }
-
-    return <></>;
-  }
 
   return (
-    <View
-      style={{
-        marginHorizontal: 15,
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'stretch',
-        justifyContent: 'space-between',
-      }}
-    >
-      <DisplayLabel />
-      <Picker
-        {...props}
-        style={[styles.input, { backgroundColor: theme.accent, color: theme.text }]}
-        itemStyle={[styles.input, { backgroundColor: theme.accent, color: theme.text }]}
-        dropdownIconColor={theme.text}
-      >
-        {options.map((option, index) => (
-          <Picker.Item
-            label={option.label}
-            value={option.value}
-            key={index}
-            style={{ backgroundColor: theme.accent, color: theme.text }}
-          />
-        ))}
-      </Picker>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      {title && (
+        <Text style={[styles.label, { opacity: 0.8 }]}>
+          {title}
+        </Text>
+      )}
+      <View style={[styles.pickerContainer, { borderColor: theme.border }]}>
+        <Picker
+          {...props}
+          style={[styles.picker, { backgroundColor: theme.accent, color: theme.text }]}
+          dropdownIconColor={theme.text}
+        >
+          {options.map((option, index) => (
+            <Picker.Item
+              label={option.label}
+              value={option.value}
+              key={index}
+              style={{ color: theme.text }}
+            />
+          ))}
+        </Picker>
+      </View>
     </View>
   );
 }

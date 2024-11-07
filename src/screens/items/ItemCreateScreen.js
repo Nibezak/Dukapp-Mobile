@@ -89,13 +89,13 @@ const CreateItemScreen = ({ navigation, route }) => {
         >
           {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
             <>
-              <View style={styles.switchContainer}>
+              {/* <View style={styles.switchContainer}>
                 <InputSwitch
                   onValueChange={toggleServiceSwitch}
                   value={isService}
                   title={t('item.is_item_service')}
                 />
-              </View>
+              </View> */}
 
               <FieldText
                 value={values.name}
