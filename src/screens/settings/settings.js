@@ -39,7 +39,7 @@ export const generalSettings = [
         type: 'select',
         options: [
           // { key: "System Default", title: "System Default" },
-          { key: 'dark', title: 'Dark Mode' },
+          // { key: 'dark', title: 'Dark Mode' },
           { key: 'light', title: 'Light Mode' },
         ],
       },
@@ -261,14 +261,14 @@ export const generalSettings = [
       },
     ],
   },
-  // {
-  //   title: 'settings.logout',
-  //   description: null,
-  //   icon: 'logout',
-  //   key: 'logout',
-  //   value: 'logout',
-  //   color: '#f59e0b',
-  //   action: 'logout',
-  //   options: [],
-  // },
+  {
+    title: 'settings.logout',
+    description: null,
+    icon: 'logout',
+    key: 'logout',
+    value: 'logout',
+    color: '#f59e0b',
+    action: 'logout',
+    options: [],
+  },
 ];

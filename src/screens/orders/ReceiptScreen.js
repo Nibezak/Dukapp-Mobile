@@ -18,20 +18,22 @@ import { useFocusEffect } from '@react-navigation/native';
 import { money, number } from '../../helpers/Numbers';
 import OrderService from '../../services/OrderService';
 import ItemService from '../../services/ItemService';
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import ReceiptOrderItems from './ReceiptOrderItems';
 import ZigzagView from 'react-native-zigzag-view';
 import { getSetting } from '../../models/AsyncStorage';
 import ViewShot from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import CheckButton from '../../components/CheckButton';
-import * as Analytics from 'expo-firebase-analytics';
 import { ThemeContext } from '../../../App';
+import PaylinkButton from '../../components/PaylinkButton';
+import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import QrCode from '../../components/QrCode';
 
 // Retrieve user windows height
 const windowHeight = Dimensions.get('window').height;
 
-export default function OrderDetailsScreen({ navigation, route }) {
+export default function ReceiptScreen({ navigation, route }) {
   const [order, setOrder] = useState(route.params.order);
   const ref = useRef();
   const payment = order?.payments[0];
@@ -46,6 +48,8 @@ export default function OrderDetailsScreen({ navigation, route }) {
   const [person, setPerson] = useState([]);
   const [currency, setCurrency] = useState(null);
   const { theme } = useContext(ThemeContext);
+  const bottomSheetModalRef = useRef(null);
+  const snapPoints = ['100%'];
 
   useFocusEffect(
     useCallback(() => {
@@ -55,6 +59,7 @@ export default function OrderDetailsScreen({ navigation, route }) {
       });
     }, [])
   );
+
   useEffect(() => {
     // Update the order detail nav
     navigation.setOptions({
@@ -66,19 +71,15 @@ export default function OrderDetailsScreen({ navigation, route }) {
     // Get Items for suggestions
     getItems();
 
-    //  Get order Customer
+    // Get order Customer
     getOrderCustomer();
 
-    //Fetch app settings
+    // Fetch app settings
     retrieveSetting();
     // Fetch order from the database
-
     refreshOrder();
   }, []);
 
-  /**
-   * Method to update the top right navitation
-   */
   function updateNavRight() {
     navigation.setOptions({
       headerStyle: {
@@ -87,7 +88,6 @@ export default function OrderDetailsScreen({ navigation, route }) {
       headerTintColor: theme.text,
       headerRight: () => (
         <View style={{ flexDirection: 'row' }}>
-          {/* Capture ScreenShot */}
           <TouchableOpacity
             onPress={() => {
               ref.current.capture().then((uri) => {
@@ -112,36 +112,15 @@ export default function OrderDetailsScreen({ navigation, route }) {
     });
   }
 
-  /**
-   * Handle Delete button, but start by confirming with the user
-   * of the application before proceeding
-   */
-
   function captureAndShareReceipt() {
     ref.current.capture().then((uri) => {
-      // capture the screenshot
       console.log('file uri ', uri);
-      //after capturing , send the screeenshot
-
       Sharing.shareAsync('file://' + uri);
-    }),
-      (error) => console.error('Oops, snapshot failed', error);
+    }).catch((error) => console.error('Oops, snapshot failed', error));
   }
 
-  /**
-   * Method to destroy the order from the database
-   */
-  /**
-   * Get Customer By Id
-   */
   async function getOrderCustomer() {
-    if (order.customer_supplier_id === 0) {
-      // Nothing to do if there is no customer or
-      // supplier
-      return;
-    }
-
-    // Find Customer for this order and attach to the order
+    if (order.customer_supplier_id === 0) return;
     CustomerService.find(order.customer_supplier_id)
       .then((result) => {
         if (result.length > 0) {
@@ -152,7 +131,6 @@ export default function OrderDetailsScreen({ navigation, route }) {
         throw error;
       });
   }
-  //retrive app settings
 
   async function retrieveSetting() {
     getSetting('business_name').then(setBusinessName);
@@ -164,23 +142,15 @@ export default function OrderDetailsScreen({ navigation, route }) {
     getSetting('contact_email').then(setEmail);
   }
 
-  /**
-   * Get orders
-   */
   async function refreshOrder() {
-    OrderService.ordersWithItems(setOrder, orderType, order.id).then((result) => {
-      // 1. Update the customer
+    OrderService.ordersWithItems(setOrder, orderType, order.id).then(() => {
       getOrderCustomer();
     });
   }
 
-  /**
-   * Get Orders from DB
-   */
   async function getItems() {
     ItemService.getItems().then(setItems);
   }
-
 
   const dayjs = require('dayjs');
   const date = payment.date_paid;
@@ -207,17 +177,20 @@ export default function OrderDetailsScreen({ navigation, route }) {
       navigation.goBack();
     }
   }
+
+  async function handlePaylink() {
+    bottomSheetModalRef.current?.present();
+  }
+
   async function checkout() {
-    Analytics.logEvent('checkout', {
-      shop: businessName,
-      method: 'checkout',
-    });
+
     OrderService.addComplete(order.id).then(() => {
       navigation.navigate('Order Sale').then(() => {
         ToastAndroid.show('Checkout complete', ToastAndroid.SHORT);
       });
     });
   }
+
   const keyExtractor = useCallback((item, index) => index.toString(), []);
 
   return (
@@ -233,22 +206,18 @@ export default function OrderDetailsScreen({ navigation, route }) {
             style={{ backgroundColor: '#f1f1f1' }}
             ref={ref}
           >
-            <ZigzagView>
+            <ZigzagView style={{ padding: 4 }}>
               <Image
-                source={require('./../../../assets/snack-icon.png')}
-                style={{ width: 120, height: 100, marginHorizontal: 30 }}
+                source={require('./../../../assets/dukapp-color.png')}
+                style={{ width: 50, height: 50, marginHorizontal: 30, marginTop: 10 }}
               />
-              {/** RECEIPT HEADER */}
-
               <View style={styles.shopDetailsContainer}>
                 <Text style={styles.shopName}>{businessName}</Text>
                 <Text style={styles.shopAddress}>{address}</Text>
                 <Text style={styles.shopAddress}>{phone}</Text>
-
                 <Text style={styles.shopAddress}>{email}</Text>
               </View>
 
-              {/** ORDER DETAILS */}
               <View style={styles.orderContainer}>
                 <View style={styles.orderDetails}>
                   <Text style={styles.receiptNumber}># {payment.transaction_id}</Text>
@@ -274,8 +243,8 @@ export default function OrderDetailsScreen({ navigation, route }) {
                   </Text>
                 </View>
               </View>
+
               <View style={styles.itemContainer}>
-                {/** HEADERS */}
                 <View style={styles.itemHeader}>
                   <Text style={styles.itemNameHeader}> {t('receipt.item_name')}</Text>
                   <Text style={styles.itemAmountHeader}>
@@ -293,17 +262,40 @@ export default function OrderDetailsScreen({ navigation, route }) {
                   <Text style={styles.totalAmount}>{number(order.total)}</Text>
                 </View>
               </View>
+
             </ZigzagView>
           </ViewShot>
         </View>
       </ScrollView>
-      <View>
+      <BottomSheetModalProvider>
+        <BottomSheetModal
+          ref={bottomSheetModalRef}
+          index={0}
+          snapPoints={snapPoints}
+          backgroundStyle={{
+            backgroundColor: theme.accent,
+            padding: 0,
+            borderTopColor: theme.colorIcon,
+          }}
+          handleIndicatorStyle={{ backgroundColor: theme.colorIcon }}
+        >
+          <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+            <Text style={{ color: theme.text, opacity: 0.7, fontSize: 14 }}>
+              Scan the Qr Code to Pay
+            </Text>
+          </View>
+          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
+            <QrCode phoneNumber={phone} orderTotal={order.total} />
+          </View>
+        </BottomSheetModal>
+      </BottomSheetModalProvider>
+      <View style={styles.buttonRow}>
+        <PaylinkButton onPress={handlePaylink} />
         <CheckButton onPress={handleCheckout} />
       </View>
     </View>
   );
 }
-
 /**
  * Styles for the
  */
@@ -311,6 +303,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    margin: 8, // Optional margin around the row
+  },
+
   orderContainer: {
     paddingHorizontal: 30,
   },

@@ -148,11 +148,11 @@ export default function EditItemScreen({ navigation, route }) {
             color: '#cbd5e0',
           }}
         >
-          <InputSwitch
+          {/* <InputSwitch
             onValueChange={toggleSwitch}
             value={isService}
             title={t('item.is_item_service')}
-          />
+          /> */}
         </View>
         <ScrollView>
           <Formik
@@ -305,7 +305,7 @@ export default function EditItemScreen({ navigation, route }) {
                   {/* <Button onPress={handleDeleteItem} color={'#f1f1f1'} backgroundColor='#ef4444'>
             {t('common.delete')}
           </Button> */}
-                  <View style={{ width: '50%' }}>
+                  <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                     <ButtonFilled
                       onPress={handleSubmit}
                       color={theme.primary}
@@ -314,6 +314,7 @@ export default function EditItemScreen({ navigation, route }) {
                       {t('common.save')}
                     </ButtonFilled>
                   </View>
+
                 </View>
               </>
             )}

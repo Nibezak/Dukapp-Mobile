@@ -5,11 +5,28 @@ import OrderItem from '../models/OrderItem';
 import Supplier from '../models/Supplier';
 import ItemInventory from '../models/ItemInventory';
 
-export function migrateDatabase() {
-  ItemInventory.createTable();
-  OrderItem.createTable();
-  Customer.createTable();
-  Supplier.createTable();
-  Order.createTable();
-  Item.createTable();
+export async function migrateDatabase() {
+  try {
+    await ItemInventory.createTable();
+    console.log('ItemInventory table created successfully.');
+
+    await OrderItem.createTable();
+    console.log('OrderItem table created successfully.');
+
+    await Customer.createTable();
+    console.log('Customer table created successfully.');
+
+    await Supplier.createTable();
+    console.log('Supplier table created successfully.');
+
+    await Order.createTable();
+    console.log('Order table created successfully.');
+
+    await Item.createTable();
+    console.log('Item table created successfully.');
+
+    console.log('============= Database Migrated Successfully ===========');
+  } catch (error) {
+    console.error('Error migrating database:', error);
+  }
 }

@@ -1,102 +1,110 @@
 import React, { useContext } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { t } from 'i18n-js';
 import { ThemeContext } from '../../../App';
 
-export default function RenderCustomer({ item, index, onPress }) {
+/**
+ * Render a customer item in a list
+ */
+export default function RenderCustomer({ item, onPress }) {
   const navigation = useNavigation();
   const { theme } = useContext(ThemeContext);
 
-  const maxLength = 10; // set the maximum number of lines
-  const text = '<Text style={[styles.email, { color: theme.text }]}>{item.email}</Text>'; // the text to trim
-  const lines = text.split('\n'); // split the text into lines
-  const displayText = lines.slice(0, maxLength).join('\n') + (lines.length > maxLength ? '\n...' : '');
-
-  console.log(displayText);
-  // Output:
-  // <Text style={[styles.email, { color: theme.text }]}>{item.email}</Text>...
-
-  // If item is for adding a customer, then return a different
-  // View
+  // If item is for adding a customer, return the add button
   if (item.id === 'add_customer') {
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('screens.newCustomer')}>
-        {/** Give options to add a new item */}
-        <View
-          style={[
-            styles.row,
-            {
-              padding: 10,
-              backgroundColor: theme.accent,
-              alignContent: 'center',
-              alignItems: 'center',
-            },
-          ]}
-        >
-          <MaterialIcons name="add" size={34} color={theme.primary} style={[styles.avatar]} />
-
-          <Text
-            style={{
-              fontSize: 18,
-              alignSelf: 'center',
-              textAlign: 'center',
-              fontWeight: '700',
-              color: theme.primary,
-            }}
-          >
-            {t('customer.new_customer')}
-          </Text>
+      <TouchableOpacity onPress={() => navigation.navigate('New Customer')}>
+        <View style={[styles.addCustomerButton, { backgroundColor: theme.accent }]}>
+          <MaterialIcons name="add" size={34} color={theme.primary} style={styles.icon} />
+          <Text style={styles.addCustomerText}>{t('customer.new_customer')}</Text>
         </View>
       </TouchableOpacity>
     );
   }
 
+  // Generate initials based on the customer's name
+  const initials = generateInitials(item.names);
+
   return (
     <TouchableOpacity onPress={onPress}>
-      < View style={styles.row} >
-        <MaterialIcons name="person" style={styles.avatar} size={32} color={theme.colorIcon} />
-
+      <View style={styles.card}>
+        <View style={styles.avatar}>
+          <Text style={styles.initial}>{initials}</Text>
+        </View>
         <View style={styles.rowText}>
           <Text style={[styles.names, { color: theme.text }]}>{item.names}</Text>
           <Text style={[styles.phone, { color: theme.text }]}>{item.phone}</Text>
         </View>
-        <View style={styles.rowText}>
-          <Text style={[styles.phone, { color: theme.text }]}>{item.address}</Text>
-        </View>
-        <Text>
-          <MaterialIcons name="chevron-right" size={32} color={theme.colorIcon} />
-        </Text>
-      </View >
-    </TouchableOpacity >
+        <MaterialIcons name="chevron-right" size={32} color={theme.colorIcon} />
+      </View>
+    </TouchableOpacity>
   );
 }
 
-const styles = {
-  row: {
+// Function to generate initials based on the customer's name
+const generateInitials = (name) => {
+  const parts = name.split(' ');
+  return parts.length > 1
+    ? `${parts[0].charAt(0).toUpperCase()}${parts[parts.length - 1].charAt(0).toUpperCase()}`
+    : `${name.charAt(0).toUpperCase()}${name.charAt(name.length - 1).toUpperCase()}`;
+};
+
+const styles = StyleSheet.create({
+  card: {
     flexDirection: 'row',
+    alignItems: 'center',
     padding: 20,
-    borderBottomWidth: 1,
-    // borderBottomColor: '#eee',
+    borderRadius: 5,
+    borderBottomWidth: 2,
+    borderColor: '#e0e0e0',
+    backgroundColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+  },
+  addCustomerButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+  },
+  icon: {
+    marginRight: 10,
   },
   avatar: {
-    borderRadius: 20,
-    width: 40,
-    height: 40,
-    marginRight: 10,
+    width: 50,
+    height: 50,
+    backgroundColor: '#F5F5F4',
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#78716C',
+    marginRight: 15,
+  },
+  initial: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#292524',
   },
   rowText: {
     flex: 1,
+    paddingRight: 15,
+  },
+  names: {
+    fontWeight: '600',
+    fontSize: 16,
+    letterSpacing: 2,
   },
   phone: {
     fontSize: 14,
+    color: '#757575',
   },
-  email: {
-    fontSize: 14,
+  addCustomerText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#00796b',
   },
-  names: {
-    fontWeight: 'bold',
-    paddingRight: 10,
-  },
-};
+});

@@ -6,6 +6,7 @@ import { t } from 'i18n-js';
 import ButtonFilled from '../../components/ButtonFilled';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ThemeContext } from '../../../App';
+import ButtonOutlined from '../../components/ButtonOutlined';
 /**
  * Render payment section
  */
@@ -30,23 +31,23 @@ export default function RenderPayment({ order, customer }) {
     <View style={{ flexDirection: 'row' }}>
       {/* CUSTOMER SECTION */}
       <View style={{ flex: 1 }}>
-        <ButtonFilled onPress={handleOnPressCustomer} color={theme.accent} labelColor={theme.text}>
+        <ButtonOutlined onPress={handleOnPressCustomer} color={theme.accent} labelColor={theme.text}>
           <MaterialCommunityIcons name={'account'} size={16} />
           {t('order.customer_paid_by', {
             customer: customer.names,
           })}
-        </ButtonFilled>
+        </ButtonOutlined>
       </View>
 
       {/* PAYMENT METHOD SECTION */}
       <View style={{ flex: 1 }}>
-        <ButtonFilled
+        <ButtonOutlined
           onPress={handleOnPressPayment}
           color={order.payments[0].method === 'credit' ? '#facc15' : '#dcfce7'}
           labelColor={order.payments[0].method === 'credit' ? '#0f172a' : '#14532d'}
         >
           {order.payments[0].title} {'-'} {money(order.total, order.payments[0].currency)}
-        </ButtonFilled>
+        </ButtonOutlined>
       </View>
     </View>
   );

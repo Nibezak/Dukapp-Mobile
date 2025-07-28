@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View, TouchableOpacity, Text, ScrollView } from 'react-native';
+import { View, TouchableOpacity, Text, ScrollView, StyleSheet } from 'react-native';
 import { ThemeContext } from '../../App';
 
 /**
@@ -7,13 +7,17 @@ import { ThemeContext } from '../../App';
  */
 export default function SuggestionButton(props) {
   const { theme } = useContext(ThemeContext);
+
   return (
-    <ScrollView style={[styles.scrollView, { backgroundColor: theme.background }]}>
-      <View style={[styles.view]}>
+    <ScrollView style={styles.scrollView}>
+      <View style={styles.view}>
         <TouchableOpacity
           style={[
             styles.suggestionButton,
-            { backgroundColor: theme.accent, borderBottomWidth: 0.3, borderColor: theme.text },
+            {
+              borderColor: theme.text,
+              backgroundColor: 'transparent'
+            },
           ]}
           onPress={props.onPress}
         >
@@ -24,24 +28,24 @@ export default function SuggestionButton(props) {
   );
 }
 
-const styles = {
+const styles = StyleSheet.create({
   suggestionButton: {
+    flex: 1,
     flexDirection: 'row',
     borderRadius: 10,
-    border: 0.5,
-    borderColor: '#f9fafb',
+    borderWidth: 1, // Changed to 'borderWidth' for better visibility
     marginHorizontal: 2,
-    marginVertical: 1,
-    paddingVertical: 10,
-    backgroundColor: '#f1f1f1',
+    marginVertical: 5, // Increased margin for better spacing
+    paddingVertical: 12, // Adjusted padding for a better touch target
+    alignItems: 'center', // Center items vertically
   },
   suggestionText: {
     fontWeight: '600',
     fontSize: 16,
     paddingHorizontal: 10,
+    textAlign: 'center', // Center text
   },
   view: {
-    padding: 3,
-    // backgroundColor: '#f4f4f4',
+    padding: 5, // Increased padding for better aesthetics
   },
-};
+});

@@ -76,17 +76,13 @@ export default function LoginScreen({ navigation }) {
 const WelcomeSection = ({ theme, navigation }) => (
   <View style={styles.welcome}>
     <Image
-      source={
-        theme.theme === 'light'
-          ? require('./../../../assets/snack-icon.png')
-          : require('./../../../assets/snack-icon-dark.png')
-      }
+      source={require('./../../../assets/snack-icon.png')}
       style={styles.appName}
     />
     <Text style={[styles.pitch, { color: theme.text, opacity: 0.7 }]}>
       {t('auth.welcome_to_dukapp_app')}
     </Text>
-    <TouchableOpacity style={{ marginHorizontal: 30 }} onPress={() => navigation.navigate('Login')}>
+    <TouchableOpacity style={{ marginHorizontal: 30 }} onPress={() => navigation.navigate('Register')}>
       <Text style={[styles.verifyPhone, { color: theme.text, opacity: 0.7 }]}>
         {t('auth.verify_your_phone')}
       </Text>
@@ -150,7 +146,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   appName: {
-    width: 200,
+    width: 45,
     marginTop: 10,
     marginBottom: -50,
     alignSelf: 'center',

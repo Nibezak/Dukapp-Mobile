@@ -1,159 +1,193 @@
-import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { Text, View, TouchableOpacity, StyleSheet, Alert, ToastAndroid } from 'react-native';
 import { t } from 'i18n-js';
 import { money } from '../../helpers/Numbers';
 import { useNavigation } from '@react-navigation/native';
 import { getSetting } from '../../models/AsyncStorage';
-import { Feather, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useContext } from 'react';
+import { FontAwesome, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { ThemeContext } from '../../../App';
+import dayjs from 'dayjs';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { RectButton } from 'react-native-gesture-handler';
+import Order from '../../models/Order';
 
-export default function RenderOrder({ item, parentRefresher }) {
+export default function RenderOrder({ item, onDelete }) {
   const navigation = useNavigation();
   const order = item.item;
-  const [customer, setCustomer] = useState({ name: 'Guest' });
   const payment = order.payments[0];
   const [currency, setCurrency] = useState(null);
   const { theme } = useContext(ThemeContext);
+  const swipeableRef = useRef(null);
 
   useEffect(() => {
-    retrieveSetting();
+    getSetting('app_default_currency').then(setCurrency);
   }, []);
 
-  function retrieveSetting() {
-    getSetting('app_default_currency').then(setCurrency);
-  }
-  const dayjs = require('dayjs');
   const date = order.created_at;
   const orderDate = payment.date_paid;
+
   function handleNavigation() {
-    if (order.status !== 'completed') {
-      navigation.navigate('Order Details', {
-        order: order,
-      });
-    } else {
-      navigation.navigate('Order Receipt', {
-        order: order,
-        customer: customer,
-      });
-    }
+    navigation.navigate(
+      order.status !== 'completed' ? 'Order Details' : 'Order Receipt',
+      { order }
+    );
   }
+
+  const handleDelete = () => {
+    Alert.alert(
+      `Delete Order #${order.id}`,
+      'Are you sure you want to delete this order?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {
+            // Close the swipeable row if deletion is canceled
+            swipeableRef.current?.close();
+          },
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: deleteOrder,
+          style: 'destructive',
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const deleteOrder = async () => {
+    try {
+      await Order.destroy(order.id); // Ensure this returns a promise
+      swipeableRef.current?.close();
+      ToastAndroid.show(t('welcome.order_deleted'), ToastAndroid.SHORT);
+      // Call onDelete to refresh the list in the parent component
+      onDelete(order.id); // Pass the order id to be deleted
+    } catch (error) {
+      console.error(error.message);
+      Alert.alert('Error', 'Failed to delete the order. Please try again.');
+    }
+  };
+
+
+  const renderRightActions = (progress, dragX) => {
+    return (
+      <RectButton style={styles.deleteButton} onPress={handleDelete}>
+        <MaterialIcons name="delete" size={24} color="#DC2626" />
+      </RectButton>
+    );
+  };
+
   return (
-    <TouchableOpacity
-      style={{
-        backgroundColor: theme.accent,
-        padding: 5,
-        borderRadius: 10,
-        marginBottom: 6,
-        elevation: 2.5,
-        marginTop: 3.5,
-      }}
-      key={order.id}
-      activeOpacity={0.8}
-      onPress={handleNavigation}
+    <Swipeable
+      ref={swipeableRef}
+      renderRightActions={renderRightActions}
+      rightThreshold={40}
+      overshootRight={false}
     >
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 2 }}>
-        <Text
-          style={{
-            paddingHorizontal: 5,
-            paddingVertical: 2,
-            borderRadius: 30,
-            color: theme.text,
-            opacity: 0.65,
-          }}
-        >
-          {dayjs(date).format('DD MMM YYYY')}
-        </Text>
-        <Text
-          style={{
-            paddingHorizontal: 5,
-            paddingVertical: 2,
-            borderRadius: 30,
-            color: theme.text,
-            opacity: 0.65,
-          }}
-        >
-          {/* {dayjs(date).format('h: mm A')} */}
-          {orderDate}
-        </Text>
-      </View>
-      <View style={styles.rows}>
-        <Text style={[styles.orderNumberColumn, { color: theme.text }]}>
-          {order.order_type.substr(0, 1).toUpperCase()}
-          {'#' + order.id}
-        </Text>
-        <Text style={[styles.itemNameColumn, { color: theme.text }]} numberOfLines={2}>
-          {order.line_items.length === 1
-            ? order.line_items[0].name
-            : t('order.items', { count: order.line_items.length })}
-        </Text>
-        <Text style={[styles.amount, { color: theme.text }]}>{money(order.total, currency)}</Text>
-        <View style={styles.itemPriceColumn}>
-          <Text
-            style={[
-              styles.paymentMethod,
-              {
-                color: payment.method == 'credit' ? '#f1c40f' : '#10b981',
-              },
-            ]}
-          >
+      <TouchableOpacity
+        style={styles.container(theme)}
+        activeOpacity={0.9}
+        onPress={handleNavigation}
+      >
+        <View style={styles.header}>
+          <Text style={styles.dateText(theme)}>{dayjs(date).format('DD MMM YYYY')}</Text>
+          <Text style={styles.dateText(theme)}>{orderDate}</Text>
+        </View>
+
+        <View style={styles.content}>
+          <Text style={[styles.orderNumber, { color: theme.text }]}>{order.order_type[0].toUpperCase()}#{order.id}</Text>
+          <Text style={styles.receiptNumber}># {payment.transaction_id}</Text>
+          <Text style={[styles.itemName, { color: theme.text }]} numberOfLines={1}>
+            {order.line_items.length === 1
+              ? order.line_items[0].name
+              : t('order.items', { count: order.line_items.length })}
+          </Text>
+        </View>
+
+        <View style={styles.footer}>
+          <Text style={[styles.paymentMethod, { color: payment.method === 'credit' ? '#f1c40f' : '#10b981' }]}>
             {payment.title?.slice(0, 6).toUpperCase()}
           </Text>
+          <Text style={[styles.amount, { color: theme.text }]}>
+            {money(order.total, currency)}
+          </Text>
           {order.status === 'completed' ? (
-            <FontAwesome name="check-circle" size={20} color="#10b981" style={{ marginRight: 5 }} />
+            <FontAwesome name="check-circle" size={20} color="#10b981" />
           ) : (
-            <>
-              <MaterialCommunityIcons name="dots-circle" size={20} color="#64748B" />
-            </>
+            <MaterialCommunityIcons name="dots-circle" size={20} color="#64748B" />
           )}
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </Swipeable>
   );
 }
 
-const styles = {
-  rows: {
+const styles = StyleSheet.create({
+  container: (theme) => ({
+    backgroundColor: 'transparent',
+    borderColor: '#000',
+    borderWidth: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    borderRadius: 12,
+    marginVertical: 6,
+    marginHorizontal: 10,
+  }),
+  header: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginVertical: 1.8,
-    paddingHorizontal: 1,
-    marginHorizontal: 3,
+    justifyContent: 'space-between',
+    marginBottom: 8,
   },
-
-  amount: {
+  dateText: (theme) => ({
+    fontSize: 12,
+    color: theme.text,
+    opacity: 0.7,
+  }),
+  content: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  orderNumber: {
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  receiptNumber: {
     fontSize: 14,
+    color: '#555',
   },
   itemName: {
-    paddingRight: 5,
-    flexGrow: 1,
-    width: 25,
+    fontSize: 15,
+    fontWeight: '500',
+    flexShrink: 1,
   },
-  orderNumberColumn: {
-    flex: 1,
-    color: '#000',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  itemNameColumn: {
-    flex: 3,
-    marginHorizontal: 5,
-  },
-  itemPriceColumn: {
-    flex: 4,
+  footer: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   paymentMethod: {
-    flex: 1,
-    marginRight: 5,
-    marginLeft: 10,
-    paddingTop: 3,
-    paddingBottom: 5,
-    paddingRight: 8,
-    // paddingLeft: ,
+    fontSize: 14,
+    fontWeight: '500',
   },
-  rightArrow: {
-    flexDirection: 'row',
+  amount: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  deleteButton: {
+    justifyContent: 'center',
     alignItems: 'center',
+    width: 40,
+    marginVertical: 6,
+    marginHorizontal: 6,
+    paddingHorizontal: 2,
+    borderRadius: 12,
   },
-};
+  deleteText: {
+    color: '#fff',
+    fontWeight: '600',
+    marginTop: 4,
+  },
+});

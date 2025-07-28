@@ -16,7 +16,7 @@ class Database {
       return {
         transaction: () => {
           return {
-            executeSql: () => {},
+            executeSql: () => { },
           };
         },
       };

@@ -20,7 +20,7 @@ export function TransactionsScreen() {
             ),
             headerLeft: () => (
                 <AntDesign
-                    name="menuunfold"
+                    name="caretright"
                     size={24}
                     color="#47a67f"
                     onPress={() => navigation.openDrawer()}

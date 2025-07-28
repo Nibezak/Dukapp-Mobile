@@ -1,5 +1,5 @@
 export default {
-  today_insights: "Today's Insights",
+  today_insights: "Insights",
   last_4_orders: 'Recent Sales',
   place_an_order: 'GURISHA',
   place_order_first: 'BANZA UGURISHE',

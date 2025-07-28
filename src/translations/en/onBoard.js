@@ -16,7 +16,7 @@ export default {
   tin_optional: 'TIN (optional)',
   default_currency: 'Default currency',
   default_payment_method: 'Default payment method',
-  start: 'Get Start',
+  start: 'START',
   setting_updated: 'Settings updated successfully.',
   continue: 'Continue',
   get_started: 'Get started',

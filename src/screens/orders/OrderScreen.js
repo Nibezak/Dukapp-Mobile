@@ -7,6 +7,7 @@ import {
   FlatList,
   Keyboard,
   Dimensions,
+  Platform,
   ActivityIndicator,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -19,7 +20,6 @@ import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Alert } from 'react-native';
 import { ToastAndroid } from 'react-native';
-import * as Analytics from 'expo-firebase-analytics';
 import { onAuthStateChanged } from '@firebase/auth';
 import { auth } from '../../../firebase';
 import { ThemeContext } from '../../../App';
@@ -60,18 +60,10 @@ export default function OrderScreen({ navigation, route }) {
     refreshOrders();
     resetToDefaultSuggestion();
     setHeader();
-    tracker();
   }, [orderType, theme]);
 
   // track screen on google analytics
-  async function tracker() {
-    Analytics.setUserId(user.email);
-    Analytics.logEvent('users', {
-      user: user.email,
-      screen: 'screens',
-      navigation: 'Order Screen',
-    });
-  }
+
   /**
    * Fetch Orders
    */
@@ -104,7 +96,7 @@ export default function OrderScreen({ navigation, route }) {
       ),
       headerLeft: () => (
         <AntDesign
-          name="menuunfold"
+          name="caretright"
           size={24}
           color={theme.primary}
           onPress={() => navigation.openDrawer()}
@@ -141,22 +133,22 @@ export default function OrderScreen({ navigation, route }) {
    */
   async function saleFromSuggestion(item) {
     /** Prevent having negative balance */
-    // if (item.quantity <= 0) {
-    //   Alert.alert(
-    //     'The Stock of : ' + item.name + ' is insuffient #',
-    //     'The remaining quantity is : ' +
-    //       item.quantity +
-    //       ' Please Add more stock to be able to sell',
-    //     [
-    //       {
-    //         text: 'Cancel',
-    //         onPress: () => console.log('Cancel Pressed'),
-    //         style: 'CANCEL',
-    //       },
-    //     ]
-    //   );
-    //   return;
-    // }
+    if (item.quantity <= 0) {
+      Alert.alert(
+        'The Stock of : ' + item.name + ' is insuffient #',
+        'The remaining quantity is : ' +
+        item.quantity +
+        ' Please Add more stock to be able to sell',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'CANCEL',
+          },
+        ]
+      );
+      return;
+    }
 
     // 1. Record the order in the database
     OrderService.quickSale(item, orderType)
@@ -188,6 +180,11 @@ export default function OrderScreen({ navigation, route }) {
   function resetToDefaultSuggestion() {
     setSuggestions([]);
   }
+
+
+  const handleDeleteOrder = (orderId) => {
+    setOrders((prevOrders) => prevOrders.filter(order => order.id !== orderId));
+  };
 
   /**
    * Handle Typing
@@ -283,8 +280,10 @@ export default function OrderScreen({ navigation, route }) {
           item: item,
         })
       }
+      onDelete={handleDeleteOrder} // Pass the onDelete function
     />
-  ));
+  ), []);
+
 
   const renderSuggestion = useCallback(({ item }) => {
     return (
@@ -374,13 +373,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   suggestions: {
-    width: '95%',
+    width: '100%',
     borderRadius: 3,
     alignSelf: 'center',
     height: windowHeight,
     position: 'relative',
     marginTop: 10,
-    elevation: 15,
     marginBottom: 5,
     paddingBottom: 5,
   },

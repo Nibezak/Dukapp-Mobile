@@ -23,7 +23,7 @@ export default function RenderOrderLineItem({
   }, []);
 
   return (
-    <View style={[styles.row, { borderBottomColor: theme.text }]}>
+    <View style={[styles.row]}>
       <View style={styles.itemNameColumn}>
         <Text style={[styles.itemName, { color: theme.text }]}>{item.name}</Text>
         <Text style={[styles.unitPrice, { color: theme.text, opacity: 0.7 }]}>
@@ -71,7 +71,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 10,
     paddingVertical: 15,
-    borderBottomWidth: 0.5,
+    borderWidth: 1,
+    borderColor: '#000',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: 5,
+    marginVertical: 4,
   },
   totalPriceInput: {
     paddingHorizontal: 5,

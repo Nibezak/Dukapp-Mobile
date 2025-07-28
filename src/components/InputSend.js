@@ -23,7 +23,7 @@ export default function InputSend(props) {
       />
 
       <TouchableOpacity onPress={props.onPress} style={styles.saleButton}>
-        <FontAwesome name="send" size={24} color={theme.primary} />
+        <FontAwesome name="plus" size={24} color={theme.primary} />
       </TouchableOpacity>
     </View>
   );

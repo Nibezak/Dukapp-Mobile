@@ -1,9 +1,9 @@
 import { t } from 'i18n-js';
 import { Image, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
-import ButtonFilled from './ButtonFilled';
 import { useNavigation } from '@react-navigation/native';
 import { useContext } from 'react';
 import { ThemeContext } from '../../App';
+import ButtonOutlined from './ButtonOutlined';
 export function WelcomeAnimation() {
   const { width } = useWindowDimensions();
   const navigation = useNavigation();
@@ -21,7 +21,7 @@ export function WelcomeAnimation() {
           {t('welcome.screen_description')}
         </Text>
         <View>
-          <ButtonFilled
+          <ButtonOutlined
             onPress={() =>
               navigation.navigate('Orders', {
                 order_type: 'sale',
@@ -30,7 +30,7 @@ export function WelcomeAnimation() {
             color={theme.primary}
           >
             {t('welcome.place_an_order')}
-          </ButtonFilled>
+          </ButtonOutlined>
         </View>
       </View>
     </View>

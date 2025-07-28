@@ -197,6 +197,45 @@ class ReportService {
     );
   }
 
+  lastSevenDaysSales(setSales, reportDays = 7, orderType = 'sale') {
+    Database.execute(
+      `SELECT
+              SUBSTR(orders.created_at, 0, 11) day,
+              SUM(order_items.total) sales
+        FROM orders, order_items
+        WHERE orders.id = order_items.order_id AND 
+              orders.order_type = ? AND 
+              SUBSTR(orders.created_at, 0, 11) >= ?
+        
+        GROUP BY 
+              SUBSTR(orders.created_at, 0, 11)
+        LIMIT 7
+        `,
+      [orderType, lastXDaysDate(reportDays)],
+      (results) => {
+        const days = lastXDaysNamesForChart(reportDays);
+        const sales = Object.keys(days).map(() => 0);
+
+        for (let i = 0; i < results.length; i++) {
+          const shortDay = new Date(results[i].day)
+            .toLocaleString('en-us', { weekday: 'long' })
+            .substr(0, 3);
+
+          const indexOfDay = days.indexOf(shortDay);
+          if (indexOfDay !== -1) {
+            sales[indexOfDay] = results[i].sales;
+          }
+        }
+
+        setSales({
+          days,
+          sales,
+        });
+      }
+    );
+  }
+
+
   /**
    * Get sales order by payment
    *

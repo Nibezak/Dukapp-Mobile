@@ -24,7 +24,6 @@ import ItemInventory from '../../models/ItemInventory';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useRef } from 'react';
 import { TextInput } from 'react-native';
-import * as Analytics from 'expo-firebase-analytics';
 import { onAuthStateChanged } from '@firebase/auth';
 import { auth, storage } from '../../../firebase';
 import { ThemeContext } from '../../../App';
@@ -59,7 +58,6 @@ export default function GeneralSettingsScreen() {
   );
 
   useEffect(() => {
-    tracker();
     // setting up the header
     navigation.setOptions({
       headerTitle: `${t('screens.settings')}`,
@@ -69,7 +67,7 @@ export default function GeneralSettingsScreen() {
       headerLeft: () => (
         <TouchableOpacity style={{ paddingLeft: 10 }}>
           <AntDesign
-            name="menuunfold"
+            name="caretright"
             size={24}
             color={theme.primary}
             onPress={() => navigation.openDrawer()}
@@ -109,14 +107,6 @@ export default function GeneralSettingsScreen() {
   }
 
   // track screen on google analytics
-  async function tracker() {
-    Analytics.setUserId(user.email);
-    Analytics.logEvent('users', {
-      user: user.email,
-      screen: 'screens',
-      navigation: 'Settings Screen',
-    });
-  }
 
   function handleFeedback() {
     bottomSheetModalRef.current?.present();

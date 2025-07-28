@@ -15,7 +15,6 @@ import SearchButton from '../../components/SearchButton';
 import RenderItem from './RenderItem';
 import { t } from 'i18n-js';
 import { StockItemAnimation } from '../../components/StockItemAnimation';
-import * as Analytics from 'expo-firebase-analytics';
 import { onAuthStateChanged } from '@firebase/auth';
 import { auth } from '../../../firebase';
 import { ThemeContext } from '../../../App';
@@ -80,7 +79,7 @@ export default function ItemListScreen({ navigation }) {
       headerLeft: () => (
         <TouchableOpacity style={{ paddingLeft: 10 }}>
           <AntDesign
-            name="menuunfold"
+            name="caretright"
             size={24}
             color={theme.primary}
             onPress={() => navigation.openDrawer()}

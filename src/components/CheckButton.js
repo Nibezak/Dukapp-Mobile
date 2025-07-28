@@ -33,6 +33,7 @@ const styles = {
         backgroundColor: "#2d3748",
         borderRadius: 30,
         elevation: 4,
+        marginTop: 15
     },
     floatingButtonIcon: {
         alignSelf: "center",

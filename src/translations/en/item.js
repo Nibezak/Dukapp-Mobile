@@ -1,7 +1,7 @@
 export default {
   item: "Item",
   items: "Items",
-  items_header: "Stock Items",
+  items_header: "Stock",
   items_description: "Stock Management",
 
   // ITEM forms

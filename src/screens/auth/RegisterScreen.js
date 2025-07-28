@@ -1,259 +1,182 @@
 import React, { useState, useRef, useContext } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  ActivityIndicator,
-  Linking,
-} from 'react-native';
-import { t } from 'i18n-js';
-import ButtonFilled from '../../components/ButtonFilled';
-import PhoneInput from 'react-native-phone-number-input';
+import { StyleSheet, View, Text, KeyboardAvoidingView, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaskInput from 'react-native-mask-input';
 import { AuthContext } from '../../context/AuthProvider';
 import { sendOTP } from '../../api/VerifyPhone';
-import { ScrollView, TextInput } from 'react-native-gesture-handler';
-import { auth } from '../../../firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { ThemeContext } from '../../../App';
 
 export default function RegisterScreen({ navigation }) {
-  const [value, setValue] = useState('');
-  const [formattedValue, setFormattedValue] = useState('');
-  const phoneInput = useRef(null);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [validationMessage, setValidationMessage] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { theme } = useContext(ThemeContext);
+  const keyboardVerticalOffset = Platform.OS === 'ios' ? 90 : 0;
 
-  const validateAndSet = (value, valueToCompare, setValue) => {
-    if (value !== valueToCompare) {
-      setValidationMessage('Passwords do not match');
-    } else {
-      setValidationMessage('');
-    }
-    setValue(value);
+
+  const handleSignUp = async () => {
+    setLoading(true);
+    console.log(phoneNumber)
+    await sendOTP(phoneNumber).then(() => {
+      navigation.navigate('Otp', { phoneNumber });
+      setLoading(false);
+    });
   };
-  const { error, isLoading, setIsLoading } = useContext(AuthContext);
-
-  /**
-   * @todo, implement the verification backend in the context
-   * sendSmsVerification
-   */
-  async function handleSendSmsVerification() {
-    if (password === confirmPassword) {
-      setIsLoading(true);
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          sendOTP(formattedValue.substring(1, 13))
-            .then((sent) => {
-              setIsLoading(false);
-              navigation.navigate('Otp', {
-                phoneNumber: formattedValue,
-              });
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        })
-        .catch((error) => {
-          setValidationMessage(error.message);
-          setIsLoading(false);
-        });
-      //   Send SMS to verify this phone
-    }
-  }
 
   return (
-    <>
-      <ScrollView style={styles.container}>
-        <View style={styles.wrapper}>
-          <View style={styles.welcome}>
-            <Image source={require('./../../../assets/snack-icon.png')} style={styles.appName} />
-            <Text style={styles.pitch}>{t('auth.welcome_to_dukapp_app')}</Text>
-            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-              <Text style={styles.verifyPhone}>Register your shop</Text>
-              <Text style={{ color: '#3498db', marginLeft: 20, fontSize: 17, marginTop: 20 }}>
-                or
-              </Text>
-              <TouchableOpacity
-                style={{ marginHorizontal: 30, marginTop: 20 }}
-                onPress={() => navigation.navigate('Login')}
-              >
-                <Text style={{ color: '#47a67f', fontSize: 15, fontWeight: 'bold' }}>
-                  {'Log in '}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <PhoneInput
-            ref={phoneInput}
-            defaultValue={value}
-            defaultCode="RW"
-            layout="first"
-            onChangeText={(text) => {
-              setValue(text);
-            }}
-            onChangeFormattedText={(text) => {
-              setFormattedValue(text);
-            }}
-            countryPickerProps={{ withAlphaFilter: true }}
-            withShadow
-            autoFocus
-            autoFormat={true}
-            initialCountry="rw"
-          />
-
-          <TextInput
-            style={styles.passwordInput}
-            placeholder="Enter your password"
-            secureTextEntry={true}
-            value={password}
-            autoCapitalize="none"
-            onChangeText={(value) => validateAndSet(value, confirmPassword, setPassword)}
-          />
-
-          <TextInput
-            style={styles.confirmPasswordInput}
-            placeholder="Confirm your password"
-            secureTextEntry={true}
-            value={confirmPassword}
-            autoCapitalize="none"
-            onChangeText={(value) => validateAndSet(value, password, setConfirmPassword)}
-          />
-          {validationMessage && <Text style={{ color: 'red' }}>{validationMessage}</Text>}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-            <Text style={styles.carrierCharges}>{t('auth.carrier_charge_may_apply')}</Text>
-          </View>
-          {error && <Text style={{ color: 'red' }}>{error}</Text>}
-          {isLoading && <ActivityIndicator style={{ marginTop: 8 }} size="small" color="gray" />}
-
-          <TouchableOpacity
-            onPress={async () => {
-              // Checking if the link is supported for links with custom URL scheme.
-              const url = 'http://dukapp.framer.website/';
-              const supported = await Linking.canOpenURL(url);
-            }}
-          >
-            <Text style={styles.termsLink}>{t('common.terms_and_condition')}</Text>
-          </TouchableOpacity>
-          <ButtonFilled onPress={handleSendSmsVerification}>
-            {t('auth.accept_tc_and_continue')}
-          </ButtonFilled>
+    <KeyboardAvoidingView keyboardVerticalOffset={keyboardVerticalOffset}
+      style={{ flex: 1, marginVertical: 50 }} behavior="padding">
+      {loading && (
+        <View style={[StyleSheet.absoluteFill, styles.loading]}>
+          <ActivityIndicator size="large" color="#1063FD" />
+          <Text style={{ fontSize: 18, padding: 10 }}>Sending code...</Text>
         </View>
-      </ScrollView>
-    </>
+      )}
+
+      <View style={styles.container}>
+        <Text style={styles.description}>
+          Dukapp will need to verify your account. Carrier charges may apply.
+        </Text>
+
+        <View style={styles.list}>
+          <View style={styles.listItem}>
+            <Text style={styles.listItemText}>Rwanda</Text>
+            <Ionicons name="chevron-forward" size={20} color="#6E6E73" />
+          </View>
+          <View style={styles.separator} />
+
+          <MaskInput
+            value={phoneNumber}
+            keyboardType="numeric"
+            autoFocus
+            placeholder="07 ... your phone number"
+            onChangeText={(masked) => setPhoneNumber(masked)}
+            style={styles.input}
+          />
+        </View>
+
+        <Text style={styles.legal}>
+          You must be{' '}
+          <Text style={styles.link} onPress={() => Linking.openURL('https://dukapp.com')}>
+            at least 16 years old
+          </Text>{' '}
+          to register. Learn how Dukapp works with the{' '}
+          <Text style={styles.link} onPress={() => Linking.openURL('https://dukapp.com')}>
+            Dukapp website
+          </Text>
+          .
+        </Text>
+
+        <View style={{ flex: 1 }} />
+
+        <TouchableOpacity
+          style={[styles.button, phoneNumber !== '' ? styles.enabled : null, { marginBottom: 20 }]}
+          onPress={handleSignUp}
+          disabled={!phoneNumber}
+        >
+          <Text style={[styles.buttonText, phoneNumber !== '' ? styles.enabledText : null]}>Next</Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  wrapper: {
-    flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#EFEEF6',
+    gap: 20,
   },
-  appName: {
-    width: 200,
-    height: 100,
-    alignSelf: 'center',
-  },
-  pitch: {
-    fontSize: 18,
-    paddingHorizontal: 30,
-    paddingBottom: 20,
-    textAlign: 'center',
-    color: '#718096',
-  },
-  verifyPhone: {
-    color: '#718096',
-    fontWeight: '700',
-    fontSize: 16,
-    alignSelf: 'center',
-    marginTop: 20,
-  },
-  carrierCharges: {
-    color: '#718096',
-    fontWeight: '600',
-    fontSize: 12,
-    paddingTop: 3,
-    fontStyle: 'italic',
-  },
-  message: {
+  description: {
     fontSize: 14,
-    paddingHorizontal: 30,
-    color: '#4a5568',
+    color: '#6E6E73',
+  },
+  legal: {
+    fontSize: 12,
     textAlign: 'center',
+    color: '#000',
+  },
+  link: {
+    color: '#1063FD',
   },
   button: {
-    borderRadius: 3,
-    fontWeight: 'bold',
-    marginTop: 20,
-    height: 50,
-    width: 300,
+    width: '100%',
+    alignItems: 'center',
+    backgroundColor: '#DCDCE2',
+    padding: 10,
+    borderRadius: 10,
+  },
+  enabled: {
+    backgroundColor: '#14B8A6',
+  },
+  buttonText: {
+    color: '#6E6E73',
+    fontSize: 22,
+    fontWeight: '500',
+  },
+  enabledText: {
+    color: '#FFFFFF',
+  },
+  list: {
+    backgroundColor: '#FFFFFF',
+    width: '100%',
+    borderRadius: 10,
+    padding: 10,
+  },
+  listItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 6,
+    marginBottom: 10,
+  },
+  listItemText: {
+    fontSize: 18,
+    color: '#1063FD',
+  },
+  separator: {
+    width: '100%',
+    height: 1,
+    backgroundColor: '#6E6E73',
+    opacity: 0.2,
+  },
+  input: {
+    backgroundColor: '#FFFFFF',
+    width: '100%',
+    fontSize: 16,
+    padding: 6,
+    marginTop: 10,
+  },
+  loading: {
+    zIndex: 10,
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#2d3748',
-    shadowColor: 'rgba(0,0,0,0.4)',
-    shadowOffset: {
-      width: 1,
-      height: 5,
-    },
-    shadowOpacity: 0.34,
-    shadowRadius: 6.27,
-    elevation: 10,
+    flex: 1,
   },
-
-  buttonText: {
-    color: 'white',
-    fontSize: 14,
-  },
-  welcome: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  status: {
-    padding: 20,
-    marginBottom: 20,
+  modalContainer: {
+    flex: 1,
     justifyContent: 'center',
-    alignItems: 'flex-start',
-    color: 'gray',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  termsLink: {
-    fontSize: 14,
-    marginTop: 10,
-    textDecorationLine: 'underline',
+  countryItem: {
+    padding: 15,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderColor: '#DCDCE2',
   },
-  emailInput: {
-    backgroundColor: '#f1f1f1',
-    borderRadius: 10,
-    width: 300,
-    padding: 10,
-    marginTop: 20,
-    marginBottom: 8,
-    marginHorizontal: 10,
-    elevation: 5,
+  countryText: {
+    fontSize: 16,
+    color: '#6E6E73',
   },
-  passwordInput: {
-    backgroundColor: '#f1f1f1',
-    borderRadius: 10,
-    width: 300,
-    padding: 10,
-    marginTop: 20,
-    marginBottom: 8,
-    marginHorizontal: 10,
-    elevation: 5,
+  countryCode: {
+    fontSize: 16,
+    color: '#1063FD',
   },
-  confirmPasswordInput: {
-    backgroundColor: '#f1f1f1',
-    borderRadius: 10,
-    width: 300,
-    padding: 10,
-    marginVertical: 5,
-    marginHorizontal: 10,
-    elevation: 5,
+  closeModal: {
+    padding: 20,
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
   },
 });
